@@ -34,7 +34,7 @@ gem "selenium-webdriver"
 gem "whenever", require: false
 
 gem "googleauth", "~> 1.1"
-gem "google-apis-gmail_v1", "~> 0.48"
+gem "google-apis-gmail_v1", "~> 0.53"
 gem "httparty"
 gem "sidekiq", "~> 7.3"
 gem "redis", ">= 5.0"
