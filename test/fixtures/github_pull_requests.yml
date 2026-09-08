@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  repository: MyString
+  pr_number: 1
+  title: MyString
+  author: MyString
+  state: MyString
+  merged: false
+  merged_by: MyString
+  opened_at: 2026-03-26 00:13:23
+  closed_at: 2026-03-26 00:13:23
+  github_repository: one
+
+two:
+  repository: MyString
+  pr_number: 1
+  title: MyString
+  author: MyString
+  state: MyString
+  merged: false
+  merged_by: MyString
+  opened_at: 2026-03-26 00:13:23
+  closed_at: 2026-03-26 00:13:23
+  github_repository: two

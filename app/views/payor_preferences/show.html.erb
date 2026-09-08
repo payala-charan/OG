@@ -1,0 +1,720 @@
+<div class="payor-preference-details">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Payor Preference Details</h1>
+        <p>Detailed view of payor preference record and analysis</p>
+      </div>
+      <%= link_to payor_preferences_path, class: "back-btn" do %>
+        <i class="fas fa-arrow-left"></i> Back to All
+      <% end %>
+    </div>
+  </header>
+
+  <!-- Details Card -->
+  <section class="details-card">
+    <div class="card-header">
+      <h2>Record Information</h2>
+      <p>Complete details for payor preference ID: <strong>#<%= @payor_preference.id %></strong></p>
+    </div>
+
+    <div class="details-grid">
+      <!-- Basic Information -->
+      <div class="detail-group">
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-hashtag"></i>
+            Record ID
+          </div>
+          <div class="detail-value">
+            <span class="value-badge primary"><%= @payor_preference.id %></span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-calendar-alt"></i>
+            Accounting Period
+          </div>
+          <div class="detail-value">
+            <span class="value-badge secondary"><%= @payor_preference.accounting_period_id %></span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-pills"></i>
+            Generic Name Group
+          </div>
+          <div class="detail-value">
+            <span class="value-text"><%= @payor_preference.generic_name_group.capitalize %></span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-hand-holding-usd"></i>
+            Payor
+          </div>
+          <div class="detail-value">
+            <span class="payor-badge <%= get_payor_color_class(@payor_preference.payor) %>">
+              <%= @payor_preference.payor.capitalize %>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Insurance & Strength -->
+      <div class="detail-group">
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-shield-alt"></i>
+            Insurances
+          </div>
+          <div class="detail-value">
+            <% if @payor_preference.insurances.present? %>
+              <% begin %>
+                <% ins = JSON.parse(@payor_preference.insurances) rescue @payor_preference.insurances %>
+                <% if ins.is_a?(Array) %>
+                  <div class="tags-container">
+                    <% ins.each do |insurance| %>
+                      <span class="insurance-tag"><%= insurance %></span>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <span class="insurance-tag"><%= ins %></span>
+                <% end %>
+              <% rescue %>
+                <span class="insurance-tag"><%= @payor_preference.insurances %></span>
+              <% end %>
+            <% else %>
+              <span class="no-data">None specified</span>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-weight-hanging"></i>
+            Strength
+          </div>
+          <div class="detail-value">
+            <span class="value-text"><%= @payor_preference.strength %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conversion Details -->
+      <div class="detail-group">
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-exchange-alt"></i>
+            Conversion Type
+          </div>
+          <div class="detail-value">
+            <span class="value-badge accent"><%= @payor_preference.conversion_type %></span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-bullseye"></i>
+            Target Column
+          </div>
+          <div class="detail-value">
+            <span class="value-text"><%= @payor_preference.conversion_target_col %></span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-chart-line"></i>
+            Factor
+          </div>
+          <div class="detail-value">
+            <% if @payor_preference.factor.to_s.capitalize == 'Max' %>
+              <span class="factor-badge max">
+                <i class="fas fa-arrow-up"></i>
+                <%= @payor_preference.factor.to_s.capitalize %>
+              </span>
+            <% else %>
+              <span class="factor-badge min">
+                <i class="fas fa-arrow-down"></i>
+                <%= @payor_preference.factor.to_s.capitalize %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Values & Result -->
+      <div class="detail-group full-width">
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-list-ol"></i>
+            Brand Values
+          </div>
+          <div class="detail-value">
+            <% if @payor_preference.values.present? %>
+              <div class="values-grid">
+                <% @payor_preference.values.each do |brand, val| %>
+                  <div class="value-card">
+                    <div class="value-brand"><%= brand %></div>
+                    <div class="value-number"><%= val %></div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <span class="no-data">No values available</span>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <div class="detail-label">
+            <i class="fas fa-trophy"></i>
+            Final Result
+          </div>
+          <div class="detail-value">
+            <div class="result-display <%= @payor_preference.factor.to_s.capitalize == 'Max' ? 'result-max' : 'result-min' %>">
+              <div class="result-icon">
+                <%= @payor_preference.factor.to_s.capitalize == 'Max' ? '↗' : '↘' %>
+              </div>
+              <div class="result-content">
+                <div class="result-label">Calculated Result</div>
+                <div class="result-value"><%= @payor_preference.result %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Summary Card -->
+  <section class="summary-card">
+    <div class="summary-header">
+      <h3>Analysis Summary</h3>
+      <i class="fas fa-chart-bar"></i>
+    </div>
+    <div class="summary-content">
+      <div class="summary-item">
+        <div class="summary-label">Payor Strategy</div>
+        <div class="summary-value">
+          <%= @payor_preference.payor.capitalize %> prefers 
+          <strong><%= @payor_preference.factor.to_s.downcase %></strong> values
+          for <strong><%= @payor_preference.generic_name_group.capitalize %></strong>
+        </div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Conversion Type</div>
+        <div class="summary-value">
+          Using <strong><%= @payor_preference.conversion_type %></strong> 
+          targeting <strong><%= @payor_preference.conversion_target_col %></strong>
+        </div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Strength Considered</div>
+        <div class="summary-value">
+          <strong><%= @payor_preference.strength %></strong>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  :root {
+    --primary: #4361ee;
+    --primary-light: #6c8aff;
+    --primary-dark: #3a56d4;
+    --secondary: #7209b7;
+    --accent: #4cc9f0;
+    --danger: #f72585;
+    --warning: #ff9e00;
+    --success: #06d6a0;
+    --light: #f8f9fc;
+    --dark: #2b2d42;
+    --gray: #8d99ae;
+    --border-radius: 16px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.4s ease;
+  }
+
+  .payor-preference-details {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* Header Styles */
+  .header {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .header-text h1 {
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-text p {
+    color: var(--gray);
+    font-size: 1.1rem;
+  }
+
+  .back-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+  }
+
+  .back-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+
+  /* Details Card */
+  .details-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border-top: 4px solid var(--primary);
+  }
+
+  .details-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--light);
+  }
+
+  .card-header h2 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-header p {
+    color: var(--gray);
+  }
+
+  .details-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .detail-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--light);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--primary-light);
+  }
+
+  .detail-group.full-width {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .detail-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.9rem;
+  }
+
+  .detail-label i {
+    color: var(--primary);
+    width: 16px;
+  }
+
+  .detail-value {
+    margin-left: 1.5rem;
+  }
+
+  /* Value Styles */
+  .value-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .value-badge.primary {
+    background: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(67, 97, 238, 0.3);
+  }
+
+  .value-badge.secondary {
+    background: rgba(114, 9, 183, 0.1);
+    color: var(--secondary);
+    border: 1px solid rgba(114, 9, 183, 0.3);
+  }
+
+  .value-badge.accent {
+    background: rgba(76, 201, 240, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+  }
+
+  .value-text {
+    font-weight: 500;
+    color: var(--dark);
+    font-size: 0.95rem;
+  }
+
+  /* Payor Badge */
+  .payor-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: white;
+  }
+
+  .payor-medicare { background: #d90429; }
+  .payor-medicaid { background: var(--success); }
+  .payor-private { background: var(--secondary); }
+  .payor-anthem { background: var(--danger); }
+  .payor-united { background: var(--warning); }
+  .payor-cigna { background: var(--accent); }
+  .payor-aetna { background: #84CC16; }
+  .payor-humana { background: #EC4899; }
+  .payor-bluecross { background: #1E40AF; }
+
+  /* Insurance Tags */
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .insurance-tag {
+    display: inline-block;
+    background: white;
+    border: 1px solid var(--primary-light);
+    border-radius: 12px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--primary);
+    transition: var(--transition);
+  }
+
+  .insurance-tag:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  /* Factor Badge */
+  .factor-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .factor-badge.max {
+    background: rgba(6, 214, 160, 0.1);
+    color: var(--success);
+    border: 2px solid rgba(6, 214, 160, 0.3);
+  }
+
+  .factor-badge.min {
+    background: rgba(247, 37, 133, 0.1);
+    color: var(--danger);
+    border: 2px solid rgba(247, 37, 133, 0.3);
+  }
+
+  /* Values Grid */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .value-card {
+    background: white;
+    border: 2px solid var(--primary-light);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    text-align: center;
+    transition: var(--transition);
+  }
+
+  .value-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    border-color: var(--primary);
+  }
+
+  .value-brand {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .value-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  /* Result Display */
+  .result-display {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    max-width: 300px;
+  }
+
+  .result-display:hover {
+    transform: translateX(5px);
+  }
+
+  .result-display.result-max {
+    background: rgba(6, 214, 160, 0.1);
+    border: 2px solid rgba(6, 214, 160, 0.3);
+  }
+
+  .result-display.result-min {
+    background: rgba(247, 37, 133, 0.1);
+    border: 2px solid rgba(247, 37, 133, 0.3);
+  }
+
+  .result-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: white;
+  }
+
+  .result-max .result-icon {
+    color: var(--success);
+    border: 2px solid var(--success);
+  }
+
+  .result-min .result-icon {
+    color: var(--danger);
+    border: 2px solid var(--danger);
+  }
+
+  .result-content {
+    flex: 1;
+  }
+
+  .result-label {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-bottom: 0.3rem;
+  }
+
+  .result-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .result-max .result-value {
+    color: var(--success);
+  }
+
+  .result-min .result-value {
+    color: var(--danger);
+  }
+
+  /* Summary Card */
+  .summary-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--success);
+  }
+
+  .summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--light);
+  }
+
+  .summary-header h3 {
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 1.3rem;
+  }
+
+  .summary-header i {
+    font-size: 1.5rem;
+    color: var(--success);
+  }
+
+  .summary-content {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--light);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+  }
+
+  .summary-item:hover {
+    transform: translateX(5px);
+    background: rgba(67, 97, 238, 0.05);
+  }
+
+  .summary-label {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.9rem;
+  }
+
+  .summary-value {
+    color: var(--gray);
+    text-align: right;
+    flex: 1;
+    margin-left: 1rem;
+  }
+
+  .summary-value strong {
+    color: var(--primary);
+  }
+
+  /* No Data State */
+  .no-data {
+    color: var(--gray);
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .payor-preference-details {
+      padding: 1rem;
+    }
+
+    .header-content {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .header-text h1 {
+      font-size: 2rem;
+    }
+
+    .details-card {
+      padding: 1.5rem;
+    }
+
+    .detail-group {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+
+    .values-grid {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .result-display {
+      max-width: none;
+    }
+
+    .summary-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .summary-value {
+      text-align: left;
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .value-card {
+      padding: 0.8rem;
+    }
+
+    .result-display {
+      flex-direction: column;
+      text-align: center;
+      gap: 0.8rem;
+    }
+
+    .back-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

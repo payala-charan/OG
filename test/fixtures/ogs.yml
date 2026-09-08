@@ -1,0 +1,31 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  generic_name: MyString
+  brand: MyString
+  strength: MyString
+  ndc_code: MyString
+  reimbursement_per_billing_unit: 1.5
+  billing_unit_per_package_size: 1
+  cms_reimbursement_per_package: 1.5
+  cost_three_forty_b: 1.5
+  cms_margin_three_forty_b_cost: 1.5
+  gpo_cost: 1.5
+  accounting_period_id: 1
+  reimbursement_id: 1
+  generic_name_group: MyString
+
+two:
+  generic_name: MyString
+  brand: MyString
+  strength: MyString
+  ndc_code: MyString
+  reimbursement_per_billing_unit: 1.5
+  billing_unit_per_package_size: 1
+  cms_reimbursement_per_package: 1.5
+  cost_three_forty_b: 1.5
+  cms_margin_three_forty_b_cost: 1.5
+  gpo_cost: 1.5
+  accounting_period_id: 1
+  reimbursement_id: 1
+  generic_name_group: MyString

@@ -1,0 +1,23 @@
+<%= form_with(model: @insurance_factor, local: true) do |f| %>
+
+  <%= f.label :primary_payor_name %>
+  <%= f.text_field :primary_payor_name %><br>
+
+  <%= f.label :benefit_plan_name %>
+  <%= f.text_field :benefit_plan_name %><br>
+
+  <%= f.label :category %>
+  <%= f.text_field :category %><br>
+
+  <%= f.label :rate_percent %>
+  <%= f.number_field :rate_percent, step: :any %><br>
+
+  <%= f.label :insurance_factor %>
+  <%= f.number_field :insurance_factor, step: :any %><br>
+
+  <%= f.label :team_id %>
+  <%= f.text_field :team_id %><br>
+
+  <%= f.submit %>
+
+<% end %>

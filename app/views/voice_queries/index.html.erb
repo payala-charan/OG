@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AI Voice Assistant — Advanced</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="csrf-token" content="<%= form_authenticity_token %>">
+
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --danger: #f72585;
+      --warning: #ff9e00;
+      --success: #06d6a0;
+      --light: #f8f9fc;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.4s ease;
+    }
+
+    /* Theme variables */
+    body.light { 
+      --bg-primary: #f8f9fc;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --text-primary: #2b2d42;
+      --text-secondary: #8d99ae;
+      --border-color: rgba(67, 97, 238, 0.1);
+    }
+
+    body.dark  { 
+      --bg-primary: #071029;
+      --bg-secondary: #00121a;
+      --bg-card: rgba(255, 255, 255, 0.05);
+      --text-primary: #e6eefb;
+      --text-secondary: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      transition: var(--transition);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* Header Styles */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .header-text h1 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-text p {
+      color: var(--gray);
+      font-size: 1.1rem;
+    }
+
+    /* Back to Dashboard Button */
+    .back-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Chat bubbles */
+    .assistant-bubble { 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .user-bubble { 
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* Visualizer */
+    .vis-bar { 
+      width: 4px; 
+      background: linear-gradient(to top, var(--accent), var(--primary-light));
+      margin: 0 2px; 
+      border-radius: 2px; 
+      display:inline-block; 
+      transition: height 0.1s ease;
+    }
+    
+    .vis-bar-muted { 
+      background: var(--gray); 
+      opacity: 0.3;
+    }
+
+    /* Cards and containers */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+      cursor: pointer;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(6, 214, 160, 0.4);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger) 0%, #f55a9e 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(247, 37, 133, 0.3);
+      cursor: pointer;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(247, 37, 133, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Form elements */
+    .input-field {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      color: var(--text-primary);
+      width: 100%;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .select-field {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 0.8rem;
+      color: var(--text-primary);
+      width: 100%;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+
+    .select-field:focus {
+      outline: none;
+      border-color: var(--primary-light);
+    }
+
+    /* Slider */
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      cursor: pointer;
+      border: none;
+      box-shadow: var(--shadow);
+    }
+
+    /* Status and labels */
+    .status-indicator {
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-color);
+    }
+
+    .label {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: slideIn 0.3s ease;
+    }
+
+    /* Visualizer container */
+    .visualizer-container {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Voice Logs Link */
+    .voice-logs-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+      border: 1px solid rgba(67, 97, 238, 0.2);
+    }
+
+    .voice-logs-link:hover {
+      background: rgba(67, 97, 238, 0.2);
+      transform: translateY(-2px);
+      text-decoration: none;
+      color: var(--primary);
+    }
+
+    /* Quick Action Buttons */
+    .quick-action-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.8rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quick-action-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Hidden utility */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Pulse animation for recording */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body class="dark min-h-screen flex items-center justify-center p-6">
+
+  <div id="app" class="w-full max-w-6xl">
+
+    <!-- Header -->
+    <header class="header mb-6 p-6">
+      <div class="flex justify-between items-center">
+        <div class="header-text">
+          <h1 class="text-3xl font-bold mb-2">
+            <i class="fas fa-robot mr-3"></i>
+            <span style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+              AI Voice Assistant
+            </span>
+          </h1>
+          <p class="text-gray-400">Advanced voice recognition and response system</p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <!-- Back to Dashboard Button -->
+          <%= link_to features_path, class: "back-btn" do %>
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+          <% end %>
+
+          <!-- Voice Logs Link -->
+          <%= link_to voice_query_logs_path, class: "voice-logs-link" do %>
+            <i class="fas fa-history"></i>
+            Voice Logs
+          <% end %>
+
+          <!-- Theme toggle -->
+          <button id="themeBtn" class="btn-secondary">
+            <i class="fas fa-palette"></i>
+            <span id="themeText">Light Mode</span>
+          </button>
+
+          <!-- Voice controls dropdown trigger -->
+          <button id="voicePanelToggle" class="btn-secondary">
+            <i class="fas fa-sliders-h"></i>
+            Voice Controls
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+      <!-- Left: controls & visualizer -->
+      <div class="xl:col-span-1 card p-6">
+        <!-- Visualizer -->
+        <div class="mb-6">
+          <label class="label">
+            <i class="fas fa-wave-square mr-2"></i>
+            Microphone Visualizer
+          </label>
+          <div class="visualizer-container">
+            <div id="visualizer" class="w-full h-24 rounded flex items-end justify-center overflow-hidden p-3">
+              <!-- bars inserted dynamically -->
+            </div>
+          </div>
+          <p class="helper-text">Shows live microphone amplitude while recording</p>
+        </div>
+
+        <!-- Recording Controls -->
+        <div class="mb-6">
+          <label class="label">
+            <i class="fas fa-microphone mr-2"></i>
+            Recording Controls
+          </label>
+          <div class="flex gap-3 mb-4">
+            <button id="startBtn" class="btn-success flex-1">
+              <i class="fas fa-play"></i>
+              Start
+            </button>
+            <button id="stopBtn" class="btn-danger flex-1" disabled>
+              <i class="fas fa-stop"></i>
+              Stop
+            </button>
+          </div>
+
+          <button id="processBtn" class="btn-primary w-full mb-4">
+            <i class="fas fa-paper-plane"></i>
+            Process Voice Query
+          </button>
+
+          <!-- Status -->
+          <div class="status-indicator text-center mb-3">
+            <i class="fas fa-circle mr-2 text-green-400" id="statusIcon"></i>
+            <span id="status">Ready</span>
+          </div>
+
+          <!-- Auto-stop Timer -->
+          <div class="text-center text-sm text-gray-400">
+            <i class="fas fa-clock mr-1"></i>
+            Auto-stops in <span id="silenceTimer">10</span>s of silence
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mb-6">
+          <label class="label">
+            <i class="fas fa-bolt mr-2"></i>
+            Quick Actions
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="quick-action-btn" onclick="setQuickQuery('What can you do?')">
+              <i class="fas fa-question mr-2"></i>
+              Help
+            </button>
+            <button class="quick-action-btn" onclick="setQuickQuery('Tell me a joke')">
+              <i class="fas fa-laugh mr-2"></i>
+              Joke
+            </button>
+            <button class="quick-action-btn" onclick="setQuickQuery('What time is it?')">
+              <i class="fas fa-clock mr-2"></i>
+              Time
+            </button>
+            <button class="quick-action-btn" onclick="setQuickQuery('How are you?')">
+              <i class="fas fa-smile mr-2"></i>
+              Greet
+            </button>
+          </div>
+        </div>
+
+        <!-- Voice controls panel -->
+        <div id="voicePanel" class="mt-6 p-4 card hidden">
+          <label class="label">
+            <i class="fas fa-voice-mail mr-2"></i>
+            Voice Settings
+          </label>
+          
+          <select id="voiceSelect" class="select-field mb-4"></select>
+
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="label text-sm">
+                Rate <span id="rateVal" class="font-mono">1.0</span>
+              </label>
+              <input id="rate" type="range" min="0.6" max="1.6" step="0.05" value="1" class="slider" />
+            </div>
+            <div>
+              <label class="label text-sm">
+                Pitch <span id="pitchVal" class="font-mono">1.0</span>
+              </label>
+              <input id="pitch" type="range" min="0.6" max="2.0" step="0.05" value="1" class="slider" />
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button id="testVoice" class="btn-secondary flex-1">
+              <i class="fas fa-play-circle"></i>
+              Test
+            </button>
+            <button id="resetVoice" class="btn-secondary flex-1">
+              <i class="fas fa-undo"></i>
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: chat area -->
+      <div class="xl:col-span-3 card p-6 flex flex-col" style="min-height: 600px;">
+        <!-- Chat Header -->
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold">
+            <i class="fas fa-comments mr-2"></i>
+            Conversation
+          </h3>
+          <div class="flex gap-2">
+            <button id="clearChatBtn" class="btn-secondary">
+              <i class="fas fa-trash"></i>
+              Clear Chat
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="flex-1 overflow-y-auto p-4 mb-6 rounded-lg bg-black/5" id="chatArea" style="scroll-behavior: smooth;">
+          <div class="text-center text-gray-400 py-8">
+            <i class="fas fa-robot text-4xl mb-3 opacity-50"></i>
+            <p>Start a conversation with your AI assistant</p>
+            <p class="text-sm mt-2">Press Enter to send messages or use voice controls</p>
+          </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="mt-auto">
+          <!--
+          <div class="flex gap-3 mb-4">
+            <div class="flex-1">
+              <label class="label">
+                <i class="fas fa-keyboard mr-2"></i>
+                Type your message
+              </label>
+              <textarea 
+                id="messageInput" 
+                class="input-field h-20" 
+                placeholder="Type your message here and press Enter to send..."
+                onkeydown="handleEnterKey(event)"
+              ></textarea>
+            </div>
+            <div class="flex flex-col justify-end gap-2">
+              <button onclick="sendMessage()" class="btn-primary whitespace-nowrap">
+                <i class="fas fa-paper-plane"></i>
+                Send Message
+              </button>
+            </div>
+          </div>
+          -->
+
+          <div class="flex items-center justify-between">
+            <div class="flex-1">
+              <label class="label">
+                <i class="fas fa-microphone mr-2"></i>
+                Voice Transcript (Editable)
+              </label>
+              <textarea 
+                id="transcript" 
+                class="input-field h-20" 
+                placeholder="Your speech will appear here, or you can type queries directly..."
+                onkeydown="handleTranscriptEnterKey(event)"
+              ></textarea>
+            </div>
+            <div class="flex flex-col justify-end gap-2 ml-3">
+              <button id="processTranscriptBtn" class="btn-primary whitespace-nowrap">
+                <i class="fas fa-paper-plane"></i>
+                Send
+              </button>
+              <button id="clearTranscriptBtn" class="quick-action-btn">
+                <i class="fas fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ======================================================
+   Enhanced Voice Assistant with Auto-stop and Enter Key Support
+   ====================================================== */
+
+(() => {
+  // UI elements
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn  = document.getElementById('stopBtn');
+  const processBtn = document.getElementById('processBtn');
+  const processTranscriptBtn = document.getElementById('processTranscriptBtn');
+  const statusEl = document.getElementById('status');
+  const statusIcon = document.getElementById('statusIcon');
+  const silenceTimerEl = document.getElementById('silenceTimer');
+
+  const transcriptEl = document.getElementById('transcript');
+  const messageInput = document.getElementById('messageInput');
+  const chatArea = document.getElementById('chatArea');
+  const clearChatBtn = document.getElementById('clearChatBtn');
+  const clearTranscriptBtn = document.getElementById('clearTranscriptBtn');
+
+  const waveContainer = document.getElementById('visualizer');
+  const voicePanelToggle = document.getElementById('voicePanelToggle');
+  const voicePanel = document.getElementById('voicePanel');
+  const voiceSelect = document.getElementById('voiceSelect');
+  const rateEl = document.getElementById('rate');
+  const pitchEl = document.getElementById('pitch');
+  const rateVal = document.getElementById('rateVal');
+  const pitchVal = document.getElementById('pitchVal');
+  const testVoice = document.getElementById('testVoice');
+  const resetVoice = document.getElementById('resetVoice');
+  const themeBtn = document.getElementById('themeBtn');
+  const themeText = document.getElementById('themeText');
+
+  // audio visualizer params
+  const BAR_COUNT = 32;
+  let bars = [];
+  let audioContext, analyserNode, micStream;
+  let rafId;
+  
+  // Auto-stop timers
+  let silenceTimeout;
+  let silenceCountdown;
+  const SILENCE_TIMEOUT = 10000; // 10 seconds
+  let silenceTimerInterval;
+
+  // speech recognition
+  let recognition;
+  let isRecording = false;
+  let lastSpeechTime = 0;
+
+  // speech synthesis config
+  let voices = [];
+  let chosenVoice = null;
+
+  // CSRF token for Rails
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+  /* ---------------------------
+     THEME
+  --------------------------- */
+  const savedTheme = localStorage.getItem('va_theme') || 'dark';
+  document.body.classList.remove('dark','light');
+  document.body.classList.add(savedTheme);
+  themeText.innerText = savedTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+  
+  themeBtn.onclick = () => {
+    const cur = document.body.classList.contains('dark') ? 'dark' : 'light';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.body.classList.remove('dark','light');
+    document.body.classList.add(next);
+    themeText.innerText = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+    localStorage.setItem('va_theme', next);
+  };
+
+  /* ---------------------------
+     Build visualizer bars
+  --------------------------- */
+  function buildBars() {
+    waveContainer.innerHTML = '';
+    bars = [];
+    for (let i=0;i<BAR_COUNT;i++){
+      const b = document.createElement('div');
+      b.className = 'vis-bar vis-bar-muted';
+      b.style.height = '6px';
+      b.style.transition = 'height 0.08s ease';
+      waveContainer.appendChild(b);
+      bars.push(b);
+    }
+  }
+  buildBars();
+
+  /* ---------------------------
+     Initialize SpeechRecognition
+  --------------------------- */
+  function initRecognition() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      status('SpeechRecognition not supported', 'error');
+      startBtn.disabled = true;
+      processBtn.disabled = false;
+      return;
+    }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      status('Listening...', 'recording');
+      showVisualizer(true);
+      startSilenceTimer();
+      lastSpeechTime = Date.now();
+    };
+
+    recognition.onerror = (ev) => {
+      console.warn('recognition error', ev);
+      status('Recognition Error', 'error');
+      stopRecording();
+    };
+
+    recognition.onend = () => {
+      status('Ready', 'ready');
+      showVisualizer(false);
+      stopMicAnalysis();
+      isRecording = false;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      clearSilenceTimer();
+      
+      // Auto-process if there's text in transcript
+      if (transcriptEl.value.trim()) {
+        setTimeout(() => {
+          processVoiceQuery();
+        }, 500);
+      }
+    };
+
+    recognition.onresult = (event) => {
+      let finalTranscript = '';
+      let interimTranscript = '';
+      
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+      
+      // Update transcript with both final and interim results
+      transcriptEl.value = finalTranscript + interimTranscript;
+      
+      // Reset silence timer when speech is detected
+      if (finalTranscript || interimTranscript) {
+        lastSpeechTime = Date.now();
+        resetSilenceTimer();
+      }
+
+      // Enable stop button while user is speaking
+      stopBtn.disabled = false;
+    };
+  }
+  initRecognition();
+
+  /* ---------------------------
+     Silence Timer Functions
+  --------------------------- */
+  function startSilenceTimer() {
+    silenceCountdown = SILENCE_TIMEOUT / 1000;
+    updateSilenceTimerDisplay();
+    
+    silenceTimerInterval = setInterval(() => {
+      silenceCountdown--;
+      updateSilenceTimerDisplay();
+      
+      if (silenceCountdown <= 0) {
+        clearSilenceTimer();
+        if (isRecording) {
+          status('No speech detected', 'warning');
+          setTimeout(() => stopRecording(), 1000);
+        }
+      }
+    }, 1000);
+  }
+
+  function resetSilenceTimer() {
+    silenceCountdown = SILENCE_TIMEOUT / 1000;
+    updateSilenceTimerDisplay();
+  }
+
+  function clearSilenceTimer() {
+    if (silenceTimerInterval) {
+      clearInterval(silenceTimerInterval);
+      silenceTimerInterval = null;
+    }
+    silenceCountdown = SILENCE_TIMEOUT / 1000;
+    updateSilenceTimerDisplay();
+  }
+
+  function updateSilenceTimerDisplay() {
+    if (silenceTimerEl) {
+      silenceTimerEl.textContent = silenceCountdown;
+      
+      // Visual feedback when time is running out
+      if (silenceCountdown <= 5) {
+        silenceTimerEl.classList.add('text-red-400', 'pulse');
+      } else {
+        silenceTimerEl.classList.remove('text-red-400', 'pulse');
+      }
+    }
+  }
+
+  /* ---------------------------
+     Microphone + WebAudio analysis
+  --------------------------- */
+  async function startMicAnalysis() {
+    try {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      const source = audioContext.createMediaStreamSource(micStream);
+      analyserNode = audioContext.createAnalyser();
+      analyserNode.fftSize = 2048;
+      source.connect(analyserNode);
+      animateVisualizer();
+    } catch (err) {
+      console.warn('microphone access denied or error:', err);
+      status('Mic access error', 'error');
+    }
+  }
+
+  function stopMicAnalysis() {
+    if (micStream) {
+      micStream.getTracks().forEach(t => t.stop());
+      micStream = null;
+    }
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    bars.forEach(b => { b.style.height = '6px'; b.classList.add('vis-bar-muted'); });
+  }
+
+  function animateVisualizer() {
+    if (!analyserNode) return;
+    const data = new Uint8Array(analyserNode.frequencyBinCount);
+    analyserNode.getByteFrequencyData(data);
+
+    const step = Math.floor(data.length / BAR_COUNT);
+    for (let i=0;i<BAR_COUNT;i++){
+      let sum = 0;
+      for (let j=0;j<step;j++){ sum += data[(i*step)+j] || 0; }
+      const avg = sum/step;
+      const h = Math.max(6, Math.min(120, Math.round((avg/255)*120)));
+      bars[i].style.height = h + 'px';
+      bars[i].classList.remove('vis-bar-muted');
+    }
+    rafId = requestAnimationFrame(animateVisualizer);
+  }
+
+  function showVisualizer(show) {
+    waveContainer.style.display = show ? 'flex' : 'none';
+  }
+
+  /* ---------------------------
+     Start / Stop recording flow
+  --------------------------- */
+  startBtn.addEventListener('click', async () => {
+    if (!recognition) return;
+    try {
+      recognition.start();
+      isRecording = true;
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      status('Starting...', 'loading');
+      await startMicAnalysis();
+    } catch (err) {
+      console.warn('start error', err);
+      status('Start error', 'error');
+    }
+  });
+
+  stopBtn.addEventListener('click', () => {
+    stopRecording();
+  });
+
+  function stopRecording() {
+    if (recognition && isRecording) {
+      recognition.stop();
+    }
+    stopMicAnalysis();
+    clearSilenceTimer();
+  }
+
+  /* ---------------------------
+     Speech Synthesis
+  --------------------------- */
+  function loadVoices() {
+    voices = speechSynthesis.getVoices() || [];
+    voiceSelect.innerHTML = '';
+    
+    const femalePreferList = [
+      'female', 'google uk english female', 'samantha', 'zira',
+      'alysa', 'victoria', 'alloy', 'kate', 'emily'
+    ];
+
+    let defaultIndex = 0;
+    voices.forEach((v, i) => {
+      const opt = document.createElement('option');
+      opt.value = v.name;
+      opt.innerText = `${v.name} (${v.lang})`;
+      voiceSelect.appendChild(opt);
+
+      const lower = v.name.toLowerCase();
+      if (femalePreferList.some(k => lower.includes(k))) {
+        defaultIndex = i;
+      }
+    });
+
+    if (voices.length > 0) {
+      voiceSelect.selectedIndex = defaultIndex;
+      chosenVoice = voices[defaultIndex];
+    }
+  }
+
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+  setTimeout(loadVoices, 200);
+
+  function pickVoiceByName(name) {
+    chosenVoice = voices.find(v => v.name === name) || voices[0];
+  }
+
+  function speakText(text, opts={interrupt:true}) {
+    if (!('speechSynthesis' in window)) return;
+    if (opts.interrupt) window.speechSynthesis.cancel();
+    
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.rate = parseFloat(rateEl.value || 1);
+    utt.pitch = parseFloat(pitchEl.value || 1);
+
+    const selectedName = voiceSelect.value;
+    pickVoiceByName(selectedName);
+    if (chosenVoice) utt.voice = chosenVoice;
+
+    window.speechSynthesis.speak(utt);
+  }
+
+  // Voice control event listeners
+  testVoice.addEventListener('click', () => {
+    const sample = 'Hello, this is the assistant speaking. I will read the backend response when available.';
+    speakText(sample);
+  });
+
+  resetVoice.addEventListener('click', () => {
+    rateEl.value = 1.0;
+    pitchEl.value = 1.0;
+    rateVal.innerText = '1.0';
+    pitchVal.innerText = '1.0';
+    if (voices.length > 0) {
+      voiceSelect.selectedIndex = 0;
+      pickVoiceByName(voiceSelect.value);
+    }
+  });
+
+  rateEl.addEventListener('input', () => {
+    rateVal.innerText = parseFloat(rateEl.value).toFixed(2);
+  });
+
+  pitchEl.addEventListener('input', () => {
+    pitchVal.innerText = parseFloat(pitchEl.value).toFixed(2);
+  });
+
+  voicePanelToggle.addEventListener('click', () => {
+    voicePanel.classList.toggle('hidden');
+  });
+
+  /* ---------------------------
+     Chat UI utilities
+  --------------------------- */
+  function appendUserMessage(text) {
+    if (!text || !text.trim()) return;
+    
+    if (chatArea.querySelector('.text-center')) {
+      chatArea.innerHTML = '';
+    }
+    
+    const wrap = document.createElement('div');
+    wrap.className = 'mb-4 flex justify-end animate-in';
+    wrap.innerHTML = `
+      <div class="user-bubble px-4 py-3 rounded-xl max-w-[85%]">
+        <div class="font-semibold text-sm mb-1 opacity-70">
+          <i class="fas fa-user mr-1"></i>You
+        </div>
+        <div class="text-sm leading-relaxed">${escapeHtml(text)}</div>
+      </div>
+    `;
+    chatArea.appendChild(wrap);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function appendAssistantMessage(text) {
+    if (chatArea.querySelector('.text-center')) {
+      chatArea.innerHTML = '';
+    }
+     // NEW: Try to parse JSON and extract summary_text
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed.summary_text) {
+        text = parsed.summary_text;  // Replace with content only
+      }
+    } catch (e) {
+      // Not JSON → ignore
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'mb-4 flex justify-start animate-in';
+    wrap.innerHTML = `
+      <div class="assistant-bubble px-4 py-3 rounded-xl max-w-[85%]">
+        <div class="font-semibold text-sm mb-1 opacity-90">
+          <i class="fas fa-robot mr-1"></i>Assistant
+        </div>
+        <div class="text-sm leading-relaxed">${escapeHtml(text)}</div>
+      </div>
+    `;
+    chatArea.appendChild(wrap);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function escapeHtml(s) {
+    return (s||'').toString()
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('\n', '<br>');
+  }
+
+  /* ---------------------------
+     Message Sending Functions
+  --------------------------- */
+  function handleEnterKey(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function handleTranscriptEnterKey(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      processTranscript();
+    }
+  }
+
+  function sendMessage() {
+    const text = messageInput.value.trim();
+    if (!text) {
+      alert('Please enter a message to send.');
+      return;
+    }
+    
+    appendUserMessage(text);
+    messageInput.value = '';
+    
+    processQueryToController(text);
+  }
+
+  function processTranscript() {
+    const text = transcriptEl.value.trim();
+    if (!text) {
+      alert('Please enter a query in the transcript area.');
+      return;
+    }
+    
+    appendUserMessage(text);
+    processQueryToController(text);
+  }
+
+  function processVoiceQuery() {
+    const text = transcriptEl.value.trim();
+    if (!text) {
+      status('No speech detected', 'warning');
+      return;
+    }
+    
+    appendUserMessage(text);
+    processQueryToController(text);
+  }
+
+  // Unified function to send queries to the same controller
+  function processQueryToController(text) {
+    status('Processing...', 'loading');
+    
+    console.log('Sending query to controller:', text);
+    
+    fetch('/voice_queries/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken,
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ text: text })
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then(data => {
+      console.log('Response from controller:', data);
+      const reply = data.response || data.reply || data.message || 
+                   data.answer || (typeof data === 'string' ? data : JSON.stringify(data));
+      appendAssistantMessage(reply || 'No reply received');
+      
+      if (reply) speakText(reply);
+      status('Ready', 'ready');
+    })
+    .catch(err => {
+      console.error('Error processing query:', err);
+      appendAssistantMessage('Error: ' + (err.message || 'Failed to process your request'));
+      status('Error', 'error');
+    });
+  }
+
+  // Set up process buttons
+  processBtn.addEventListener('click', processVoiceQuery);
+  processTranscriptBtn.addEventListener('click', processTranscript);
+
+  // Quick query function
+  window.setQuickQuery = function(text) {
+    messageInput.value = text;
+    messageInput.focus();
+  };
+
+  /* ---------------------------
+     Other Event Listeners
+  --------------------------- */
+  clearChatBtn.addEventListener('click', () => {
+    chatArea.innerHTML = `
+      <div class="text-center text-gray-400 py-8">
+        <i class="fas fa-robot text-4xl mb-3 opacity-50"></i>
+        <p>Start a conversation with your AI assistant</p>
+        <p class="text-sm mt-2">Press Enter to send messages or use voice controls</p>
+      </div>
+    `;
+  });
+
+  clearTranscriptBtn.addEventListener('click', () => {
+    transcriptEl.value = '';
+  });
+
+  /* ---------------------------
+     Enhanced Status Function
+  --------------------------- */
+  function status(s, type = 'ready') {
+    statusEl.innerText = s;
+    const colors = {
+      ready: 'text-green-400',
+      recording: 'text-red-400',
+      loading: 'text-yellow-400',
+      error: 'text-red-500',
+      warning: 'text-orange-400'
+    };
+    const icons = {
+      ready: 'fa-circle',
+      recording: 'fa-circle',
+      loading: 'fa-circle-notch fa-spin',
+      error: 'fa-exclamation-circle',
+      warning: 'fa-exclamation-triangle'
+    };
+    
+    statusIcon.className = statusIcon.className.replace(/text-(green|red|yellow|orange)-400|text-red-500/, '');
+    statusIcon.classList.add(colors[type]);
+    
+    statusIcon.className = statusIcon.className.replace(/fa-(circle|circle-notch|exclamation-circle|exclamation-triangle)/, icons[type]);
+    if (!statusIcon.className.includes(icons[type])) {
+      statusIcon.classList.add(icons[type]);
+    }
+  }
+
+  // Initialize voice panel as hidden
+  voicePanel.classList.add('hidden');
+
+})();
+</script>
+</body>
+</html>

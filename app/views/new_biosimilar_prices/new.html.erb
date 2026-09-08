@@ -1,0 +1,474 @@
+<div class="upload-container nbp-page">
+  <header class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Add biosimilar price</h1>
+        <p>Upload a spreadsheet or enter a row manually</p>
+      </div>
+      <%= link_to new_biosimilar_prices_path, class: "back-btn" do %>
+        <i class="fas fa-arrow-left"></i> Back to list
+      <% end %>
+    </div>
+  </header>
+
+  <% if flash[:alert] || flash[:notice] %>
+    <div class="flash-messages">
+      <% if flash[:alert] %>
+        <div class="flash-message alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="flash-message notice">
+          <i class="fas fa-check-circle"></i>
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <section class="nbp-panel">
+    <div class="nbp-panel-head">
+      <div class="nbp-panel-icon"><i class="fas fa-file-excel"></i></div>
+      <div>
+        <h2>Upload Excel or CSV</h2>
+        <p>Supported formats: .xlsx, .xls — large files may take a moment to import.</p>
+      </div>
+    </div>
+
+    <%= form_with url: new_biosimilar_prices_path, multipart: true, local: true, class: "nbp-upload-form", id: "nbpUploadForm" do |f| %>
+      <div class="upload-area" id="nbpUploadArea">
+        <div class="upload-placeholder">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <h3>Drag and drop your file</h3>
+          <p>or click this area to browse</p>
+        </div>
+        <%= file_field_tag :file, id: "nbpFileInput", class: "file-input", accept: ".xlsx,.xls,.csv" %>
+
+        <div id="nbpFileInfo" class="file-info" style="display: none;">
+          <div class="file-details">
+            <i class="fas fa-file-excel"></i>
+            <div class="file-meta">
+              <div class="file-name" id="nbpFileName">No file selected</div>
+              <div class="file-size" id="nbpFileSize">0 KB</div>
+            </div>
+            <button type="button" id="nbpRemoveFile" class="remove-btn" aria-label="Remove file">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="upload-actions">
+        <%= submit_tag "Upload and import", class: "upload-btn", id: "nbpUploadBtn", disabled: true %>
+        <div class="upload-tips">
+          <div class="tip-item">
+            <i class="fas fa-info-circle"></i>
+            <span>Column headers should match your database fields where possible.</span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="nbp-panel nbp-panel--manual">
+    <div class="nbp-panel-head">
+      <div class="nbp-panel-icon nbp-panel-icon--secondary"><i class="fas fa-keyboard"></i></div>
+      <div>
+        <h2>Manual entry</h2>
+        <p>Fill in the fields below to create a single record.</p>
+      </div>
+    </div>
+    <%= render "form" %>
+  </section>
+
+  <p class="nbp-footer-link">
+    <%= link_to features_path do %><i class="fas fa-th-large"></i> Features dashboard<% end %>
+  </p>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var area = document.getElementById("nbpUploadArea");
+    var input = document.getElementById("nbpFileInput");
+    var info = document.getElementById("nbpFileInfo");
+    var nameEl = document.getElementById("nbpFileName");
+    var sizeEl = document.getElementById("nbpFileSize");
+    var removeBtn = document.getElementById("nbpRemoveFile");
+    var btn = document.getElementById("nbpUploadBtn");
+    var form = document.getElementById("nbpUploadForm");
+    if (!area || !input) return;
+
+    function formatSize(bytes) {
+      if (!bytes) return "0 KB";
+      var k = 1024;
+      var i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + ["Bytes", "KB", "MB", "GB"][i];
+    }
+
+    function showFile(file) {
+      if (!file) return;
+      var ext = "." + file.name.split(".").pop().toLowerCase();
+      var ok = [".xlsx", ".xls", ".csv"].indexOf(ext) !== -1;
+      if (!ok) {
+        alert("Please choose an Excel or CSV file (.xlsx, .xls, .csv).");
+        input.value = "";
+        return;
+      }
+      nameEl.textContent = file.name;
+      sizeEl.textContent = formatSize(file.size);
+      info.style.display = "block";
+      btn.disabled = false;
+    }
+
+    area.addEventListener("click", function (e) {
+      if (e.target !== removeBtn && !removeBtn.contains(e.target)) input.click();
+    });
+
+    area.addEventListener("dragover", function (e) {
+      e.preventDefault();
+      area.classList.add("dragover");
+    });
+    area.addEventListener("dragleave", function () {
+      area.classList.remove("dragover");
+    });
+    area.addEventListener("drop", function (e) {
+      e.preventDefault();
+      area.classList.remove("dragover");
+      if (e.dataTransfer.files.length) {
+        input.files = e.dataTransfer.files;
+        showFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    input.addEventListener("change", function () {
+      if (input.files.length) showFile(input.files[0]);
+    });
+
+    removeBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      input.value = "";
+      info.style.display = "none";
+      btn.disabled = true;
+    });
+
+    form.addEventListener("submit", function (e) {
+      if (!input.files.length) {
+        e.preventDefault();
+        alert("Choose a file first, or use the manual entry form below.");
+      }
+    });
+  });
+</script>
+
+<style>
+  .nbp-page {
+    --primary: #4361ee;
+    --primary-light: #6c8aff;
+    --secondary: #7209b7;
+    --accent: #4cc9f0;
+    --success: #06d6a0;
+    --danger: #f72585;
+    --light: #f8f9fc;
+    --dark: #2b2d42;
+    --gray: #8d99ae;
+    --border-radius: 16px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+    color: var(--dark);
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+    min-height: calc(100vh - 20px);
+  }
+
+  .nbp-page .header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .nbp-page .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .nbp-page .header-text h1 {
+    font-weight: 800;
+    font-size: 2rem;
+    margin: 0 0 0.35rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nbp-page .header-text p {
+    margin: 0;
+    color: var(--gray);
+  }
+
+  .nbp-page .back-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border-radius: 50px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    transition: var(--transition);
+  }
+
+  .nbp-page .back-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+  }
+
+  .flash-messages { margin-bottom: 1.25rem; }
+
+  .flash-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .flash-message.alert {
+    background: rgba(247, 37, 133, 0.1);
+    border-left: 4px solid var(--danger);
+    color: #9d174d;
+  }
+
+  .flash-message.notice {
+    background: rgba(6, 214, 160, 0.1);
+    border-left: 4px solid var(--success);
+    color: #047857;
+  }
+
+  .nbp-panel {
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--primary);
+  }
+
+  .nbp-panel--manual {
+    border-top-color: var(--secondary);
+  }
+
+  .nbp-panel-head {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+
+  .nbp-panel-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .nbp-panel-icon--secondary {
+    background: linear-gradient(135deg, var(--secondary) 0%, #9333ea 100%);
+  }
+
+  .nbp-panel-head h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+    color: var(--dark);
+  }
+
+  .nbp-panel-head p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.95rem;
+  }
+
+  .upload-area {
+    border: 3px dashed var(--primary-light);
+    border-radius: var(--border-radius);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    background: rgba(67, 97, 238, 0.02);
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+
+  .upload-area:hover {
+    border-color: var(--primary);
+    background: rgba(67, 97, 238, 0.05);
+  }
+
+  .upload-area.dragover {
+    border-color: var(--success);
+    background: rgba(6, 214, 160, 0.06);
+  }
+
+  .upload-placeholder i {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .upload-placeholder h3 {
+    font-weight: 600;
+    color: var(--dark);
+    margin: 0 0 0.35rem;
+    font-size: 1.15rem;
+  }
+
+  .upload-placeholder p {
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .file-input {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+  }
+
+  .file-details {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--light);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--success);
+    text-align: left;
+  }
+
+  .file-details i {
+    font-size: 1.75rem;
+    color: var(--success);
+  }
+
+  .file-meta { flex: 1; }
+
+  .file-name {
+    font-weight: 600;
+    color: var(--dark);
+  }
+
+  .file-size {
+    color: var(--gray);
+    font-size: 0.85rem;
+  }
+
+  .remove-btn {
+    background: rgba(247, 37, 133, 0.1);
+    border: 2px solid var(--danger);
+    color: var(--danger);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .remove-btn:hover {
+    background: var(--danger);
+    color: white;
+  }
+
+  .upload-actions {
+    text-align: center;
+  }
+
+  .upload-btn {
+    background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.85rem 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+    font-size: 1rem;
+  }
+
+  .upload-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  .upload-btn:disabled {
+    background: var(--gray);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .upload-tips {
+    margin-top: 1.25rem;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--light);
+    border-radius: 12px;
+    border-left: 3px solid var(--accent);
+    color: var(--gray);
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .tip-item i {
+    color: var(--accent);
+    margin-top: 0.15rem;
+  }
+
+  .nbp-footer-link {
+    text-align: center;
+    margin: 0;
+  }
+
+  .nbp-footer-link a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .nbp-footer-link a:hover {
+    text-decoration: underline;
+  }
+</style>

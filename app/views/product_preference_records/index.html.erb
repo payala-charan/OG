@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Product Preference Records</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --danger: #f72585;
+      --warning: #ff9e00;
+      --success: #06d6a0;
+      --light: #f8f9fc;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.4s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--dark);
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header Styles */
+    .header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .header-text h1 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-text p {
+      color: var(--gray);
+      font-size: 1.1rem;
+    }
+
+    .back-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Table Section */
+    .table-section {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .table-header {
+      padding: 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .table-header h3 {
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .table-header p {
+      color: var(--gray);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      max-height: 600px;
+    }
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .records-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .records-table th {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 21;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .records-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .records-table tbody tr {
+      transition: var(--transition);
+    }
+
+    .records-table tbody tr:hover {
+      background: rgba(67, 97, 238, 0.03);
+    }
+
+    .action-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(76, 201, 240, 0.3);
+    }
+
+    /* Upload Card */
+    .upload-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-top: 4px solid transparent;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      border-top: 4px solid var(--primary);
+    }
+
+    .upload-card h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--dark);
+      margin-bottom: 1rem;
+    }
+
+    .upload-btn {
+      background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(6, 214, 160, 0.4);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .header-text h1 {
+        font-size: 2rem;
+      }
+
+      .upload-card, .table-section {
+        padding: 1.5rem;
+      }
+
+      .records-table {
+        font-size: 0.8rem;
+      }
+
+      .records-table th,
+      .records-table td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Product Preference Records</h1>
+          <p>View and manage uploaded product preference files</p>
+        </div>
+        <%= link_to features_path, class: "back-btn" do %>
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        <% end %>
+      </div>
+    </header>
+
+    <!-- Upload Card -->
+    <section class="upload-card">
+      <h2>Upload New File</h2>
+      <p>Upload your Excel files for product preference validation and analysis</p>
+      <%= link_to new_product_preference_record_path, class: "upload-btn" do %>
+        <i class="fas fa-plus-circle"></i> Upload File
+      <% end %>
+    </section>
+
+    <!-- Table Section -->
+    <section class="table-section">
+      <div class="table-header">
+        <h3>Uploaded Files</h3>
+        <p>Records of all uploaded product preference files</p>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Uploaded At</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @records.each do |record| %>
+              <tr>
+                <td><%= record.id %></td>
+                <td><%= record.user_email %></td>
+                <td><%= record.created_at.strftime("%d %b %Y %H:%M") %></td>
+                <td>
+                  <%= link_to "View", product_preference_record_path(record), class: "action-btn" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

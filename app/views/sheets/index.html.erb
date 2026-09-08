@@ -1,0 +1,5 @@
+<h2>Upload Excel Sheet[Marks]</h2>
+<%= form_with url: upload_sheets_path, multipart: true, local: true do |f| %>
+  <%= f.file_field :file %>
+  <%= f.submit "Upload and Validate" %>
+<% end %>

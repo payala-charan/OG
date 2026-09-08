@@ -1,0 +1,253 @@
+<div class="upload-container nbp-show">
+  <header class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Biosimilar price</h1>
+        <p>Record details</p>
+      </div>
+      <%= link_to new_biosimilar_prices_path, class: "back-btn" do %>
+        <i class="fas fa-arrow-left"></i> Back to list
+      <% end %>
+    </div>
+  </header>
+
+  <% if flash[:notice] %>
+    <div class="flash-messages">
+      <div class="flash-message notice">
+        <i class="fas fa-check-circle"></i>
+        <%= flash[:notice] %>
+      </div>
+    </div>
+  <% end %>
+
+  <section class="nbp-detail-card">
+    <dl class="nbp-dl">
+      <div class="nbp-dl-row">
+        <dt>Generic name</dt>
+        <dd><%= @new_biosimilar_price.generic_name.presence || "—" %></dd>
+      </div>
+      <div class="nbp-dl-row">
+        <dt>HCPCS</dt>
+        <dd><%= @new_biosimilar_price.hcpcs_code.presence || "—" %></dd>
+      </div>
+      <div class="nbp-dl-row">
+        <dt>NDC</dt>
+        <dd><%= @new_biosimilar_price.ndc_code.presence || "—" %></dd>
+      </div>
+      <div class="nbp-dl-row">
+        <dt>Billing unit</dt>
+        <dd><%= @new_biosimilar_price.billing_unit.presence || "—" %></dd>
+      </div>
+      <div class="nbp-dl-row">
+        <dt>Reimbursement / billing unit</dt>
+        <dd><%= @new_biosimilar_price.reimbursement_per_billing_unit.presence || "—" %></dd>
+      </div>
+      <div class="nbp-dl-row">
+        <dt>GPO cost</dt>
+        <dd><%= @new_biosimilar_price.gpo_cost.presence || "—" %></dd>
+      </div>
+      <div class="nbp-dl-row">
+        <dt>340B cost</dt>
+        <dd><%= @new_biosimilar_price.cost_three_forty_b.presence || "—" %></dd>
+      </div>
+      <div class="nbp-dl-row">
+        <dt>Best margin</dt>
+        <dd><%= @new_biosimilar_price.best_margin ? "Yes" : "No" %></dd>
+      </div>
+      <div class="nbp-dl-row">
+        <dt>Utilization best margin</dt>
+        <dd><%= @new_biosimilar_price.utilization_best_margin ? "Yes" : "No" %></dd>
+      </div>
+      <div class="nbp-dl-row">
+        <dt>Team ID</dt>
+        <dd><%= @new_biosimilar_price.team_id.presence || "—" %></dd>
+      </div>
+    </dl>
+
+    <div class="nbp-detail-actions">
+      <%= link_to edit_new_biosimilar_price_path(@new_biosimilar_price), class: "nbp-detail-btn nbp-detail-btn--primary" do %>
+        <i class="fas fa-pen"></i> Edit
+      <% end %>
+      <%= link_to new_biosimilar_price_path(@new_biosimilar_price),
+          data: { turbo_method: :delete, turbo_confirm: "Delete this record?" },
+          class: "nbp-detail-btn nbp-detail-btn--danger" do %>
+        <i class="fas fa-trash-alt"></i> Delete
+      <% end %>
+    </div>
+  </section>
+</div>
+
+<style>
+  .nbp-show {
+    --primary: #4361ee;
+    --primary-light: #6c8aff;
+    --secondary: #7209b7;
+    --success: #06d6a0;
+    --danger: #f72585;
+    --light: #f8f9fc;
+    --dark: #2b2d42;
+    --gray: #8d99ae;
+    --border-radius: 16px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+    color: var(--dark);
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+    min-height: calc(100vh - 20px);
+  }
+
+  .nbp-show .header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .nbp-show .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .nbp-show .header-text h1 {
+    font-weight: 800;
+    font-size: 2rem;
+    margin: 0 0 0.35rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nbp-show .header-text p {
+    margin: 0;
+    color: var(--gray);
+  }
+
+  .nbp-show .back-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border-radius: 50px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    transition: var(--transition);
+  }
+
+  .nbp-show .back-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+  }
+
+  .nbp-show .flash-messages { margin-bottom: 1.25rem; }
+
+  .nbp-show .flash-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(6, 214, 160, 0.1);
+    border-left: 4px solid var(--success);
+    color: #047857;
+  }
+
+  .nbp-detail-card {
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--primary);
+  }
+
+  .nbp-dl {
+    margin: 0;
+    padding: 0;
+  }
+
+  .nbp-dl-row {
+    display: grid;
+    grid-template-columns: minmax(140px, 38%) 1fr;
+    gap: 0.75rem 1.25rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid rgba(142, 153, 175, 0.2);
+  }
+
+  .nbp-dl-row:last-of-type {
+    border-bottom: none;
+  }
+
+  .nbp-dl dt {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--gray);
+  }
+
+  .nbp-dl dd {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--dark);
+    word-break: break-word;
+  }
+
+  .nbp-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(142, 153, 175, 0.25);
+  }
+
+  .nbp-detail-btn {
+    border-radius: 50px;
+    padding: 0.65rem 1.35rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .nbp-detail-btn:hover {
+    transform: translateY(-2px);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .nbp-detail-btn--primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(67, 97, 238, 0.35);
+  }
+
+  .nbp-detail-btn--danger {
+    background: linear-gradient(135deg, var(--danger), #db2777);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(247, 37, 133, 0.3);
+  }
+
+  @media (max-width: 520px) {
+    .nbp-dl-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

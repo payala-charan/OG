@@ -1,0 +1,2 @@
+module NewBiosimilarPricesHelper
+end

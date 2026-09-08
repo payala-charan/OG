@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pricing Catalogs Upload</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --secondary: #7209b7;
+      --success: #06d6a0;
+      --light: #f8f9fc;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.4s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; color: var(--dark); background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%); min-height: 100vh; }
+    .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+    .header { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: var(--border-radius); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow); text-align: center; }
+    .header h1 { font-weight: 800; font-size: 2.5rem; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .upload-card { background: white; border-radius: var(--border-radius); padding: 2.5rem; box-shadow: var(--shadow); border-top: 4px solid var(--primary); }
+    
+    .file-input-wrapper {
+      border: 3px dashed var(--primary-light);
+      border-radius: var(--border-radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      background: rgba(67, 97, 238, 0.02);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      margin-bottom: 2rem;
+    }
+    .file-input-wrapper:hover { border-color: var(--primary); background: rgba(67, 97, 238, 0.05); }
+    .file-input { opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; }
+    
+    .upload-icon { font-size: 3rem; color: var(--primary); margin-bottom: 1rem; }
+    .upload-text h3 { font-weight: 600; font-size: 1.2rem; }
+    .upload-text p { color: var(--gray); margin-top: 0.5rem; }
+
+    .textarea-wrapper { margin-bottom: 2rem; }
+    .textarea-label { font-weight: 600; margin-bottom: 0.5rem; display: block; }
+    .ndc-textarea { width: 100%; height: 200px; padding: 1rem; border: 2px solid var(--primary-light); border-radius: 12px; font-family: monospace; font-size: 1rem; resize: vertical; transition: var(--transition); }
+    .ndc-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1); }
+    
+    .submit-btn { width: 100%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; border: none; border-radius: 50px; padding: 1rem 2rem; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3); }
+    .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header" style="position: relative;">
+      <%= link_to features_path, style: "position: absolute; left: 2rem; top: 2rem; color: var(--primary); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: var(--transition);" do %>
+        <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+      <% end %>
+      <h1><i class="fa-solid fa-file-excel"></i> Pricing Catalogs</h1>
+      <p style="color: var(--gray); margin-top: 0.5rem;">Upload your massive Excel dataset and provide NDC codes to compute automated analytics.</p>
+    </div>
+
+    <% if @available_files.any? %>
+      <div class="files-dashboard" style="margin-bottom: 2rem; display: grid; gap: 1rem;">
+        <div style="background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+          <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Select an Existing File</h2>
+          <p style="color: #6c8aff; margin-bottom: 1rem;">Choose an uploaded Excel file to view saved results or re-run mapping operations.</p>
+          <div style="display: grid; gap: 0.75rem;">
+            <% @available_files.each do |file_name| %>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; border: 1px solid #e9efff; border-radius: 14px; background: <%= file_name == @selected_file_name ? '#f0f4ff' : 'white' %>;">
+                <div style="min-width: 0;">
+                  <strong style="display: block; color: #212a4c; font-size: 0.98rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 460px;"><%= file_name %></strong>
+                  <span style="color: #8d99ae; font-size: 0.9rem;"><%= ExcelRecord.where(file_name: file_name).count %> rows</span>
+                </div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
+                  <%= link_to "View Results", results_pricing_catalogs_path(file_name: file_name), class: "btn btn-outline", style: "padding: 0.65rem 1rem; font-size: 0.9rem;" %>
+                  <%= link_to "Use File", mapping_pricing_catalogs_path(file_name: file_name), class: "btn btn-success", style: "padding: 0.65rem 1rem; font-size: 0.9rem;" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <%= form_with url: pricing_catalogs_path, local: true, multipart: true do |f| %>
+      <div class="upload-card">
+        <% if flash[:alert] %>
+          <div style="background: rgba(247, 37, 133, 0.1); color: #f72585; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-weight: 600;">
+            <%= flash[:alert] %>
+          </div>
+        <% end %>
+
+        <div class="file-input-wrapper">
+          <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+          <div class="upload-text">
+            <h3>Drag & Drop or Click to Upload Excel</h3>
+            <p>Supported file: .xlsx</p>
+          </div>
+          <%= f.file_field :file, class: "file-input", accept: ".xlsx", required: true, id: "excel-upload" %>
+        </div>
+
+        <!-- Selected file display -->
+        <div id="file-name-display" style="display: none; text-align: center; margin-top: -1rem; margin-bottom: 1.5rem; color: var(--success); font-weight: 600;">
+          <i class="fa-solid fa-check-circle"></i> <span id="file-name-text"></span>
+        </div>
+
+        <div class="textarea-wrapper">
+          <label class="textarea-label">NDC Codes (Paste codes separated by exactly one per line)</label>
+          <%= f.text_area :ndc_codes, class: "ndc-textarea", placeholder: "00001501250\n00001501251\n00001501252", required: true %>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          Proceed to Mapping <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: var(--border-radius); padding: 3rem; text-align: center; max-width: 400px; width: 100%;">
+      <div style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem; animation: spin 1s linear infinite;">
+        <i class="fa-solid fa-circle-notch"></i>
+      </div>
+      <h3 style="font-weight: 700; font-size: 1.5rem; color: var(--dark); margin-bottom: 0.75rem;">Uploading Data...</h3>
+      <p style="color: var(--gray); line-height: 1.5;">Please wait while we parse your Excel file and NDC codes. This might take a few moments...</p>
+    </div>
+    <style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
+  </div>
+
+  <script>
+    document.getElementById('excel-upload').addEventListener('change', function(e) {
+      if(e.target.files.length > 0) {
+        document.getElementById('file-name-text').textContent = e.target.files[0].name;
+        document.getElementById('file-name-display').style.display = 'block';
+      }
+    });
+
+    document.querySelector('form').addEventListener('submit', function() {
+      document.getElementById('loadingOverlay').style.display = 'flex';
+    });
+  </script>
+</body>
+</html>

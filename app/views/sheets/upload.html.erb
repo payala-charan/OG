@@ -1,0 +1,33 @@
+<h3>Validation Results</h3>
+
+<table border="1">
+  <tr>
+    <th>Name</th>
+    <th>B</th>
+    <th>C</th>
+    <th>D</th>
+    <th>E</th>
+    <th>Expected D</th>
+    <th>Expected E</th>
+    <th>D Status</th>
+    <th>E Status</th>
+    <th>F Status</th>
+  </tr>
+
+  <% @data.each do |row| %>
+    <tr>
+      <td><%= row[:name] %></td>
+      <td><%= row[:b] %></td>
+      <td><%= row[:c] %></td>
+      <td><%= row[:d] %></td>
+      <td><%= row[:e] %></td>
+      <td><%= row[:expected_d] %></td>
+      <td><%= row[:expected_e] %></td>
+      <td><%= row[:d_status] %></td>
+      <td><%= row[:e_status] %></td>
+      <td><%= row[:f_status] %></td>
+    </tr>
+  <% end %>
+</table>
+
+<%= link_to "Back", root_path %>

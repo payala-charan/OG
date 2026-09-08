@@ -1,0 +1,2 @@
+class BiosimilarPrice < ApplicationRecord
+end

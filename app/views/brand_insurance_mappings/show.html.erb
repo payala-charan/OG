@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Brand Mapping Results — Modern UI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --danger: #f72585;
+      --warning: #ff9e00;
+      --success: #06d6a0;
+      --light: #f8f9fc;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--dark);
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header Styles */
+    .header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .header-text h1 {
+      font-weight: 800;
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-text p {
+      color: var(--gray);
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.2);
+    }
+
+    .download-btn {
+      background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+    }
+
+    .download-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(6, 214, 160, 0.4);
+      color: white;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border-top: 4px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .stat-card.brands { border-top-color: var(--primary); }
+    .stat-card.insurances { border-top-color: var(--secondary); }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+    }
+
+    .stat-icon.brands { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); }
+    .stat-icon.insurances { background: linear-gradient(135deg, var(--secondary) 0%, #a03cff 100%); }
+
+    .stat-details h3 {
+      font-size: 0.85rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-details span {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--dark);
+    }
+
+    /* Search & Control Bar */
+    .controls-panel {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .search-box {
+      position: relative;
+      flex-grow: 1;
+      max-width: 600px;
+      min-width: 320px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: 2px solid #e0e6ed;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+    }
+
+    .view-toggle {
+      display: flex;
+      background: #f1f5f9;
+      padding: 0.25rem;
+      border-radius: 50px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .toggle-btn {
+      border: none;
+      background: transparent;
+      padding: 0.5rem 1.25rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: var(--transition);
+    }
+
+    .toggle-btn.active {
+      background: white;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    /* Results layout grid */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Mapping Card style */
+    .mapping-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.02);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      border-left: 5px solid var(--primary-light);
+    }
+
+    .mapping-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+    .mapping-card:nth-child(2n) {
+      border-left-color: var(--secondary);
+    }
+    .mapping-card:nth-child(3n) {
+      border-left-color: var(--accent);
+    }
+
+    .mapping-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #f1f3f9;
+      padding-bottom: 0.75rem;
+    }
+
+    .brand-title {
+      font-weight: 750;
+      font-size: 1.15rem;
+      color: var(--dark);
+      letter-spacing: -0.3px;
+    }
+
+    .insurance-count-badge {
+      background: #f1f5f9;
+      color: #475569;
+      padding: 0.25rem 0.6rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .insurance-tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+
+    .insurance-tag {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 550;
+      transition: var(--transition);
+    }
+
+    .insurance-tag:hover {
+      border-color: var(--primary-light);
+      background: rgba(67, 97, 238, 0.02);
+    }
+
+    .mapping-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid #f1f3f9;
+      padding-top: 0.75rem;
+    }
+
+    .copy-btn {
+      border: none;
+      background: transparent;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .copy-btn:hover {
+      background: rgba(67, 97, 238, 0.05);
+    }
+
+    .copy-btn.copied {
+      color: var(--success);
+    }
+
+    /* Results table style */
+    .results-table-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: none;
+    }
+
+    .results-table-card.active {
+      display: block;
+    }
+
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .results-table th {
+      background: #f8f9fc;
+      color: var(--dark);
+      font-weight: 700;
+      padding: 1rem 1.5rem;
+      border-bottom: 2px solid #e0e6ed;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .results-table td {
+      padding: 1rem 1.5rem;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #f1f3f9;
+      vertical-align: middle;
+    }
+
+    .results-table tr:hover {
+      background-color: rgba(67, 97, 238, 0.01);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 10000;
+      pointer-events: none;
+    }
+
+    .toast.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 5rem 2rem;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      color: var(--gray);
+    }
+
+    .no-results-icon {
+      font-size: 4rem;
+      color: var(--primary-light);
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Extraction Run Results</h1>
+          <p><i class="fas fa-file-excel text-success"></i> Source file: <%= @record.file_name %></p>
+        </div>
+        <div class="header-actions">
+          <%= link_to brand_insurance_mappings_path, class: "back-btn" do %>
+            <i class="fas fa-arrow-left"></i> Run Another File
+          <% end %>
+          <%= link_to download_brand_insurance_mapping_path(@record), class: "download-btn" do %>
+            <i class="fas fa-download"></i> Download Compiled Excel
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stats Summary Block -->
+    <% 
+      total_brands = @mappings.keys.size
+      total_mappings = @mappings.values.map(&:size).sum
+      unique_insurances = @mappings.values.flatten.uniq.size
+    %>
+    <div class="stats-grid">
+      <div class="stat-card brands">
+        <div class="stat-icon brands">
+          <i class="fas fa-pills"></i>
+        </div>
+        <div class="stat-details">
+          <h3>Total Mapped Brands</h3>
+          <span><%= total_brands %></span>
+        </div>
+      </div>
+
+      <div class="stat-card insurances">
+        <div class="stat-icon insurances">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="stat-details">
+          <h3>Unique Insurances Found</h3>
+          <span><%= unique_insurances %></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Control Bar -->
+    <div class="controls-panel">
+      <!-- Live Search Box -->
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" id="searchInput" onkeyup="filterResults()" placeholder="Search brands, insurances or coverage options...">
+      </div>
+
+      <!-- Grid vs Table View Mode -->
+      <div class="view-toggle">
+        <button class="toggle-btn active" id="gridToggleBtn" onclick="toggleViewMode('grid')">
+          <i class="fas fa-th-large"></i> Cards Grid
+        </button>
+        <button class="toggle-btn" id="tableToggleBtn" onclick="toggleViewMode('table')">
+          <i class="fas fa-list"></i> Table View
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Display -->
+    <!-- Grid View Mode -->
+    <div class="results-grid" id="resultsGrid">
+      <% if @mappings.any? %>
+        <% @mappings.each do |brand, insurances| %>
+          <div class="mapping-card" data-brand="<%= brand.downcase %>" data-insurances="<%= insurances.join(', ').downcase %>">
+            <div class="mapping-card-header">
+              <span class="brand-title"><%= brand %></span>
+              <span class="insurance-count-badge"><%= insurances.size %> Insurances</span>
+            </div>
+
+            <div class="insurance-tag-list">
+              <% if insurances.any? %>
+                <% insurances.each do |ins| %>
+                  <span class="insurance-tag"><%= ins %></span>
+                <% end %>
+              <% else %>
+                <span style="font-size: 0.85rem; color: var(--gray); font-style: italic;">No insurances mapped (N)</span>
+              <% end %>
+            </div>
+
+            <div class="mapping-card-actions">
+              <button class="copy-btn" onclick="copyInsuranceList(this, '<%= escape_javascript(insurances.join(', ')) %>')">
+                <i class="fas fa-copy"></i> Copy List
+              </button>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="no-results">
+          <i class="fas fa-exclamation-circle no-results-icon"></i>
+          <h3>No mappings parsed</h3>
+          <p>Please double check the headers and values of your Excel mapping sheet.</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Table View Mode -->
+    <div class="results-table-card" id="resultsTableCard">
+      <div class="table-container">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th width="30%">Brand / Product Name</th>
+              <th width="15%">Insurances Count</th>
+              <th width="55%">Mapped Insurances List</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTableBody">
+            <% if @mappings.any? %>
+              <% @mappings.each do |brand, insurances| %>
+                <tr class="table-row" data-brand="<%= brand.downcase %>" data-insurances="<%= insurances.join(', ').downcase %>">
+                  <td class="fw-bold"><%= brand %></td>
+                  <td>
+                    <span class="badge type-match"><%= insurances.size %></span>
+                  </td>
+                  <td>
+                    <% if insurances.any? %>
+                      <%= insurances.join(', ') %>
+                    <% else %>
+                      <span style="color: var(--gray); font-style: italic;">None</span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="3" class="text-center" style="color: var(--gray); padding: 3rem;">No mappings found.</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Clipboard Toast -->
+  <div class="toast" id="copyToast">
+    <i class="fas fa-check-circle text-success"></i>
+    <span>Insurances list copied to clipboard!</span>
+  </div>
+
+  <script>
+    function toggleViewMode(mode) {
+      const gridBtn = document.getElementById('gridToggleBtn');
+      const tableBtn = document.getElementById('tableToggleBtn');
+      const gridView = document.getElementById('resultsGrid');
+      const tableView = document.getElementById('resultsTableCard');
+
+      if (mode === 'grid') {
+        gridBtn.classList.add('active');
+        tableBtn.classList.remove('active');
+        gridView.style.display = 'grid';
+        tableView.classList.remove('active');
+      } else {
+        gridBtn.classList.remove('active');
+        tableBtn.classList.add('active');
+        gridView.style.display = 'none';
+        tableView.classList.add('active');
+      }
+    }
+
+    function filterResults() {
+      const query = document.getElementById('searchInput').value.toLowerCase().strip;
+      
+      // Filter Grid Cards
+      const cards = document.querySelectorAll('.mapping-card');
+      cards.forEach(card => {
+        const brand = card.getAttribute('data-brand');
+        const insurances = card.getAttribute('data-insurances');
+        if (brand.includes(query) || insurances.includes(query)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Filter Table Rows
+      const rows = document.querySelectorAll('.table-row');
+      rows.forEach(row => {
+        const brand = row.getAttribute('data-brand');
+        const insurances = row.getAttribute('data-insurances');
+        if (brand.includes(query) || insurances.includes(query)) {
+          row.style.display = 'table-row';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Custom helper for whitespace stripping in js
+    if (!String.prototype.strip) {
+      String.prototype.strip = function() {
+        return this.replace(/^\s+|\s+$/g, '');
+      };
+    }
+
+    function copyInsuranceList(btn, text) {
+      if (!text || text.trim() === '') {
+        return;
+      }
+      
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        btn.classList.add('copied');
+        
+        // Show Toast
+        const toast = document.getElementById('copyToast');
+        toast.classList.add('active');
+        
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove('copied');
+          toast.classList.remove('active');
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+  </script>
+</body>
+</html>

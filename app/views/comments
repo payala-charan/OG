@@ -1,0 +1,4 @@
+<#% unless @hide_navbar %>
+      <#%= render "shared/navbar" %>
+    <#% end %>
+    

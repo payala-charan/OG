@@ -1,0 +1,2 @@
+class ExcelRecord < ApplicationRecord
+end

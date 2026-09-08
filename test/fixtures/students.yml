@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  branch: MyString
+  rollno: 1
+  cgpa: 1.5
+  college: MyString
+
+two:
+  name: MyString
+  branch: MyString
+  rollno: 1
+  cgpa: 1.5
+  college: MyString

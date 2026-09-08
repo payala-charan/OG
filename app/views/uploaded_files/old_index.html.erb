@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // FRONTEND VALIDATION BEFORE UPLOAD
+    function validateForm(event) {
+      const fileName = document.getElementById("file_name").value.trim();
+      const quarter = document.getElementById("quarter").value;
+      const category = document.getElementById("category").value;
+      const fileInput = document.getElementById("file_upload");
+
+      if (!fileName || !quarter || !category || !fileInput.files.length) {
+        alert("⚠️ Please fill all fields and select a file before uploading.");
+        event.preventDefault();
+        return false;
+      }
+    }
+
+    // LIVE SEARCH FUNCTIONALITY
+    function liveSearch() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#filesTableBody tr");
+
+      rows.forEach(row => {
+        const name = row.querySelector("td:nth-child(1)").textContent.toLowerCase();
+        row.style.display = name.includes(query) ? "" : "none";
+      });
+    }
+
+    // FILTER FUNCTIONALITY
+    function applyFilters() {
+      const quarter = document.getElementById("quarterFilter").value.toLowerCase();
+      const category = document.getElementById("categoryFilter").value.toLowerCase();
+      const rows = document.querySelectorAll("#filesTableBody tr");
+
+      rows.forEach(row => {
+        const rowQuarter = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
+        const rowCategory = row.querySelector("td:nth-child(3)").textContent.toLowerCase();
+        const matchesQuarter = !quarter || rowQuarter === quarter;
+        const matchesCategory = !category || rowCategory === category;
+        row.style.display = matchesQuarter && matchesCategory ? "" : "none";
+      });
+    }
+  </script>
+</head>
+
+<body class="bg-gray-50 p-8">
+  <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
+    <h1 class="text-3xl font-bold mb-4 text-indigo-700 border-b pb-2">📂 File Upload Center</h1>
+    <!-- Upload Form -->
+    <div>
+      <%= link_to features_path do %>
+        <i class="fas fa-sign-out-alt"></i> Back
+      <% end %>
+    </div>
+    <%= form_with scope: :uploaded_file, url: uploaded_files_path, method: :post, local: true, html: { multipart: true, onsubmit: "validateForm(event)" } do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <%= f.label :file_name, "File Name", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :file_name, id: "file_name", class: "w-full mt-1 border rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500" %>
+        </div>
+
+        <div>
+          <%= f.label :quarter, "Quarter", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.select :quarter, ["Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4", "Global"], {}, class: "w-full mt-1 border rounded-lg p-2", id: "quarter" %>
+        </div>
+
+        <div>
+          <%= f.label :category, "Category", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.select :category, ["Biosimilars", "Catalogs", "Crosswalks", "Pricings", "Others"], {}, class: "w-full mt-1 border rounded-lg p-2", id: "category" %>
+        </div>
+
+        <div>
+          <%= f.label :file, "Select File", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.file_field :file, id: "file_upload", class: "w-full mt-1 text-gray-700" %>
+        </div>
+      </div>
+
+      <div class="text-right">
+        <%= f.submit "Upload File", class: "mt-4 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition" %>
+      </div>
+    <% end %>
+
+    <!-- Flash Messages -->
+    <% if flash[:alert] %>
+      <div class="bg-red-100 text-red-800 px-4 py-2 rounded mt-4"><%= flash[:alert] %></div>
+    <% elsif flash[:notice] %>
+      <div class="bg-green-100 text-green-800 px-4 py-2 rounded mt-4"><%= flash[:notice] %></div>
+    <% end %>
+
+    <!-- Filters -->
+    <div class="mt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <input type="text" id="searchInput" onkeyup="liveSearch()" placeholder=" Search by file name..."
+             class="w-full md:w-1/3 border-gray-300 rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500">
+
+      <div class="flex gap-2">
+        <select id="quarterFilter" onchange="applyFilters()" class="border rounded-lg p-2 text-gray-700">
+          <option value="">All Quarters</option>
+          <option value="quarter 1">Quarter 1</option>
+          <option value="quarter 2">Quarter 2</option>
+          <option value="quarter 3">Quarter 3</option>
+          <option value="quarter 4">Quarter 4</option>
+          <option value="global">Global</option>
+        </select>
+
+        <select id="categoryFilter" onchange="applyFilters()" class="border rounded-lg p-2 text-gray-700">
+          <option value="">All Categories</option>
+          <option value="biosimilars">Biosimilars</option>
+          <option value="catalogs">Catalogs</option>
+          <option value="crosswalks">Crosswalks</option>
+          <option value="pricings">Pricings</option>
+          <option value="others">Others</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Files Table -->
+    <div class="mt-6 overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-indigo-600 text-white">
+          <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase">File Name</th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Quarter</th>
+            <th class="px-4 py-3 text-left text-xs font-medium uppercase">Category</th>
+            <th class="px-4 py-3 text-center text-xs font-medium uppercase">Download</th>
+            <th class="px-4 py-3 text-center text-xs font-medium uppercase">Delete</th>
+          </tr>
+        </thead>
+        <tbody id="filesTableBody" class="divide-y divide-gray-200 bg-white">
+          <% @files.order(created_at: :desc).each do |file| %>
+            <tr class="hover:bg-indigo-50 transition duration-150">
+              <td class="px-4 py-3 font-medium text-gray-900"><%= file.file_name %></td>
+              <td class="px-4 py-3 text-gray-700"><%= file.quarter %></td>
+              <td class="px-4 py-3 text-gray-700"><%= file.category %></td>
+              <td class="px-4 py-3 text-center">
+                <% if file.file.attached? %>
+                  <%= link_to "⬇️ Download", rails_blob_path(file.file, disposition: "attachment"), class: "text-indigo-600 hover:text-indigo-800 font-semibold" %>
+                <% else %>
+                  <span class="text-gray-400 italic">No File</span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <%= button_to "🗑️ Delete", uploaded_file_path(file), method: :delete,
+                    data: {confirm: "Are you sure you want to delete this file?" },
+                    class: "text-red-600 hover:text-red-800 font-semibold" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

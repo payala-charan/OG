@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>AI Voice Assistant — Advanced</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="csrf-token" content="<%= form_authenticity_token %>">
+
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --danger: #f72585;
+      --warning: #ff9e00;
+      --success: #06d6a0;
+      --light: #f8f9fc;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.4s ease;
+    }
+
+    /* Theme variables */
+    body.light { 
+      --bg-primary: #f8f9fc;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --text-primary: #2b2d42;
+      --text-secondary: #8d99ae;
+      --border-color: rgba(67, 97, 238, 0.1);
+    }
+
+    body.dark  { 
+      --bg-primary: #071029;
+      --bg-secondary: #00121a;
+      --bg-card: rgba(255, 255, 255, 0.05);
+      --text-primary: #e6eefb;
+      --text-secondary: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      transition: var(--transition);
+    }
+
+    /* Chat bubbles */
+    .assistant-bubble { 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+    
+    .user-bubble { 
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* Visualizer */
+    .vis-bar { 
+      width: 4px; 
+      background: linear-gradient(to top, var(--accent), var(--primary-light));
+      margin: 0 2px; 
+      border-radius: 2px; 
+      display:inline-block; 
+      transition: height 0.1s ease;
+    }
+    
+    .vis-bar-muted { 
+      background: var(--gray); 
+      opacity: 0.3;
+    }
+
+    /* Cards and containers */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+      cursor: pointer;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(6, 214, 160, 0.4);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger) 0%, #f55a9e 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(247, 37, 133, 0.3);
+      cursor: pointer;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(247, 37, 133, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* Form elements */
+    .input-field {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      color: var(--text-primary);
+      width: 100%;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .select-field {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 0.8rem;
+      color: var(--text-primary);
+      width: 100%;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+
+    .select-field:focus {
+      outline: none;
+      border-color: var(--primary-light);
+    }
+
+    /* Slider */
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      cursor: pointer;
+      border: none;
+      box-shadow: var(--shadow);
+    }
+
+    /* Status and labels */
+    .status-indicator {
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-color);
+    }
+
+    .label {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: slideIn 0.3s ease;
+    }
+
+    /* Visualizer container */
+    .visualizer-container {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      border: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body class="dark min-h-screen flex items-center justify-center p-6">
+
+  <div id="app" class="w-full max-w-4xl">
+
+    <!-- Header -->
+    <header class="header card mb-6">
+      <div class="header-content p-6">
+        <div class="flex justify-between items-center">
+          <div class="header-text">
+            <h1 class="text-3xl font-bold mb-2">
+              <i class="fas fa-robot mr-3"></i>
+              <span style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                AI Voice Assistant
+              </span>
+            </h1>
+            <p class="text-gray-400">Advanced voice recognition and response system</p>
+          </div>
+
+          <div class="flex items-center space-x-3">
+            <!-- Theme toggle -->
+            <button id="themeBtn" class="btn-secondary">
+              <i class="fas fa-palette"></i>
+              <span id="themeText">Light Mode</span>
+            </button>
+
+            <!-- Voice controls dropdown trigger -->
+            <button id="voicePanelToggle" class="btn-secondary">
+              <i class="fas fa-sliders-h"></i>
+              Voice Controls
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Left: controls & visualizer -->
+      <div class="col-span-1 card p-6">
+        <!-- Visualizer -->
+        <div class="mb-6">
+          <label class="label">
+            <i class="fas fa-wave-square mr-2"></i>
+            Microphone Visualizer
+          </label>
+          <div class="visualizer-container">
+            <div id="visualizer" class="w-full h-24 rounded flex items-end justify-center overflow-hidden p-3">
+              <!-- bars inserted dynamically -->
+            </div>
+          </div>
+          <p class="helper-text">Shows live microphone amplitude while recording</p>
+        </div>
+
+        <!-- Recording Controls -->
+        <div class="mb-6">
+          <label class="label">
+            <i class="fas fa-microphone mr-2"></i>
+            Recording Controls
+          </label>
+          <div class="flex gap-3 mb-4">
+            <button id="startBtn" class="btn-success flex-1">
+              <i class="fas fa-play"></i>
+              Start
+            </button>
+            <button id="stopBtn" class="btn-danger flex-1" disabled>
+              <i class="fas fa-stop"></i>
+              Stop
+            </button>
+          </div>
+
+          <button id="processBtn" class="btn-primary w-full mb-4">
+            <i class="fas fa-paper-plane"></i>
+            Process Query
+          </button>
+
+          <!-- Status -->
+          <div class="status-indicator text-center">
+            <i class="fas fa-circle mr-2 text-green-400" id="statusIcon"></i>
+            <span id="status">Ready</span>
+          </div>
+          <br>
+          <div class="status-indicator text-center">
+            <%= link_to "Voice Logs", voice_query_logs_path, class: "px-4 py-2 hover:underline" %>
+          </div>
+        </div>
+
+        <!-- Voice controls panel -->
+        <div id="voicePanel" class="mt-6 p-4 card animate-in">
+          <label class="label">
+            <i class="fas fa-voice-mail mr-2"></i>
+            Voice Settings
+          </label>
+          
+          <select id="voiceSelect" class="select-field mb-4"></select>
+
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="label text-sm">
+                Rate <span id="rateVal" class="font-mono">1.0</span>
+              </label>
+              <input id="rate" type="range" min="0.6" max="1.6" step="0.05" value="1" class="slider" />
+            </div>
+            <div>
+              <label class="label text-sm">
+                Pitch <span id="pitchVal" class="font-mono">1.0</span>
+              </label>
+              <input id="pitch" type="range" min="0.6" max="2.0" step="0.05" value="1" class="slider" />
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button id="testVoice" class="btn-secondary flex-1">
+              <i class="fas fa-play-circle"></i>
+              Test
+            </button>
+            <button id="resetVoice" class="btn-secondary flex-1">
+              <i class="fas fa-undo"></i>
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: chat area -->
+      <div class="col-span-1 lg:col-span-2 card p-6 flex flex-col" style="min-height: 500px;">
+        <!-- Chat Header -->
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold">
+            <i class="fas fa-comments mr-2"></i>
+            Conversation
+          </h3>
+          <div class="flex gap-2">
+            <button id="clearChatBtn" class="btn-secondary">
+              <i class="fas fa-trash"></i>
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Messages -->
+        <div class="flex-1 overflow-y-auto p-4 mb-6 rounded-lg bg-black/5" id="chatArea" style="scroll-behavior: smooth;">
+          <div class="text-center text-gray-400 py-8">
+            <i class="fas fa-robot text-4xl mb-3 opacity-50"></i>
+            <p>Start a conversation with your AI assistant</p>
+          </div>
+        </div>
+
+        <!-- Transcript Area -->
+        <div class="mt-auto">
+          <label class="label">
+            <i class="fas fa-keyboard mr-2"></i>
+            Transcript
+          </label>
+          <textarea id="transcript" class="input-field h-32 mb-4" placeholder="Your speech will appear here..."></textarea>
+
+          <div class="flex gap-3">
+            <button id="appendUserBtn" class="btn-primary flex-1">
+              <i class="fas fa-plus-circle"></i>
+              Add to Chat
+            </button>
+            <button id="clearTranscriptBtn" class="btn-secondary">
+              <i class="fas fa-eraser"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ======================================================
+   Feature-rich Voice Assistant frontend
+   Updated with consistent CSS theme
+   ====================================================== */
+
+(() => {
+  // UI elements
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn  = document.getElementById('stopBtn');
+  const processBtn = document.getElementById('processBtn');
+  const statusEl = document.getElementById('status');
+  const statusIcon = document.getElementById('statusIcon');
+
+  const transcriptEl = document.getElementById('transcript');
+  const chatArea = document.getElementById('chatArea');
+  const appendUserBtn = document.getElementById('appendUserBtn');
+  const clearChatBtn = document.getElementById('clearChatBtn');
+  const clearTranscriptBtn = document.getElementById('clearTranscriptBtn');
+
+  const waveContainer = document.getElementById('visualizer');
+  const voicePanelToggle = document.getElementById('voicePanelToggle');
+  const voicePanel = document.getElementById('voicePanel');
+  const voiceSelect = document.getElementById('voiceSelect');
+  const rateEl = document.getElementById('rate');
+  const pitchEl = document.getElementById('pitch');
+  const rateVal = document.getElementById('rateVal');
+  const pitchVal = document.getElementById('pitchVal');
+  const testVoice = document.getElementById('testVoice');
+  const resetVoice = document.getElementById('resetVoice');
+  const themeBtn = document.getElementById('themeBtn');
+  const themeText = document.getElementById('themeText');
+
+  // audio visualizer params
+  const BAR_COUNT = 32;
+  let bars = [];
+  let audioContext, analyserNode, micStream;
+  let rafId;
+  let silenceTimeout;
+
+  // speech recognition
+  let recognition;
+  let isRecording = false;
+
+  // speech synthesis config
+  let voices = [];
+  let chosenVoice = null;
+
+  // CSRF token for Rails
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+  /* ---------------------------
+     THEME
+  --------------------------- */
+  const savedTheme = localStorage.getItem('va_theme') || 'dark';
+  document.body.classList.remove('dark','light');
+  document.body.classList.add(savedTheme);
+  themeText.innerText = savedTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+  
+  themeBtn.onclick = () => {
+    const cur = document.body.classList.contains('dark') ? 'dark' : 'light';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.body.classList.remove('dark','light');
+    document.body.classList.add(next);
+    themeText.innerText = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+    localStorage.setItem('va_theme', next);
+  };
+
+  /* ---------------------------
+     Build visualizer bars
+  --------------------------- */
+  function buildBars() {
+    waveContainer.innerHTML = '';
+    bars = [];
+    for (let i=0;i<BAR_COUNT;i++){
+      const b = document.createElement('div');
+      b.className = 'vis-bar vis-bar-muted';
+      b.style.height = '6px';
+      b.style.transition = 'height 0.08s ease';
+      waveContainer.appendChild(b);
+      bars.push(b);
+    }
+  }
+  buildBars();
+
+  /* ---------------------------
+     Initialize SpeechRecognition
+  --------------------------- */
+  function initRecognition() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      status('SpeechRecognition not supported', 'error');
+      startBtn.disabled = true;
+      processBtn.disabled = false; // still allow manual
+      return;
+    }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      status('Listening', 'recording');
+      showVisualizer(true);
+    };
+
+    recognition.onerror = (ev) => {
+      console.warn('recognition error', ev);
+      status('Recognition Error', 'error');
+      stopRecording(); // try to stop gracefully
+    };
+
+    recognition.onend = () => {
+      status('Ready', 'ready');
+      showVisualizer(false);
+      // stop mic audio processing as well
+      stopMicAnalysis();
+      isRecording = false;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+    };
+
+    recognition.onresult = (event) => {
+      let transcript = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      transcriptEl.value = transcript;
+
+      // enable stop button while user speaking
+      enableStopWhileSpeaking();
+
+      // small auto add to chat as "live user" (optional). not auto-append to chat; user chooses
+    };
+  }
+  initRecognition();
+
+  /* ---------------------------
+     Microphone + WebAudio analysis
+  --------------------------- */
+  async function startMicAnalysis() {
+    try {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      // request audio stream
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      const source = audioContext.createMediaStreamSource(micStream);
+      analyserNode = audioContext.createAnalyser();
+      analyserNode.fftSize = 2048;
+      source.connect(analyserNode);
+      animateVisualizer();
+    } catch (err) {
+      console.warn('microphone access denied or error:', err);
+      status('Mic access error', 'error');
+    }
+  }
+
+  function stopMicAnalysis() {
+    if (micStream) {
+      micStream.getTracks().forEach(t => t.stop());
+      micStream = null;
+    }
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    // mute bars visually
+    bars.forEach(b => { b.style.height = '6px'; b.classList.add('vis-bar-muted'); });
+  }
+
+  function animateVisualizer() {
+    if (!analyserNode) return;
+    const data = new Uint8Array(analyserNode.frequencyBinCount);
+    analyserNode.getByteFrequencyData(data);
+
+    // we'll map slices to bars
+    const step = Math.floor(data.length / BAR_COUNT);
+    for (let i=0;i<BAR_COUNT;i++){
+      let sum = 0;
+      for (let j=0;j<step;j++){ sum += data[(i*step)+j] || 0; }
+      const avg = sum/step;
+      const h = Math.max(6, Math.min(120, Math.round((avg/255)*120)));
+      bars[i].style.height = h + 'px';
+      bars[i].classList.remove('vis-bar-muted');
+    }
+    rafId = requestAnimationFrame(animateVisualizer);
+  }
+
+  function showVisualizer(show) {
+    waveContainer.style.display = show ? 'flex' : 'none';
+  }
+
+  /* ---------------------------
+     Start / Stop recording flow
+  --------------------------- */
+  startBtn.addEventListener('click', async () => {
+    if (!recognition) return;
+    try {
+      recognition.start();
+      isRecording = true;
+      startBtn.disabled = true;
+      stopBtn.disabled = true; // will enable when voice detected
+      status('Starting...', 'loading');
+      // start mic analyser to show actual amplitude
+      await startMicAnalysis();
+    } catch (err) {
+      console.warn('start error', err);
+      status('Start error', 'error');
+    }
+  });
+
+  stopBtn.addEventListener('click', () => stopRecording());
+
+  function stopRecording() {
+    if (recognition && isRecording) {
+      recognition.stop(); // will trigger onend
+      isRecording = false;
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      status('Stopped', 'ready');
+    }
+    stopMicAnalysis();
+  }
+
+  // enable stop while speaking and auto-disable after silence
+  function enableStopWhileSpeaking() {
+    stopBtn.disabled = false;
+    clearTimeout(silenceTimeout);
+    silenceTimeout = setTimeout(() => {
+      // if user silent for 2.5s, disable
+      stopBtn.disabled = true;
+    }, 2500);
+  }
+
+  /* ---------------------------
+     Speech Synthesis
+  --------------------------- */
+
+  function loadVoices() {
+    voices = speechSynthesis.getVoices() || [];
+    // populate select
+    voiceSelect.innerHTML = '';
+    // pick female preferred voice
+    const femalePreferList = [
+      'female', 'google uk english female', 'samantha', 'zira',
+      'alysa', 'victoria', 'alloy', 'kate', 'emily'
+    ];
+
+    let defaultIndex = 0;
+    voices.forEach((v, i) => {
+      const opt = document.createElement('option');
+      opt.value = v.name;
+      opt.innerText = `${v.name} (${v.lang})`;
+      voiceSelect.appendChild(opt);
+
+      // choose default female voice heuristics
+      const lower = v.name.toLowerCase();
+      if (femalePreferList.some(k => lower.includes(k))) {
+        defaultIndex = i;
+      }
+    });
+
+    // if no voices present yet, fallback to first when available
+    if (voices.length > 0) {
+      voiceSelect.selectedIndex = defaultIndex;
+      chosenVoice = voices[defaultIndex];
+    }
+  }
+
+  // voice list may populate after load
+  window.speechSynthesis.onvoiceschanged = () => {
+    loadVoices();
+  };
+  // try initial load
+  setTimeout(loadVoices, 200);
+
+  function pickVoiceByName(name) {
+    chosenVoice = voices.find(v => v.name === name) || voices[0];
+  }
+
+  function speakText(text, opts={interrupt:true}) {
+    if (!('speechSynthesis' in window)) {
+      console.warn('No TTS support');
+      return;
+    }
+    if (opts.interrupt) window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.rate = parseFloat(rateEl.value || 1);
+    utt.pitch = parseFloat(pitchEl.value || 1);
+
+    // choose voice by selection or female preference
+    const selectedName = voiceSelect.value;
+    pickVoiceByName(selectedName);
+    if (chosenVoice) utt.voice = chosenVoice;
+
+    window.speechSynthesis.speak(utt);
+  }
+
+  // test voice button
+  testVoice.addEventListener('click', () => {
+    const sample = 'Hello, this is the assistant speaking. I will read the backend response when available.';
+    speakText(sample);
+  });
+
+  resetVoice.addEventListener('click', () => {
+    rateEl.value = 1.0;
+    pitchEl.value = 1.0;
+    rateVal.innerText = '1.0';
+    pitchVal.innerText = '1.0';
+    if (voices.length > 0) {
+      voiceSelect.selectedIndex = 0;
+      pickVoiceByName(voiceSelect.value);
+    }
+  });
+
+  rateEl.addEventListener('input', () => {
+    rateVal.innerText = parseFloat(rateEl.value).toFixed(2);
+  });
+  pitchEl.addEventListener('input', () => {
+    pitchVal.innerText = parseFloat(pitchEl.value).toFixed(2);
+  });
+
+  voicePanelToggle.addEventListener('click', () => {
+    voicePanel.classList.toggle('hidden');
+  });
+
+  /* ---------------------------
+     Chat UI utilities
+  --------------------------- */
+  function appendUserMessage(text) {
+    if (!text || !text.trim()) return;
+    // Remove empty state if present
+    if (chatArea.querySelector('.text-center')) {
+      chatArea.innerHTML = '';
+    }
+    
+    const wrap = document.createElement('div');
+    wrap.className = 'mb-4 flex justify-end animate-in';
+    wrap.innerHTML = `
+      <div class="user-bubble px-4 py-3 rounded-xl max-w-[85%]">
+        <div class="font-semibold text-sm mb-1 opacity-70">
+          <i class="fas fa-user mr-1"></i>You
+        </div>
+        <div class="text-sm leading-relaxed">${escapeHtml(text)}</div>
+      </div>
+    `;
+    chatArea.appendChild(wrap);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function appendAssistantMessage(text) {
+    // Remove empty state if present
+    if (chatArea.querySelector('.text-center')) {
+      chatArea.innerHTML = '';
+    }
+    
+    const wrap = document.createElement('div');
+    wrap.className = 'mb-4 flex justify-start animate-in';
+    wrap.innerHTML = `
+      <div class="assistant-bubble px-4 py-3 rounded-xl max-w-[85%]">
+        <div class="font-semibold text-sm mb-1 opacity-90">
+          <i class="fas fa-robot mr-1"></i>Assistant
+        </div>
+        <div class="text-sm leading-relaxed">${escapeHtml(text)}</div>
+      </div>
+    `;
+    chatArea.appendChild(wrap);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function escapeHtml(s) {
+    return (s||'').toString()
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('\n', '<br>');
+  }
+
+  appendUserBtn.addEventListener('click', () => {
+    const t = transcriptEl.value.trim();
+    if (!t) return alert('Transcript empty');
+    appendUserMessage(t);
+  });
+
+  clearChatBtn.addEventListener('click', () => {
+    chatArea.innerHTML = `
+      <div class="text-center text-gray-400 py-8">
+        <i class="fas fa-robot text-4xl mb-3 opacity-50"></i>
+        <p>Start a conversation with your AI assistant</p>
+      </div>
+    `;
+  });
+
+  clearTranscriptBtn.addEventListener('click', () => {
+    transcriptEl.value = '';
+  });
+
+  /* ---------------------------
+     Send transcript to server & speak backend response
+  --------------------------- */
+
+  processBtn.addEventListener('click', async () => {
+    const text = transcriptEl.value.trim();
+    if (!text) return alert('No text to process. Speak or type first.');
+
+    appendUserMessage(text);
+    status('Processing...', 'loading');
+
+    try {
+      const res = await fetch('/voice_queries/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ text })
+      });
+      const data = await res.json();
+
+      // Normalize where possible
+      const reply = data.response || data.reply || data.message || (typeof data === 'string' ? data : JSON.stringify(data));
+      appendAssistantMessage(reply || 'No reply');
+
+      // speak exact backend reply text
+      if (reply) speakText(reply);
+
+      status('Ready', 'ready');
+    } catch (err) {
+      console.error(err);
+      appendAssistantMessage('Error: ' + (err.message || err));
+      status('Error', 'error');
+    }
+  });
+
+  /* ---------------------------
+     Enhanced Status Function
+  --------------------------- */
+  function status(s, type = 'ready') {
+    statusEl.innerText = s;
+    const colors = {
+      ready: 'text-green-400',
+      recording: 'text-red-400',
+      loading: 'text-yellow-400',
+      error: 'text-red-500'
+    };
+    const icons = {
+      ready: 'fa-circle',
+      recording: 'fa-circle',
+      loading: 'fa-circle-notch fa-spin',
+      error: 'fa-exclamation-circle'
+    };
+    
+    // Remove all color classes
+    statusIcon.className = statusIcon.className.replace(/text-(green|red|yellow)-400|text-red-500/, '');
+    // Add new color
+    statusIcon.classList.add(colors[type]);
+    
+    // Update icon
+    statusIcon.className = statusIcon.className.replace(/fa-(circle|circle-notch|exclamation-circle)/, icons[type]);
+    if (!statusIcon.className.includes(icons[type])) {
+      statusIcon.classList.add(icons[type]);
+    }
+  }
+
+  // Initialize voice panel as hidden
+  voicePanel.classList.add('hidden');
+
+})();
+</script>
+</body>
+</html>

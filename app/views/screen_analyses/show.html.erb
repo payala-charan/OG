@@ -1,0 +1,129 @@
+<%= render 'shared_styles' %>
+
+<div class="screen-analyses-dashboard">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="welcome-section">
+          <h1><%= @team_name %> Screen Analyses</h1>
+          <p>Analyze screen images side-by-side with summary text for Team <%= @team_id %></p>
+        </div>
+        <div class="user-actions">
+          <%= link_to screen_analyses_path, class: "btn-header" do %>
+            <i class="fas fa-arrow-left"></i> Back to Hub
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="features-main">
+    <div class="container">
+      <div class="section-title">
+        <div>
+          <h2>Your <%= @team_name %> Screens</h2>
+          <p style="color: var(--gray); font-size: 1.1rem; margin:0;">All uploaded screen analyses for this team are available below</p>
+        </div>
+        <%= link_to new_screen_analysis_path(team_id: @team_id), class: "btn-primary" do %>
+          <i class="fas fa-plus"></i> New Upload
+        <% end %>
+      </div>
+
+      <% if @screen_analyses.empty? %>
+        <div class="empty-state">
+          <i class="fas fa-desktop empty-icon"></i>
+          <h3>No Screens Found</h3>
+          <p>Get started by uploading your first screen for <%= @team_name %>.</p>
+          <%= link_to new_screen_analysis_path(team_id: @team_id), class: "btn-primary" do %>
+             Upload Screen
+          <% end %>
+        </div>
+      <% else %>
+        <div class="screen-list">
+          <% @screen_analyses.each do |screen| %>
+            <div class="screen-card-enhanced" data-analysis-id="<%= screen.id %>">
+              <div class="screen-card-header">
+                <h3><%= screen.title %></h3>
+                <div class="actions">
+                  <%= link_to screen_analysis_path(screen), method: :delete, data: { confirm: "Delete this screen analysis?" }, class: "btn-danger" do %>
+                    <i class="fas fa-trash-alt"></i> Delete
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="splitter-controls">
+                <label>Image/Text Ratio: <span class="split-value">70/30</span></label>
+                <input type="range" min="30" max="70" value="70" class="split-range" />
+              </div>
+
+              <div class="screen-content-split" style="--image-width: 70%; --text-width: 30%;">
+                <div class="image-pane">
+                  <% if screen.image.attached? %>
+                    <%= image_tag url_for(screen.image), alt: screen.title, class: "screen-image" %>
+                  <% else %>
+                    <div class="placeholder"><i class="fas fa-image" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i> Image missing</div>
+                  <% end %>
+                </div>
+
+                <div class="text-pane">
+                  <div class="text-header">
+                    <div class="text-meta">
+                      <i class="far fa-clock"></i> <%= screen.created_at.strftime("%b %d, %Y %I:%M %p") %>
+                    </div>
+                    <button class="btn-copy" data-summary-id="summary-<%= screen.id %>">
+                      <i class="far fa-copy"></i> Copy
+                    </button>
+                  </div>
+                  <p id="summary-<%= screen.id %>" class="summary-text"><%= screen.summary %></p>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </main>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.screen-card-enhanced').forEach(function(card) {
+      var rangeInput = card.querySelector('.split-range');
+      var splitValue = card.querySelector('.split-value');
+      var screenContent = card.querySelector('.screen-content-split');
+
+      if(rangeInput && screenContent && splitValue) {
+        function updateSplit(value) {
+          var iv = Number(value);
+          screenContent.style.setProperty('--image-width', iv + '%');
+          screenContent.style.setProperty('--text-width', (100 - iv) + '%');
+          splitValue.textContent = iv + '/' + (100 - iv);
+        }
+
+        rangeInput.addEventListener('input', function(event) {
+          updateSplit(event.target.value);
+        });
+      }
+
+      var copyBtn = card.querySelector('.btn-copy');
+      if(copyBtn) {
+        copyBtn.addEventListener('click', function() {
+          var summaryEl = document.getElementById(this.dataset.summaryId);
+          var text = summaryEl.textContent.trim();
+          navigator.clipboard.writeText(text).then(function() {
+            var icon = copyBtn.querySelector('i');
+            var originalClass = icon.className;
+            icon.className = 'fas fa-check text-success';
+            setTimeout(function() {
+              icon.className = originalClass;
+            }, 2000);
+          }, function(err) {
+            alert('Copy failed: ' + err);
+          });
+        });
+      }
+    });
+  });
+</script>

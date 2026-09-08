@@ -1,0 +1,578 @@
+<%
+  total = @rows.size
+  invalid_count = @rows.sum do |row|
+    row["validations"].values.count { |v| v["status"] == "invalid" }
+  end
+%>
+
+<div class="upload-container ppr-show">
+  <header class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Product preferences validation</h1>
+        <p>Review calculated fields, expected values, and row-level results</p>
+      </div>
+      <div class="ppr-header-actions">
+        <%= link_to product_preference_records_path, class: "back-btn back-btn--ghost" do %>
+          <i class="fas fa-list"></i> All records
+        <% end %>
+        <%= link_to new_product_preference_record_path, class: "back-btn" do %>
+          <i class="fas fa-cloud-upload-alt"></i> New upload
+        <% end %>
+      </div>
+    </div>
+  </header>
+
+  <% if flash[:alert] || flash[:notice] %>
+    <div class="flash-messages">
+      <% if flash[:alert] %>
+        <div class="flash-message alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="flash-message notice">
+          <i class="fas fa-check-circle"></i>
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <section class="ppr-stats" aria-label="Summary">
+    <div class="ppr-stat ppr-stat--neutral">
+      <div class="ppr-stat-icon"><i class="fas fa-table"></i></div>
+      <div class="ppr-stat-body">
+        <span class="ppr-stat-value"><%= number_with_delimiter(total) %></span>
+        <span class="ppr-stat-label">Total rows</span>
+      </div>
+    </div>
+    <div class="ppr-stat <%= invalid_count.positive? ? 'ppr-stat--warn' : 'ppr-stat--ok' %>">
+      <div class="ppr-stat-icon"><i class="fas fa-exclamation-circle"></i></div>
+      <div class="ppr-stat-body">
+        <span class="ppr-stat-value"><%= number_with_delimiter(invalid_count) %></span>
+        <span class="ppr-stat-label">Invalid cells</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="ppr-table-card">
+    <div class="ppr-table-card-head">
+      <h2><i class="fas fa-clipboard-check"></i> Validation grid</h2>
+      <p class="ppr-hint">
+        <i class="fas fa-info-circle"></i>
+        Hover or focus a column header to see its formula. Horizontal scroll keeps all columns in view.
+      </p>
+    </div>
+
+    <div class="ppr-table-scroll">
+      <table class="ppr-table">
+        <thead>
+          <tr>
+            <% @headers.each do |header| %>
+              <%= tag.th class: "ppr-th",
+                  tabindex: "0",
+                  role: "columnheader",
+                  data: { ppr_formula: formula_for(header) },
+                  aria: { label: "#{header} — hover or focus to show formula" } do %>
+                <span class="ppr-th-label"><%= header %></span>
+                <span class="ppr-th-badge" aria-hidden="true"><i class="fas fa-calculator"></i></span>
+              <% end %>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @rows.each do |row| %>
+            <tr>
+              <% @headers.each do |header| %>
+                <% validation = row["validations"][header] %>
+                <% if validation.present? %>
+                  <% css_class = validation["status"] == "valid" ? "ppr-cell ppr-cell--valid" : "ppr-cell ppr-cell--invalid" %>
+                  <td class="<%= css_class %>">
+                    <span class="ppr-cell-actual"><%= validation["actual"] %></span>
+                    <span class="ppr-cell-expected">
+                      Expected: <%= validation["expected"] %>
+                    </span>
+                  </td>
+                <% else %>
+                  <td class="ppr-cell ppr-cell--plain">
+                    <%= row["original_data"][header] %>
+                  </td>
+                <% end %>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<div id="ppr-formula-popover" class="ppr-formula-popover" role="tooltip" aria-hidden="true" hidden></div>
+
+<script>
+  (function () {
+    var pop = document.getElementById("ppr-formula-popover");
+    if (!pop) return;
+
+    var hideTimer = null;
+    var activeTh = null;
+
+    function cancelHide() {
+      if (hideTimer) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
+      }
+    }
+
+    function positionPopover(anchor) {
+      var text = anchor.getAttribute("data-ppr-formula");
+      if (!text) return;
+
+      pop.textContent = text;
+      pop.hidden = false;
+      pop.setAttribute("aria-hidden", "false");
+      pop.classList.add("is-visible");
+
+      requestAnimationFrame(function () {
+        var r = anchor.getBoundingClientRect();
+        var margin = 8;
+        var pw = pop.offsetWidth;
+        var ph = pop.offsetHeight;
+        var left = r.left + r.width / 2 - pw / 2;
+        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
+        var top = r.bottom + margin;
+        if (top + ph > window.innerHeight - margin) {
+          top = r.top - ph - margin;
+        }
+        top = Math.max(margin, Math.min(top, window.innerHeight - ph - margin));
+        pop.style.left = left + "px";
+        pop.style.top = top + "px";
+      });
+    }
+
+    function hidePopover() {
+      pop.classList.remove("is-visible");
+      pop.setAttribute("aria-hidden", "true");
+      pop.hidden = true;
+      pop.textContent = "";
+      activeTh = null;
+    }
+
+    function scheduleHide() {
+      cancelHide();
+      hideTimer = setTimeout(hidePopover, 200);
+    }
+
+    document.querySelectorAll(".ppr-th").forEach(function (th) {
+      th.addEventListener("mouseenter", function () {
+        cancelHide();
+        activeTh = th;
+        positionPopover(th);
+      });
+      th.addEventListener("mouseleave", scheduleHide);
+      th.addEventListener("focus", function () {
+        cancelHide();
+        activeTh = th;
+        positionPopover(th);
+      });
+      th.addEventListener("blur", scheduleHide);
+    });
+
+    pop.addEventListener("mouseenter", cancelHide);
+    pop.addEventListener("mouseleave", scheduleHide);
+
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (activeTh && pop.classList.contains("is-visible")) {
+          positionPopover(activeTh);
+        }
+      },
+      true
+    );
+
+    window.addEventListener("resize", function () {
+      if (activeTh && pop.classList.contains("is-visible")) {
+        positionPopover(activeTh);
+      }
+    });
+  })();
+</script>
+
+<style>
+  .ppr-show {
+    --primary: #4361ee;
+    --primary-light: #6c8aff;
+    --secondary: #7209b7;
+    --accent: #4cc9f0;
+    --success: #06d6a0;
+    --danger: #f72585;
+    --warning: #ff9e00;
+    --light: #f8f9fc;
+    --dark: #2b2d42;
+    --gray: #8d99ae;
+    --border-radius: 16px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+    color: var(--dark);
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+    min-height: calc(100vh - 20px);
+    box-sizing: border-box;
+  }
+
+  .ppr-show .header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .ppr-show .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .ppr-show .header-text h1 {
+    font-weight: 800;
+    font-size: clamp(1.5rem, 4vw, 2.1rem);
+    margin: 0 0 0.4rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ppr-show .header-text p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 1.02rem;
+    max-width: 36rem;
+    line-height: 1.5;
+  }
+
+  .ppr-header-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    align-items: flex-end;
+  }
+
+  .ppr-show .back-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border-radius: 50px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    transition: var(--transition);
+    white-space: nowrap;
+    border: none;
+    font-size: 0.9rem;
+  }
+
+  .ppr-show .back-btn--ghost {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    box-shadow: none;
+  }
+
+  .ppr-show .back-btn--ghost:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .ppr-show .back-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+  }
+
+  .flash-messages {
+    margin-bottom: 1.25rem;
+  }
+
+  .flash-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .flash-message.alert {
+    background: rgba(247, 37, 133, 0.1);
+    border: 1px solid rgba(247, 37, 133, 0.3);
+    border-left: 4px solid var(--danger);
+    color: #9d174d;
+  }
+
+  .flash-message.notice {
+    background: rgba(6, 214, 160, 0.1);
+    border: 1px solid rgba(6, 214, 160, 0.3);
+    border-left: 4px solid var(--success);
+    color: #047857;
+  }
+
+  .ppr-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .ppr-stat {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--border-radius);
+    background: #fff;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--primary);
+  }
+
+  .ppr-stat--ok {
+    border-top-color: var(--success);
+  }
+
+  .ppr-stat--warn {
+    border-top-color: var(--warning);
+  }
+
+  .ppr-stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(67, 97, 238, 0.12);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+
+  .ppr-stat--ok .ppr-stat-icon {
+    background: rgba(6, 214, 160, 0.15);
+    color: #059669;
+  }
+
+  .ppr-stat--warn .ppr-stat-icon {
+    background: rgba(255, 158, 0, 0.15);
+    color: #d97706;
+  }
+
+  .ppr-stat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .ppr-stat-value {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1.1;
+  }
+
+  .ppr-stat-label {
+    font-size: 0.88rem;
+    color: var(--gray);
+    font-weight: 600;
+  }
+
+  .ppr-table-card {
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 1.5rem 1.5rem 1.25rem;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--primary);
+  }
+
+  .ppr-table-card-head {
+    margin-bottom: 1rem;
+  }
+
+  .ppr-table-card-head h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.2rem;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ppr-hint {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--gray);
+    line-height: 1.45;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+
+  .ppr-hint i {
+    color: var(--accent);
+    margin-top: 0.15rem;
+  }
+
+  .ppr-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    border: 1px solid rgba(67, 97, 238, 0.12);
+    max-height: min(70vh, 900px);
+    overflow-y: auto;
+  }
+
+  .ppr-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.8125rem;
+    min-width: max(100%, 720px);
+  }
+
+  .ppr-th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    text-align: left;
+    font-weight: 700;
+    padding: 0.65rem 0.75rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+    cursor: help;
+    outline: none;
+    vertical-align: middle;
+    transition: filter 0.2s, box-shadow 0.2s;
+  }
+
+  .ppr-th:last-child {
+    border-right: none;
+  }
+
+  .ppr-th:hover,
+  .ppr-th:focus-visible {
+    filter: brightness(1.08);
+    box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  .ppr-th:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .ppr-th-label {
+    display: inline;
+    margin-right: 0.35rem;
+  }
+
+  .ppr-th-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    opacity: 0.85;
+    vertical-align: middle;
+  }
+
+  .ppr-cell {
+    border: 1px solid rgba(142, 153, 175, 0.35);
+    padding: 0.55rem 0.65rem;
+    vertical-align: top;
+    line-height: 1.45;
+  }
+
+  .ppr-cell--valid {
+    background: rgba(6, 214, 160, 0.14);
+    border-color: rgba(5, 150, 105, 0.35);
+  }
+
+  .ppr-cell--invalid {
+    background: rgba(247, 37, 133, 0.1);
+    border-color: rgba(247, 37, 133, 0.35);
+  }
+
+  .ppr-cell--plain {
+    background: #fff;
+  }
+
+  .ppr-cell-actual {
+    font-weight: 700;
+    color: var(--dark);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .ppr-cell-expected {
+    font-size: 0.72rem;
+    color: var(--gray);
+    display: block;
+  }
+
+  tbody tr:nth-child(even) .ppr-cell--plain {
+    background: rgba(248, 249, 252, 0.85);
+  }
+
+  .ppr-formula-popover {
+    position: fixed;
+    z-index: 10050;
+    max-width: min(400px, calc(100vw - 24px));
+    padding: 14px 16px;
+    background: linear-gradient(145deg, #1e1b4b 0%, #312e81 100%);
+    color: #f1f5f9;
+    border-radius: 14px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    pointer-events: auto;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+  }
+
+  .ppr-formula-popover.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  @media (max-width: 640px) {
+    .ppr-show {
+      padding: 1rem;
+    }
+
+    .ppr-header-actions {
+      align-items: stretch;
+      width: 100%;
+    }
+
+    .ppr-show .back-btn {
+      justify-content: center;
+    }
+  }
+</style>

@@ -1,0 +1,15 @@
+<h2>Validation Results</h2>
+<table border="1">
+  <tr>
+    <% @data.first.keys.each do |col| %>
+      <th><%= col %></th>
+    <% end %>
+  </tr>
+  <% @data.each do |row| %>
+    <tr>
+      <% row.values.each do |val| %>
+        <td><%= val %></td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>

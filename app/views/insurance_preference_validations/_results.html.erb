@@ -1,0 +1,116 @@
+<% summary = @run.summary.is_a?(Hash) ? @run.summary : {} %>
+<% if @run.failed? %>
+  <div class="ip-alert alert">Validation failed: <%= @run.error_message %></div>
+<% end %>
+
+<% Array(@run.warnings).each do |warning| %>
+  <div class="ip-alert warn"><%= warning %></div>
+<% end %>
+
+<div class="ip-card">
+  <h2 style="margin-top:0;">Summary</h2>
+  <div class="ip-kpis">
+    <div class="ip-kpi"><span>Rows</span><strong><%= summary.dig("row_count") || @rows.size %></strong></div>
+    <% (summary["status_counts"] || {}).each do |status, count| %>
+      <div class="ip-kpi"><span><%= status %></span><strong><%= count %></strong></div>
+    <% end %>
+  </div>
+  <% if summary["tab_counts"].present? %>
+    <p style="margin:.9rem 0 0;">Per tab:
+      <%= summary["tab_counts"].map { |tab, count| "#{tab} (#{count})" }.join(" · ") %>
+    </p>
+  <% end %>
+</div>
+
+<div class="ip-card">
+  <div class="ip-filters">
+    <input type="search" id="ip-search" placeholder="Filter generic name, group, brand…">
+    <select id="ip-filter-tab">
+      <option value="">All tabs</option>
+      <% @rows.map(&:source_sheet_name).uniq.compact.each do |tab| %>
+        <option value="<%= tab %>"><%= tab %></option>
+      <% end %>
+    </select>
+    <select id="ip-filter-status">
+      <option value="">All statuses</option>
+      <% @rows.map(&:validation_status).uniq.compact.each do |status| %>
+        <option value="<%= status %>"><%= status %></option>
+      <% end %>
+    </select>
+    <select id="ip-filter-group">
+      <option value="">All groups</option>
+      <% @rows.map(&:generic_name_group).uniq.compact.each do |group| %>
+        <option value="<%= group %>"><%= group %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <div class="ip-table-wrap">
+    <table class="ip-table" id="ip-results">
+      <thead>
+        <tr>
+          <th data-col="0">Tab</th>
+          <th data-col="1">Generic name</th>
+          <th data-col="2">Group</th>
+          <th data-col="3">Matched brand</th>
+          <th data-col="4">Status</th>
+          <th data-col="5">Missing</th>
+          <th data-col="6">Spelling</th>
+          <th data-col="7">Extras</th>
+          <% if @run.model_validation_enabled? %>
+            <th data-col="8">Model</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rows.each do |row| %>
+          <tr
+            data-tab="<%= row.source_sheet_name %>"
+            data-status="<%= row.validation_status %>"
+            data-group="<%= row.generic_name_group %>"
+            data-search="<%= [row.generic_name, row.generic_name_group, row.matched_brand_column, row.validation_status].join(' ').downcase %>"
+          >
+            <td><%= row.source_sheet_name %></td>
+            <td>
+              <%= row.generic_name %>
+              <div class="ip-muted">Row <%= row.source_row_number %><% if row.generic_name_group_inferred %> · group inferred<% end %></div>
+            </td>
+            <td><%= row.generic_name_group %></td>
+            <td>
+              <%= row.matched_brand_column || "—" %>
+              <div class="ip-muted"><%= row.match_method %><% if row.match_confidence %> · <%= number_with_precision(row.match_confidence, precision: 2) %><% end %></div>
+            </td>
+            <td><%= ip_status_chip(row.validation_status) %></td>
+            <td><%= ip_list_preview(row.missing_list) %></td>
+            <td>
+              <% row.spelling_list.each do |item| %>
+                <% if item.is_a?(Hash) %>
+                  <div><%= item["master"] %> ↔ <%= item["sheet"] %></div>
+                <% else %>
+                  <div><%= item %></div>
+                <% end %>
+              <% end %>
+              <% if row.spelling_list.empty? %>—<% end %>
+            </td>
+            <td><%= ip_list_preview(row.extra_list) %></td>
+            <% if @run.model_validation_enabled? %>
+              <td>
+                <%= ip_agree_chip(row.model_validation_result) %>
+                <% if row.model_validation_result %>
+                  <details class="ip-model">
+                    <summary>Model notes</summary>
+                    <div>Verdict: <%= row.model_validation_result.model_validation_status %></div>
+                    <div><%= row.model_validation_result.model_notes %></div>
+                    <% if row.model_validation_result.model_missing_insurances.present? %>
+                      <div>Missing: <%= row.model_validation_result.model_missing_insurances %></div>
+                    <% end %>
+                  </details>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

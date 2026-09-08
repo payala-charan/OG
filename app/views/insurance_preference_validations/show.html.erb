@@ -1,0 +1,171 @@
+<div
+  class="ip-wrap"
+  data-turbo="false"
+  data-status-url="<%= insurance_preference_validation_path(@run, format: :json) %>"
+  data-results-url="<%= results_insurance_preference_validation_path(@run) %>"
+  data-finished="<%= @run.complete? || @run.failed? %>"
+>
+  <style>
+    .ip-wrap { --primary:#4361ee; --dark:#2b2d42; --gray:#8d99ae; font-family: Inter, "Segoe UI", sans-serif; color: var(--dark); max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+    .ip-hero, .ip-card { background:#fff; border-radius:16px; padding:1.5rem 1.75rem; box-shadow:0 10px 30px rgba(0,0,0,.06); margin-bottom:1.25rem; }
+    .ip-hero h1 { margin:0 0 .35rem; font-size:1.9rem; background:linear-gradient(135deg,#4361ee,#7209b7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .ip-actions { display:flex; gap:.7rem; flex-wrap:wrap; margin-top:1rem; }
+    .ip-btn { display:inline-flex; align-items:center; gap:.45rem; background:linear-gradient(135deg,#4361ee,#6c8aff); color:#fff; border:0; border-radius:999px; padding:.65rem 1.1rem; font-weight:700; text-decoration:none; }
+    .ip-btn.ghost { background:#eef2ff; color:#3730a3; }
+    .ip-btn.is-disabled { opacity:.45; pointer-events:none; }
+    .ip-alert { padding:1rem 1.2rem; border-radius:12px; margin-bottom:1rem; font-weight:600; }
+    .ip-alert.notice { background:rgba(6,214,160,.12); color:#04926c; }
+    .ip-alert.alert { background:rgba(247,37,133,.1); color:#c51b65; }
+    .ip-alert.warn { background:#fff7ed; color:#9a3412; }
+    .ip-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.75rem; }
+    .ip-kpi { background:#f8f9fc; border-radius:12px; padding:.9rem 1rem; }
+    .ip-kpi strong { display:block; font-size:1.4rem; }
+    .ip-filters { display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:1rem; }
+    .ip-filters input, .ip-filters select { padding:.55rem .7rem; border:1px solid #e5e7eb; border-radius:10px; }
+    .ip-table-wrap { overflow:auto; max-height:70vh; }
+    .ip-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+    .ip-table th, .ip-table td { text-align:left; padding:.65rem .5rem; border-bottom:1px solid #eef1f6; vertical-align:top; }
+    .ip-table th { cursor:pointer; white-space:nowrap; position:sticky; top:0; background:#fff; }
+    .ip-chip { display:inline-block; padding:.15rem .55rem; border-radius:999px; font-size:.72rem; font-weight:700; }
+    .ip-chip-pass { background:#d1fae5; color:#047857; }
+    .ip-chip-fail { background:#fee2e2; color:#b91c1c; }
+    .ip-chip-review { background:#fef3c7; color:#92400e; }
+    .ip-chip-neutral { background:#e5e7eb; color:#374151; }
+    .ip-progress { padding:1rem; background:#eef2ff; border-radius:12px; margin-bottom:1rem; }
+    .ip-progress.is-done { background:#ecfdf5; }
+    .ip-progress.is-failed { background:#fef2f2; }
+    details.ip-model { margin-top:.35rem; }
+    .ip-muted { color:#8d99ae; }
+  </style>
+
+  <div class="ip-hero">
+    <h1>Validation results</h1>
+    <p class="ip-muted"><%= @run.master_file_name %> × <%= @run.biosimilar_file_name %></p>
+    <div class="ip-actions">
+      <%= link_to insurance_preference_validations_path, class: "ip-btn ghost", data: { turbo: false } do %><i class="fas fa-arrow-left"></i> All runs<% end %>
+      <%= link_to download_insurance_preference_validation_path(@run), class: "ip-btn #{'is-disabled' unless @run.complete? && @run.output_file.attached?}", id: "ip-download", data: { turbo: false } do %>
+        <i class="fas fa-file-excel"></i> Download annotated workbook
+      <% end %>
+    </div>
+  </div>
+
+  <div class="ip-progress<%= ' is-done' if @run.complete? %><%= ' is-failed' if @run.failed? %>" id="ip-progress" <%= "hidden" if @run.complete? %>>
+    <strong id="ip-status-label"><%= @run.status.humanize %></strong>
+    <div id="ip-progress-msg"><%= @run.progress_message.presence || "Running in the background…" %></div>
+  </div>
+
+  <div id="ip-results-root">
+    <% if @run.complete? || @run.failed? %>
+      <%= render "results" %>
+    <% else %>
+      <div class="ip-card ip-muted">The job is running in the background. This page will fill in when it finishes — it will not reload.</div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.querySelector(".ip-wrap");
+    if (!root) return;
+
+    if (window.__ipPrefPoll) {
+      clearInterval(window.__ipPrefPoll);
+      window.__ipPrefPoll = null;
+    }
+
+    function bindFilters() {
+      var search = document.getElementById("ip-search");
+      var tab = document.getElementById("ip-filter-tab");
+      var status = document.getElementById("ip-filter-status");
+      var group = document.getElementById("ip-filter-group");
+      var rows = Array.prototype.slice.call(document.querySelectorAll("#ip-results tbody tr"));
+      if (!search) return;
+
+      function applyFilters() {
+        var q = (search.value || "").toLowerCase();
+        rows.forEach(function (row) {
+          var ok = true;
+          if (q && (row.getAttribute("data-search") || "").indexOf(q) === -1) ok = false;
+          if (tab.value && row.getAttribute("data-tab") !== tab.value) ok = false;
+          if (status.value && row.getAttribute("data-status") !== status.value) ok = false;
+          if (group.value && row.getAttribute("data-group") !== group.value) ok = false;
+          row.style.display = ok ? "" : "none";
+        });
+      }
+
+      [search, tab, status, group].forEach(function (el) {
+        if (!el) return;
+        el.addEventListener("input", applyFilters);
+        el.addEventListener("change", applyFilters);
+      });
+
+      document.querySelectorAll("#ip-results th").forEach(function (th) {
+        th.addEventListener("click", function () {
+          var col = parseInt(th.getAttribute("data-col"), 10);
+          var tbody = document.querySelector("#ip-results tbody");
+          var dir = th.getAttribute("data-dir") === "asc" ? "desc" : "asc";
+          th.setAttribute("data-dir", dir);
+          rows.slice().sort(function (a, b) {
+            var av = a.children[col].innerText.trim().toLowerCase();
+            var bv = b.children[col].innerText.trim().toLowerCase();
+            if (av < bv) return dir === "asc" ? -1 : 1;
+            if (av > bv) return dir === "asc" ? 1 : -1;
+            return 0;
+          }).forEach(function (row) { tbody.appendChild(row); });
+        });
+      });
+    }
+
+    function loadResultsOnce() {
+      if (root.getAttribute("data-loaded") === "1") return;
+      root.setAttribute("data-loaded", "1");
+      var resultsUrl = root.getAttribute("data-results-url");
+      fetch(resultsUrl, { headers: { "Accept": "text/html" }, credentials: "same-origin" })
+        .then(function (res) { return res.text(); })
+        .then(function (html) {
+          document.getElementById("ip-results-root").innerHTML = html;
+          var download = document.getElementById("ip-download");
+          if (download) download.classList.remove("is-disabled");
+          bindFilters();
+        });
+    }
+
+    bindFilters();
+
+    if (root.getAttribute("data-finished") === "true") return;
+
+    var url = root.getAttribute("data-status-url");
+    var lastStatus = "";
+    var lastMessage = "";
+    window.__ipPrefPoll = setInterval(function () {
+      fetch(url, { headers: { "Accept": "application/json" }, credentials: "same-origin" })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          var label = document.getElementById("ip-status-label");
+          var msg = document.getElementById("ip-progress-msg");
+          var banner = document.getElementById("ip-progress");
+          var nextStatus = (data.status || "").toString();
+          var nextMessage = data.progress_message || "";
+          if (label && nextStatus !== lastStatus) {
+            label.textContent = nextStatus.replace(/_/g, " ");
+            lastStatus = nextStatus;
+          }
+          if (msg && nextMessage !== lastMessage) {
+            msg.textContent = nextMessage;
+            lastMessage = nextMessage;
+          }
+          if (nextStatus !== "complete" && nextStatus !== "failed") return;
+
+          clearInterval(window.__ipPrefPoll);
+          window.__ipPrefPoll = null;
+          if (banner) {
+            banner.classList.toggle("is-done", nextStatus === "complete");
+            banner.classList.toggle("is-failed", nextStatus === "failed");
+            banner.hidden = nextStatus === "complete";
+          }
+          loadResultsOnce();
+        })
+        .catch(function () {});
+    }, 4000);
+  })();
+</script>

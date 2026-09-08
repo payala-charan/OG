@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OG - Enterprise Healthcare & Integration Intelligence</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --danger: #f72585;
+      --success: #06d6a0;
+      --warning: #ffb703;
+      --dark: #0f172a;
+      --gray: #64748b;
+      --light: #f8fafc;
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--dark);
+      background: #ffffff;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Navbar Config */
+    .navbar {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+      padding: 1.2rem 0;
+      transition: var(--transition);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .navbar-brand {
+      font-weight: 800;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+    }
+    .navbar-brand i { margin-right: 0.5rem; font-size: 2rem; }
+    .nav-link { font-weight: 600; color: #475569; margin: 0 0.8rem; position: relative; }
+    .nav-link:hover { color: var(--primary); }
+    
+    .btn-rounded {
+      border-radius: 50px;
+      font-weight: 600;
+      padding: 0.6rem 1.8rem;
+      transition: var(--transition);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-login { background: transparent; border: 2px solid #e2e8f0; color: #475569; }
+    .btn-login:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-signup { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; border: none; box-shadow: 0 6px 15px rgba(67, 97, 238, 0.25); }
+    .btn-signup:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(67, 97, 238, 0.35); color: white; }
+
+    /* Hero Section: Extreme Gradient Animation */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 0 4rem;
+      background: radial-gradient(circle at top right, rgba(67, 97, 238, 0.08) 0%, transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(114, 9, 183, 0.05) 0%, transparent 40%);
+    }
+    .hero-content h1 {
+      font-weight: 900;
+      font-size: 4.2rem;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+    }
+    .hero-content h1 span {
+      background: linear-gradient(110deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-content p {
+      font-size: 1.25rem;
+      color: #475569;
+      margin-bottom: 2.5rem;
+      max-width: 90%;
+      line-height: 1.7;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-primary-btn {
+      background: var(--dark);
+      color: white;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      transition: var(--transition);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+    }
+    .hero-primary-btn:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(15, 23, 42, 0.3); color: white; }
+    
+    /* Feature Cloud Container (Replaces Clumsy Orbital) */
+    .hero-cloud-wrapper {
+      position: relative;
+      width: 100%;
+      margin-top: 3rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .orb-core-bg {
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      filter: blur(80px);
+      opacity: 0.15;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulse-glow 8s infinite alternate;
+      z-index: 0;
+    }
+    @keyframes pulse-glow { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.1; } 100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.25; } }
+
+    .feature-cloud {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      max-width: 100%;
+    }
+
+    .floating-badge {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      padding: 0.8rem 1.4rem;
+      border-radius: 50px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      animation: float-badge 4s ease-in-out infinite alternate;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: default;
+    }
+    
+    .floating-badge i { font-size: 1.2rem; }
+    .floating-badge span { font-size: 0.95rem; font-weight: 700; color: var(--dark); white-space: nowrap; }
+
+    .floating-badge:hover { 
+      transform: translateY(-5px) scale(1.05) !important; 
+      z-index: 20; 
+      box-shadow: 0 15px 35px rgba(67, 97, 238, 0.15); 
+      border-color: rgba(67, 97, 238, 0.4); 
+    }
+
+    /* Staggered Animations & Colors */
+    @keyframes float-badge { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
+    
+    .floating-badge:nth-child(2n) { animation-delay: 0.5s; animation-duration: 5s; }
+    .floating-badge:nth-child(3n) { animation-delay: 1.2s; animation-duration: 4.5s; }
+    .floating-badge:nth-child(4n) { animation-delay: 2.1s; animation-duration: 6s; }
+    .floating-badge:nth-child(5n) { animation-delay: 0.8s; animation-duration: 5.5s; }
+
+    .c-1 i { color: var(--primary); }
+    .c-2 i { color: var(--secondary); }
+    .c-3 i { color: var(--success); }
+    .c-4 i { color: var(--danger); }
+    .c-5 i { color: var(--warning); }
+    .c-6 i { color: #f59e0b; }
+    .c-7 i { color: #10b981; }
+    .c-8 i { color: #8b5cf6; }
+    .c-9 i { color: #ec4899; }
+    .c-10 i { color: #3b82f6; }
+    .c-11 i { color: #14b8a6; }
+    .c-12 i { color: #6366f1; }
+
+    /* Features Grid Display */
+    .features-section { padding: 6rem 0 8rem; background: #f8fafc; border-top: 1px solid rgba(0,0,0,0.03); }
+    .section-head { text-align: center; margin-bottom: 5rem; }
+    .section-head h2 { font-size: 2.8rem; font-weight: 900; color: var(--dark); margin-bottom: 1rem; letter-spacing: -1px; }
+    .section-head p { font-size: 1.2rem; color: #64748b; max-width: 600px; margin: 0 auto; }
+    
+    .marketing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .market-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+      transition: all 0.4s ease;
+      border: 1px solid rgba(0,0,0,0.02);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 1;
+    }
+    .market-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transform: scaleX(0); transform-origin: left; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .market-card:hover { transform: translateY(-8px); box-shadow: 0 20px 45px rgba(67, 97, 238, 0.08); }
+    .market-card:hover::before { transform: scaleX(1); }
+    
+    .m-icon {
+      width: 65px; height: 65px;
+      border-radius: 18px;
+      background: #f1f5f9;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 1.8rem; color: var(--primary);
+      margin-bottom: 1.5rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .market-card:hover .m-icon {
+      background: var(--primary); color: white; transform: scale(1.1) rotate(-8deg); box-shadow: 0 10px 20px rgba(67, 97, 238, 0.25);
+    }
+    .market-card h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.8rem; color: #0f172a; letter-spacing: -0.3px; }
+    .market-card p { font-size: 0.95rem; color: #64748b; line-height: 1.6; margin-bottom: 0; }
+
+    /* CTA Graphic Footer Box */
+    .cta-container {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: 30px;
+      padding: 6rem 3rem;
+      text-align: center;
+      margin: 4rem auto 6rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(15, 23, 42, 0.25);
+    }
+    .cta-container::after {
+      content: ''; position: absolute; right: -10%; top: -20%;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(67, 97, 238, 0.2) 0%, transparent 60%);
+    }
+    .cta-container h2 { color: white; font-size: 3rem; font-weight: 900; margin-bottom: 1.5rem; position: relative; z-index: 2; letter-spacing: -1px; }
+    .cta-container p { color: #94a3b8; font-size: 1.2rem; max-width: 600px; margin: 0 auto 3rem; position: relative; z-index: 2; }
+    .btn-light-special {
+      background: white; color: #0f172a; padding: 1.2rem 3rem; border-radius: 50px;
+      font-weight: 800; font-size: 1.1rem; text-decoration: none; position: relative; z-index: 2;
+      transition: var(--transition); display: inline-flex; align-items: center; gap: 0.8rem;
+    }
+    .btn-light-special:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(255, 255, 255, 0.2); color: var(--primary); }
+
+    /* Quick Stats Footer */
+    .footer-modern { background: #fff; padding: 4rem 0 2rem; border-top: 1px solid #f1f5f9; text-align: center; }
+    .footer-modern p { color: #94a3b8; font-weight: 500; font-size: 0.95rem; }
+
+    @media (max-width: 992px) {
+      .hero { padding: 8rem 0 2rem; text-align: center; }
+      .hero-content p { margin: 0 auto 2rem; }
+      .hero-btns { justify-content: center; }
+      .hero-cloud-wrapper { margin-top: 3rem; padding: 0 1rem; }
+      .section-head h2 { font-size: 2.2rem; }
+      .marketing-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="fas fa-bolt text-primary"></i> <span style="color: #0f172a;">OG 2.O</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <i class="fas fa-bars border-0" style="color: #0f172a;"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#platform">Platform Architecture</a></li>
+          
+          <% if current_user %>
+            <li class="nav-item ms-lg-4">
+              <%= link_to features_path, class: "btn-rounded btn-signup shadow-sm" do %>
+                <i class="fas fa-layer-group"></i> Dashboard
+              <% end %>
+            </li>
+            <li class="nav-item ms-lg-2 mt-3 mt-lg-0">
+              <%= button_to logout_path, method: :delete, data: { turbo: false, turbo_confirm: "Are you sure you want to logout?" }, class: "btn-rounded btn-login border-danger text-danger bg-transparent" do %>
+                <i class="fas fa-sign-out-alt"></i> Logout
+              <% end %>
+            </li>
+          <% else %>
+            <li class="nav-item ms-lg-3"><%= link_to "Sign In", login_path, class: "nav-link fw-bold text-dark" %></li>
+            <li class="nav-item ms-lg-2"><%= link_to "Create Account", signup_path, class: "btn-rounded btn-signup" %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="row align-items-center">
+        <!-- Text Content -->
+        <div class="col-lg-5 hero-content">
+          <h1>Architect Your Core <br><span>Data Intelligence</span></h1>
+          <p>The single ecosystem orchestrating advanced spreadsheet ingestion, biometric schema mapping, dynamic GitHub analytics, and complex CMS validation routines instantly.</p>
+          <div class="hero-btns">
+            <% if current_user %>
+              <%= link_to features_path, class: "hero-primary-btn" do %>
+                Launch Platform Access <i class="fas fa-arrow-right"></i>
+              <% end %>
+            <% else %>
+              <%= link_to signup_path, class: "hero-primary-btn" do %>
+                Start Building Free <i class="fas fa-arrow-right"></i>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Dynamic Feature Cloud Display -->
+        <div class="col-lg-7">
+          <div class="hero-cloud-wrapper">
+            <div class="orb-core-bg"></div>
+            
+            <div class="feature-cloud">
+              <div class="floating-badge c-1"><i class="fas fa-file-excel"></i> <span>Excel Validation</span></div>
+              <div class="floating-badge c-2"><i class="fas fa-cloud-upload-alt"></i> <span>Document Cloud</span></div>
+              <div class="floating-badge c-3"><i class="fas fa-desktop"></i> <span>Screen Analytics</span></div>
+              <div class="floating-badge c-4"><i class="fas fa-chart-line"></i> <span>Payor Analysis</span></div>
+              <div class="floating-badge c-5"><i class="fas fa-file-invoice-dollar"></i> <span>Biosimilar Upload</span></div>
+              <div class="floating-badge c-6"><i class="fas fa-search"></i> <span>Preference Maps</span></div>
+              <div class="floating-badge c-7"><i class="fas fa-list-ol"></i> <span>Rankings Interpolation</span></div>
+              <div class="floating-badge c-8"><i class="fas fa-robot"></i> <span>AI Voice Synthesis</span></div>
+              <div class="floating-badge c-9"><i class="fas fa-project-diagram"></i> <span>Relational Map</span></div>
+              <div class="floating-badge c-10"><i class="fab fa-github"></i> <span>GitHub Telemetry</span></div>
+              <div class="floating-badge c-11"><i class="fas fa-magic"></i> <span>Automations</span></div>
+              <div class="floating-badge c-12"><i class="fas fa-vials"></i> <span>Browser Tests</span></div>
+              <div class="floating-badge c-1"><i class="fas fa-server"></i> <span>Global Scheduler</span></div>
+              <div class="floating-badge c-2"><i class="fas fa-bell"></i> <span>Alert Hub</span></div>
+              <div class="floating-badge c-3"><i class="fas fa-calculator"></i> <span>Pricing Catalogs</span></div>
+              <div class="floating-badge c-4"><i class="fas fa-trophy"></i> <span>Product Rankings</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Features Engine -->
+  <section class="features-section" id="platform">
+    <div class="container">
+      <div class="section-head">
+        <h2>Enterprise Tools. Completely Unified.</h2>
+        <p>16 distinct architectural modules seamlessly networked into one ecosystem. Explore the underlying capabilities mapping your organization to the future.</p>
+      </div>
+
+      <div class="marketing-grid">
+        <!-- 1 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-file-excel"></i></div>
+          <h3>Excel Validation Engine</h3>
+          <p>Dynamically ingest mass spreadsheet blocks detecting invalid format bindings and enforcing stringent backend structural rules instinctively.</p>
+        </div>
+        <!-- 2 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+          <h3>Document Cloud Server</h3>
+          <p>Secure vault managing organizational paperwork logic via custom authentication thresholds and native visual ingestion paths.</p>
+        </div>
+        <!-- 3 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-desktop"></i></div>
+          <h3>Screen Architecture</h3>
+          <p>Custom resizable 70/30 split view layout empowering immediate graphic uploading chained directly to textual transcriptions natively.</p>
+        </div>
+        <!-- 4 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-chart-line"></i></div>
+          <h3>Payor Data Analysis</h3>
+          <p>Examine insurance behavior variables natively constructing visual trends estimating maximum coverage extraction pathways.</p>
+        </div>
+        <!-- 5 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+          <h3>Biosimilar Verification</h3>
+          <p>Safely cross-check highly dynamic HCPCS medication prices specifically anchoring complex CMS values securely during data uploads.</p>
+        </div>
+        <!-- 6 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-search"></i></div>
+          <h3>Product Preference Maps</h3>
+          <p>Establish strict historical tracking resolving exact pharmaceutical utilization behaviors determining preferred market implementations.</p>
+        </div>
+        <!-- 7 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-list-ol"></i></div>
+          <h3>Rankings Interpolation</h3>
+          <p>Safeguard human submissions by parsing physical generic brands utilizing team-locked CMS bounding calculations scaling numerical accuracies.</p>
+        </div>
+        <!-- 8 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-robot"></i></div>
+          <h3>AI Voice Synthesis</h3>
+          <p>Initiate complex verbal queries dynamically translated straight into readable text triggering localized contextual backend interactions.</p>
+        </div>
+        <!-- 9 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-project-diagram"></i></div>
+          <h3>Relational DB Topography</h3>
+          <p>Drop your active ruby schema.rb securely to visually map all node relationships seamlessly navigating interactive VisJS canvas structures.</p>
+        </div>
+        <!-- 10 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fab fa-github"></i></div>
+          <h3>GitHub DevOps Telemetry</h3>
+          <p>Auth natively extracting organizational PR arrays graphing massive historical Stacked Bar visualizations assessing collective contributor flow.</p>
+        </div>
+        <!-- 11 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-magic"></i></div>
+          <h3>Automations Engine</h3>
+          <p>Trigger automated workflows that download sheets, execute validation jobs, map data sets, and sync final endpoints instantly.</p>
+        </div>
+        <!-- 12 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-vials"></i></div>
+          <h3>Browser Workflows</h3>
+          <p>Trigger and manage comprehensive structural Capybara integration tests safely detached directly from the background job queue safely.</p>
+        </div>
+        <!-- 13 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-bell"></i></div>
+          <h3>Notification Alert Hub</h3>
+          <p>Architect robust EmailJS listener endpoints subscribing team stakeholders to deeply parsed multi-variable diagnostic error payloads automatically.</p>
+        </div>
+        <!-- 14 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-server"></i></div>
+          <h3>Global Auto Scheduler</h3>
+          <p>Batch dispatch exhaustive 100+ network combination loops recursively bypassing timeout bounds using highly delayed solid queue asynchronous scheduling.</p>
+        </div>
+        <!-- 15 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-calculator"></i></div>
+          <h3>Pricing Catalogs Logic</h3>
+          <p>Inject infinite array datasets directly performing customizable dynamic arithmetic comparisons spanning targeted columns securely stored as active JSON blobs.</p>
+        </div>
+        <!-- 16 -->
+        <div class="market-card">
+          <div class="m-icon"><i class="fas fa-trophy"></i></div>
+          <h3>Product Rankings Metrics</h3>
+          <p>Cross-reference payors across live environments identifying perfect descending order Three-Forty-B and CMS value structures natively.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Box -->
+  <div class="container">
+    <div class="cta-container">
+      <h2>Scale your enterprise structure instantly.</h2>
+      <p>Secure your architectural data integrations without complex custom engineering dependencies effectively right now.</p>
+      <% if current_user %>
+        <%= link_to features_path, class: "btn-light-special" do %>
+          Go To My Dashboard <i class="fas fa-rocket"></i>
+        <% end %>
+      <% else %>
+        <%= link_to signup_path, class: "btn-light-special" do %>
+          Create Free Organization Account <i class="fas fa-user-plus"></i>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer-modern">
+    <div class="container">
+      <div style="margin-bottom: 1.5rem; display: flex; justify-content: center; gap: 1.8rem;">
+        <a href="https://www.linkedin.com/in/payalacharan/" target="_blank" title="LinkedIn Profile" style="color: #64748b; font-size: 1.8rem; transition: all 0.3s;" onmouseover="this.style.color='#0a66c2'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color='#64748b'; this.style.transform='translateY(0)';">
+          <i class="fab fa-linkedin"></i>
+        </a>
+        <a href="https://www.instagram.com/charan_cherry_245/" target="_blank" title="Instagram Profile" style="color: #64748b; font-size: 1.8rem; transition: all 0.3s;" onmouseover="this.style.color='#e1306c'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color='#64748b'; this.style.transform='translateY(0)';">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="mailto:payalacharan@gmail.com" title="Email Developer directly" style="color: #64748b; font-size: 1.8rem; transition: all 0.3s;" onmouseover="this.style.color='#ea4335'; this.style.transform='translateY(-3px)';" onmouseout="this.style.color='#64748b'; this.style.transform='translateY(0)';">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </div>
+      <p>&copy; 2025 Original Group (OG) Intelligence Architecture. Developed carefully by Charan Payala.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Smooth Navbar Tracing 
+    window.addEventListener('scroll', function() {
+      const nav = document.querySelector('.navbar');
+      if (window.scrollY > 20) {
+        nav.style.background = 'rgba(255, 255, 255, 0.95)';
+        nav.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.08)';
+      } else {
+        nav.style.background = 'rgba(255, 255, 255, 0.85)';
+        nav.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.03)';
+      }
+    });
+  </script>
+</body>
+</html>

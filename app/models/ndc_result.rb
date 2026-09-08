@@ -1,0 +1,2 @@
+class NdcResult < ApplicationRecord
+end

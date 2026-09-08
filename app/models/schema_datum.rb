@@ -1,0 +1,2 @@
+class SchemaDatum < ApplicationRecord
+end

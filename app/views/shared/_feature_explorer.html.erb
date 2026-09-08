@@ -1,0 +1,128 @@
+<% categories = explorer_categories %>
+<aside class="fx-explorer" data-explorer aria-label="Feature explorer">
+  <div class="fx-brand">
+    <div class="fx-logo" aria-hidden="true">
+      <span class="fx-logo-orbit"></span>
+      <i class="fas fa-bolt"></i>
+    </div>
+    <div class="fx-brand-copy fx-hide-on-collapse">
+      <strong>OG Explorer</strong>
+      <span><%= explorer_feature_count %> features in <%= categories.size %> groups</span>
+    </div>
+    <button type="button" class="fx-collapse-btn fx-hide-on-collapse" data-explorer-toggle aria-label="Collapse explorer" title="Collapse explorer (Ctrl+B)">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+  </div>
+
+  <div class="fx-search">
+    <div class="fx-search-wrap">
+      <i class="fas fa-search"></i>
+      <input type="search" data-explorer-search placeholder="Search features..." aria-label="Search features" autocomplete="off">
+    </div>
+  </div>
+
+  <nav class="fx-tree" aria-label="Features by category">
+    <% categories.each do |category| %>
+      <% active_group = explorer_category_active?(category) %>
+      <section
+        class="fx-folder is-open<%= ' is-active-group' if active_group %>"
+        data-explorer-folder="<%= category.id %>">
+        <button type="button" class="fx-folder-toggle" data-explorer-folder-btn aria-expanded="true">
+          <i class="fas fa-chevron-right fx-chevron"></i>
+          <i class="fas <%= category.icon %> fx-folder-icon"></i>
+          <span class="fx-folder-label"><%= category.name %></span>
+          <span class="fx-motion fx-motion--<%= category.motion %>" aria-hidden="true">
+            <% case category.motion %>
+            <% when "orbit" %>
+              <span></span>
+            <% when "pulse" %>
+              <span></span><span></span><span></span>
+            <% when "bounce" %>
+              <span></span>
+            <% when "bars" %>
+              <i></i><i></i><i></i><i></i>
+            <% when "float" %>
+              <i class="fas fa-file-alt"></i>
+            <% when "spin" %>
+              <i class="fas fa-cog"></i>
+            <% when "wave" %>
+              <i></i><i></i><i></i><i></i>
+            <% end %>
+          </span>
+          <span class="fx-folder-count"><%= category.features.size %></span>
+        </button>
+
+        <div class="fx-folder-body">
+          <% category.features.each do |feature| %>
+            <% options = explorer_item_options(feature, category) %>
+            <% item_body = capture do %>
+              <i class="<%= feature.icon.start_with?('fab ') ? feature.icon : "fas #{feature.icon}" %> fx-item-icon"></i>
+              <span class="fx-item-copy">
+                <span class="fx-item-name"><%= feature.name %></span>
+                <span class="fx-item-hint"><%= feature.hint %></span>
+              </span>
+              <span class="fx-kind fx-kind--<%= feature.kind %>" title="<%= feature.kind == 'task' ? 'Actionable task' : feature.kind == 'home' ? 'Home' : 'Insight view' %>"></span>
+            <% end %>
+
+            <% if feature.http_method == :post %>
+              <%= button_to explorer_path_for(feature),
+                    method: :post,
+                    class: options[:class],
+                    form_class: "fx-item-form",
+                    data: options[:data].merge(turbo: false, turbo_confirm: "Run browser tests now? The browser should open shortly.") do %>
+                <%= item_body %>
+              <% end %>
+            <% else %>
+              <%= link_to explorer_path_for(feature), options do %>
+                <%= item_body %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+    <p class="fx-empty-search" data-explorer-empty>No features match that search.</p>
+  </nav>
+
+  <div class="fx-rail" aria-hidden="true">
+    <% categories.each do |category| %>
+      <button type="button"
+              class="fx-rail-btn<%= ' is-active' if explorer_category_active?(category) %>"
+              data-explorer-rail="<%= category.id %>"
+              title="<%= category.name %>">
+        <i class="fas <%= category.icon %>"></i>
+      </button>
+    <% end %>
+    <button type="button" class="fx-rail-btn" data-explorer-toggle title="Expand explorer">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <div class="fx-footer">
+    <div class="fx-user">
+      <div class="fx-avatar"><%= explorer_user_label.to_s.first.to_s.upcase %></div>
+      <div class="fx-user-meta">
+        <strong><%= explorer_user_label %></strong>
+        <span>Signed in</span>
+      </div>
+      <%= button_to logout_path,
+            method: :delete,
+            data: { turbo: false, turbo_confirm: "Are you sure you want to logout?" },
+            class: "fx-logout",
+            title: "Logout" do %>
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="fx-logout-label">Logout</span>
+      <% end %>
+    </div>
+    <div class="fx-shortcut fx-hide-on-collapse">
+      Toggle with <kbd>Ctrl</kbd> <kbd>B</kbd>
+    </div>
+  </div>
+
+  <div class="fx-resize" data-explorer-resize></div>
+</aside>
+
+<button type="button" class="fx-open-tab" data-explorer-toggle aria-label="Open feature explorer">
+  <i class="fas fa-layer-group"></i>
+</button>
+<div class="fx-backdrop" data-explorer-backdrop></div>

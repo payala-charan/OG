@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  automation_batch: one
+  generic_name_group: MyString
+  team_id: MyString
+  quarter: MyString
+  status: MyString
+  error_message: MyText
+  user_id: 1
+
+two:
+  automation_batch: two
+  generic_name_group: MyString
+  team_id: MyString
+  quarter: MyString
+  status: MyString
+  error_message: MyText
+  user_id: 1

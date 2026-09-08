@@ -1,0 +1,484 @@
+<div class="upload-container nbp-index">
+  <header class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>New Biosimilar Prices</h1>
+        <p>View and manage biosimilar price records</p>
+      </div>
+      <div class="nbp-header-right">
+        <%= link_to features_path, class: "back-btn" do %>
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        <% end %>
+        <div class="nbp-toolbar">
+          <%= link_to new_new_biosimilar_price_path, class: "nbp-toolbar-btn nbp-toolbar-btn--success" do %>
+            <i class="fas fa-plus-circle"></i> Add / Upload
+          <% end %>
+          <%= link_to upload_blended_costs_new_biosimilar_prices_path, class: "nbp-toolbar-btn nbp-toolbar-btn--accent" do %>
+            <i class="fas fa-calculator"></i> Extract Blended Costs
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <% if flash[:alert] || flash[:notice] %>
+    <div class="flash-messages">
+      <% if flash[:alert] %>
+        <div class="flash-message alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="flash-message notice">
+          <i class="fas fa-check-circle"></i>
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <section class="nbp-card">
+    <h2><i class="fas fa-filter"></i> Filters</h2>
+    <%= form_with url: new_biosimilar_prices_path, method: :get, local: true, class: "nbp-filter-form" do %>
+      <div class="nbp-filter-grid">
+        <div class="nbp-field">
+          <%= text_field_tag :generic_name, params[:generic_name], placeholder: "Search generic name", class: "nbp-input" %>
+        </div>
+        <div class="nbp-field">
+          <%= text_field_tag :ndc_code, params[:ndc_code], placeholder: "Search NDC code", class: "nbp-input" %>
+        </div>
+        <div class="nbp-filter-actions">
+          <%= submit_tag "Apply filters", class: "nbp-btn nbp-btn--primary" %>
+          <%= link_to "Reset", new_biosimilar_prices_path, class: "nbp-btn nbp-btn--muted" %>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="nbp-card">
+    <h2><i class="fas fa-columns"></i> Display options</h2>
+    <p class="nbp-card-hint">Toggle columns to reduce horizontal scrolling on wide tables.</p>
+    <div class="nbp-toggle-grid">
+      <% NewBiosimilarPrice.column_names.each do |col| %>
+        <label class="nbp-toggle">
+          <input type="checkbox" class="column-toggle" data-column="<%= col %>" checked>
+          <span><%= col.humanize %></span>
+        </label>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="nbp-card nbp-card--table">
+    <% if @new_biosimilar_prices.any? %>
+      <div class="nbp-table-wrap">
+        <table class="nbp-table" id="biosimilar-table">
+          <thead>
+            <tr>
+              <% NewBiosimilarPrice.column_names.each do |col| %>
+                <th class="col-<%= col %>"><%= col.humanize %></th>
+              <% end %>
+              <th class="nbp-actions-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @new_biosimilar_prices.each do |record| %>
+              <tr>
+                <% NewBiosimilarPrice.column_names.each do |col| %>
+                  <td class="col-<%= col %>"><%= record.send(col) %></td>
+                <% end %>
+                <td class="nbp-actions-cell">
+                  <%= link_to new_biosimilar_price_path(record), class: "nbp-row-action nbp-row-action--show" do %>
+                    <i class="fas fa-eye"></i> Show
+                  <% end %>
+                  <%= link_to edit_new_biosimilar_price_path(record), class: "nbp-row-action nbp-row-action--edit" do %>
+                    <i class="fas fa-pen"></i> Edit
+                  <% end %>
+                  <%= link_to new_biosimilar_price_path(record),
+                      data: { turbo_method: :delete, turbo_confirm: "Delete this record?" },
+                      class: "nbp-row-action nbp-row-action--delete" do %>
+                    <i class="fas fa-trash-alt"></i> Delete
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="nbp-empty">
+        <div class="nbp-empty-icon"><i class="fas fa-table"></i></div>
+        <h3>No records yet</h3>
+        <p>Upload a file or add a row manually to see data here.</p>
+        <%= link_to new_new_biosimilar_price_path, class: "nbp-toolbar-btn nbp-toolbar-btn--success" do %>
+          <i class="fas fa-plus-circle"></i> Add / Upload
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".column-toggle").forEach(function (checkbox) {
+      checkbox.addEventListener("change", function () {
+        var colClass = ".col-" + this.dataset.column;
+        document.querySelectorAll(colClass).forEach(function (cell) {
+          cell.style.display = checkbox.checked ? "" : "none";
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .nbp-index {
+    --primary: #4361ee;
+    --primary-light: #6c8aff;
+    --secondary: #7209b7;
+    --accent: #4cc9f0;
+    --success: #06d6a0;
+    --danger: #f72585;
+    --light: #f8f9fc;
+    --dark: #2b2d42;
+    --gray: #8d99ae;
+    --border-radius: 16px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+    color: var(--dark);
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+    min-height: calc(100vh - 20px);
+  }
+
+  .nbp-index .header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .nbp-index .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .nbp-index .header-text h1 {
+    font-weight: 800;
+    font-size: 2rem;
+    margin: 0 0 0.35rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nbp-index .header-text p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 1.05rem;
+  }
+
+  .nbp-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+
+  .nbp-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    justify-content: flex-end;
+  }
+
+  .nbp-toolbar-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    border-radius: 50px;
+    padding: 0.65rem 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    box-shadow: 0 6px 18px rgba(67, 97, 238, 0.3);
+    transition: var(--transition);
+    font-size: 0.9rem;
+    border: none;
+  }
+
+  .nbp-toolbar-btn:hover {
+    transform: translateY(-2px);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .nbp-toolbar-btn--success {
+    background: linear-gradient(135deg, var(--success), #05c291);
+    box-shadow: 0 6px 18px rgba(6, 214, 160, 0.35);
+  }
+
+  .nbp-toolbar-btn--accent {
+    background: linear-gradient(135deg, var(--accent), #06b6d4);
+    box-shadow: 0 6px 18px rgba(76, 201, 240, 0.35);
+  }
+
+  .nbp-index .back-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border-radius: 50px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    transition: var(--transition);
+  }
+
+  .nbp-index .back-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+  }
+
+  .flash-messages { margin-bottom: 1.25rem; }
+
+  .flash-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .flash-message.alert {
+    background: rgba(247, 37, 133, 0.1);
+    border: 1px solid rgba(247, 37, 133, 0.3);
+    border-left: 4px solid var(--danger);
+    color: var(--danger);
+  }
+
+  .flash-message.notice {
+    background: rgba(6, 214, 160, 0.1);
+    border: 1px solid rgba(6, 214, 160, 0.3);
+    border-left: 4px solid var(--success);
+    color: #047857;
+  }
+
+  .nbp-card {
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--primary);
+  }
+
+  .nbp-card h2 {
+    font-size: 1.15rem;
+    margin: 0 0 1rem;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nbp-card-hint {
+    margin: -0.5rem 0 1rem;
+    color: var(--gray);
+    font-size: 0.9rem;
+  }
+
+  .nbp-filter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+  }
+
+  .nbp-field { display: flex; flex-direction: column; gap: 0.35rem; }
+
+  .nbp-input {
+    border: 1px solid rgba(142, 153, 175, 0.45);
+    border-radius: 12px;
+    padding: 0.65rem 0.85rem;
+    font-size: 1rem;
+    transition: border 0.2s, box-shadow 0.2s;
+  }
+
+  .nbp-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+  }
+
+  .nbp-filter-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  .nbp-btn {
+    border: none;
+    border-radius: 50px;
+    padding: 0.65rem 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    font-size: 0.9rem;
+  }
+
+  .nbp-btn--primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+  }
+
+  .nbp-btn--muted {
+    background: var(--gray);
+    color: #fff;
+  }
+
+  .nbp-btn--primary:hover, .nbp-btn--muted:hover {
+    transform: translateY(-1px);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .nbp-toggle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.65rem;
+  }
+
+  .nbp-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--dark);
+  }
+
+  .nbp-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    border: 1px solid rgba(67, 97, 238, 0.12);
+  }
+
+  .nbp-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1100px;
+  }
+
+  .nbp-table th,
+  .nbp-table td {
+    padding: 0.75rem 0.65rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(142, 153, 175, 0.2);
+    font-size: 0.88rem;
+  }
+
+  .nbp-table th {
+    background: linear-gradient(135deg, rgba(67, 97, 238, 0.12), rgba(114, 9, 183, 0.1));
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .nbp-table tbody tr:hover {
+    background: rgba(67, 97, 238, 0.04);
+  }
+
+  .nbp-actions-col { white-space: nowrap; width: 1%; }
+
+  .nbp-actions-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    white-space: nowrap;
+  }
+
+  .nbp-row-action {
+    border-radius: 8px;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: var(--transition);
+  }
+
+  .nbp-row-action:hover {
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-1px);
+    opacity: 0.95;
+  }
+
+  .nbp-row-action--show { background: linear-gradient(135deg, var(--accent), #0891b2); }
+  .nbp-row-action--edit { background: linear-gradient(135deg, var(--primary), var(--primary-light)); }
+  .nbp-row-action--delete { background: linear-gradient(135deg, var(--danger), #db2777); }
+
+  .nbp-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--gray);
+  }
+
+  .nbp-empty-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    background: rgba(67, 97, 238, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: var(--primary);
+  }
+
+  .nbp-empty h3 { color: var(--dark); margin: 0 0 0.5rem; }
+
+  .col-generic_name,
+  .col-ndc_code {
+    position: sticky;
+    background: #fff;
+    z-index: 1;
+  }
+
+  .nbp-table thead th.col-generic_name,
+  .nbp-table thead th.col-ndc_code {
+    z-index: 3;
+    background: linear-gradient(135deg, rgba(67, 97, 238, 0.18), rgba(114, 9, 183, 0.15));
+  }
+
+  .col-generic_name { left: 0; }
+  .col-ndc_code { left: 140px; box-shadow: 4px 0 8px -4px rgba(0,0,0,0.08); }
+
+  @media (max-width: 900px) {
+    .nbp-filter-grid { grid-template-columns: 1fr; }
+    .nbp-header-right { align-items: stretch; width: 100%; }
+    .nbp-toolbar { justify-content: center; }
+  }
+</style>

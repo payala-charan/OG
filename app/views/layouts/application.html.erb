@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html class="<%= 'has-explorer' if show_feature_explorer? %>">
+  <head>
+    <title><%= content_for(:title) || "They Call Him" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= favicon_link_tag 'og1.jpeg' %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "feature_explorer", "data-turbo-track": "reload" if show_feature_explorer? %>
+    <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" %>
+    <%= javascript_include_tag "application", type: "module", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "feature_explorer", defer: true if show_feature_explorer? %>
+  </head>
+
+  <body class="<%= 'has-explorer-body' if show_feature_explorer? %>">
+    <%= render "shared/feature_explorer" if show_feature_explorer? %>
+    <main class="<%= show_feature_explorer? ? 'app-shell' : '' %>" style="<%= 'margin-top: 10px;' unless show_feature_explorer? %>">
+      <%= yield %>
+    </main>
+    <% unless controller_name == "home" && action_name == "index" %>
+      <div id="musicFloatingButton"
+          style="
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+          ">
+        <a href="javascript:void(0)" 
+          id="musicToggle"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 28px;
+            cursor: pointer;
+          ">
+          <i class="fas fa-bolt" id="musicIcon"></i>
+        </a>
+      </div>
+
+      <audio id="homeMusic" src="<%= asset_path('fire_storm.mp3') %>" hidden></audio>
+    <% end %>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const musicToggle = document.getElementById("musicToggle");
+        const musicIcon   = document.getElementById("musicIcon");
+        const homeMusic   = document.getElementById("homeMusic");
+
+        if (!musicToggle || !homeMusic) return;
+
+        musicToggle.addEventListener("click", () => {
+          if (homeMusic.paused) {
+            #homeMusic.play();
+            musicIcon.style.color = "red";   // Turn bolt RED when playing
+          } else {
+            homeMusic.pause();
+            musicIcon.style.color = "";      // Reset to default color
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

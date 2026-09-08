@@ -1,0 +1,66 @@
+<%= render 'shared_styles' %>
+
+<div class="screen-analyses-dashboard">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="welcome-section">
+          <h1>Screen Analysis Hub</h1>
+          <p>Select a Team to view their screen analyses side-by-side</p>
+        </div>
+        <div class="user-actions">
+          <%= link_to features_path, class: "btn-header" do %>
+            <i class="fas fa-home"></i> Dashboard 
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="features-main">
+    <div class="container">
+      <div class="section-title">
+        <div>
+          <h2>Team Portals</h2>
+          <p style="color: var(--gray); font-size: 1.1rem; margin:0;">Choose a specific team below to manage their screens</p>
+        </div>
+        <%= link_to new_screen_analysis_path, class: "btn-primary" do %>
+          <i class="fas fa-plus"></i> New Screen Analysis
+        <% end %>
+      </div>
+
+      <div class="team-hub-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem; max-width: 1000px; margin: 3rem auto;">
+        <!-- Riverside Card -->
+        <%= link_to screen_analysis_path(198), class: "team-hub-card", style: "background: white; border-radius: var(--border-radius); padding: 3rem 2rem; text-align: center; text-decoration: none; color: inherit; box-shadow: var(--shadow); transition: var(--transition); border-top: 4px solid #4cc9f0;" do %>
+          <div class="icon-wrap" style="width: 80px; height: 80px; background: rgba(76,201,240,0.1); border-radius: 50%; color: #4cc9f0; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; transition: var(--transition);">
+            <i class="fas fa-building"></i>
+          </div>
+          <h2 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--dark);">Riverside</h2>
+          <p style="color: var(--gray);">Team 198</p>
+        <% end %>
+
+        <!-- St Charles Card -->
+        <%= link_to screen_analysis_path(209), class: "team-hub-card", style: "background: white; border-radius: var(--border-radius); padding: 3rem 2rem; text-align: center; text-decoration: none; color: inherit; box-shadow: var(--shadow); transition: var(--transition); border-top: 4px solid #7209b7;" do %>
+          <div class="icon-wrap" style="width: 80px; height: 80px; background: rgba(114,9,183,0.1); border-radius: 50%; color: #7209b7; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; transition: var(--transition);">
+            <i class="fas fa-hospital"></i>
+          </div>
+          <h2 style="font-weight: 700; margin-bottom: 0.5rem; color: var(--dark);">St Charles</h2>
+          <p style="color: var(--gray);">Team 209</p>
+        <% end %>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<style>
+  .team-hub-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  }
+  .team-hub-card:hover .icon-wrap {
+    transform: scale(1.1);
+  }
+</style>

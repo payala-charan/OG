@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File to XLSX Converter</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --light: #f8f9fc;
+      --success: #06d6a0;
+      --danger: #ef233c;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--dark);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .converter-container {
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+    }
+
+    .header-section {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .header-section h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-section p {
+      color: var(--gray);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .upload-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 3rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .upload-area {
+      border: 2px dashed var(--primary-light);
+      border-radius: calc(var(--border-radius) - 4px);
+      padding: 4rem 2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      background: rgba(67, 97, 238, 0.02);
+      margin-bottom: 2rem;
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+      background: rgba(67, 97, 238, 0.05);
+      border-color: var(--primary);
+    }
+
+    .upload-icon {
+      font-size: 4rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .upload-text h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.2rem;
+      color: var(--dark);
+    }
+
+    .upload-text p {
+      margin: 0;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    .supported-formats {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .format-badge {
+      background: var(--light);
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      border: 1px solid rgba(67, 97, 238, 0.1);
+    }
+
+    .btn-convert {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-convert:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+    }
+
+    .btn-convert:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-preview {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--light);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .file-preview.active {
+      display: flex;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .file-icon {
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .file-name {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .file-size {
+      font-size: 0.85rem;
+      color: var(--gray);
+    }
+
+    .remove-file {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: var(--transition);
+    }
+
+    .remove-file:hover {
+      transform: scale(1.1);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray);
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 2rem;
+      transition: var(--transition);
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .alert-danger {
+      background: rgba(239, 35, 60, 0.1);
+      color: var(--danger);
+      border: 1px solid rgba(239, 35, 60, 0.2);
+    }
+
+    .alert-success {
+      background: rgba(6, 214, 160, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(6, 214, 160, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="converter-container">
+    <%= link_to features_path, class: "back-link" do %>
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    <% end %>
+
+    <div class="header-section">
+      <h1>Universal XLSX Converter</h1>
+      <p>Transform your documents, spreadsheets, and text files into a clean Excel format instantly.</p>
+    </div>
+
+    <% if flash[:alert] %>
+      <div class="alert alert-danger"><%= flash[:alert] %></div>
+    <% end %>
+    <% if flash[:notice] %>
+      <div class="alert alert-success"><%= flash[:notice] %></div>
+    <% end %>
+
+    <div class="upload-card">
+      <%= form_with url: convert_file_conversions_path, method: :post, local: true, multipart: true, id: "conversion-form", data: { turbo: false } do |f| %>
+        
+        <div class="upload-area" id="drop-zone" onclick="document.getElementById('file-upload').click()">
+          <div class="upload-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <div class="upload-text">
+            <h3>Drag & Drop your file here</h3>
+            <p>or click to browse from your computer</p>
+          </div>
+          <div class="supported-formats">
+            <span class="format-badge">.CSV</span>
+            <span class="format-badge">.TXT</span>
+            <span class="format-badge">.PDF</span>
+            <span class="format-badge">.DOCX</span>
+          </div>
+        </div>
+
+        <%= f.file_field :file, id: "file-upload", class: "file-input", accept: ".csv,.txt,.pdf,.docx,.doc" %>
+
+        <div class="file-preview" id="file-preview">
+          <div class="file-info">
+            <i class="fas fa-file-alt file-icon"></i>
+            <div>
+              <div class="file-name" id="file-name">filename.txt</div>
+              <div class="file-size" id="file-size">1.2 MB</div>
+            </div>
+          </div>
+          <button type="button" class="remove-file" id="remove-file">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <button type="submit" class="btn-convert" id="submit-btn" disabled>
+          <i class="fas fa-sync-alt"></i> Convert to XLSX
+        </button>
+
+      <% end %>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-upload');
+      const filePreview = document.getElementById('file-preview');
+      const fileName = document.getElementById('file-name');
+      const fileSize = document.getElementById('file-size');
+      const removeBtn = document.getElementById('remove-file');
+      const submitBtn = document.getElementById('submit-btn');
+
+      // Handle file selection
+      fileInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+          handleFile(this.files[0]);
+        }
+      });
+
+      // Handle drag and drop
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+      });
+
+      dropZone.addEventListener('drop', function(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files[0]) {
+          fileInput.files = files; // Update input files
+          handleFile(files[0]);
+        }
+      });
+
+      // Remove file
+      removeBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent opening file dialog
+        fileInput.value = '';
+        dropZone.style.display = 'block';
+        filePreview.classList.remove('active');
+        submitBtn.disabled = true;
+      });
+
+      function handleFile(file) {
+        dropZone.style.display = 'none';
+        filePreview.classList.add('active');
+        fileName.textContent = file.name;
+        
+        // Format size
+        let size = file.size;
+        let ext = 'Bytes';
+        if (size > 1024) { size /= 1024; ext = 'KB'; }
+        if (size > 1024) { size /= 1024; ext = 'MB'; }
+        fileSize.textContent = size.toFixed(2) + ' ' + ext;
+
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <%= csrf_meta_tags %>
+  <title>File Upload Center</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --danger: #f72585;
+      --warning: #ff9e00;
+      --success: #06d6a0;
+      --light: #f8f9fc;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.4s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--dark);
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header Styles */
+    .header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .header-text h1 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-text p {
+      color: var(--gray);
+      font-size: 1.1rem;
+    }
+
+    .back-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Upload Card */
+    .upload-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-top: 4px solid transparent;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      border-top: 4px solid var(--primary);
+    }
+
+    .upload-header {
+      margin-bottom: 2rem;
+    }
+
+    .upload-header h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-header p {
+      color: var(--gray);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .form-input, .form-select {
+      padding: 0.8rem 1rem;
+      border: 2px solid var(--primary-light);
+      border-radius: var(--border-radius);
+      background: white;
+      color: var(--dark);
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .file-input {
+      position: absolute;
+      left: -9999px;
+    }
+
+    .file-input-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1rem;
+      border: 2px dashed var(--primary-light);
+      border-radius: var(--border-radius);
+      background: rgba(67, 97, 238, 0.02);
+      color: var(--primary);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .file-input-label:hover {
+      border-color: var(--primary);
+      background: rgba(67, 97, 238, 0.05);
+    }
+
+    .file-selected {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--success);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .upload-btn {
+      background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      float: right;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(6, 214, 160, 0.4);
+    }
+
+    .upload-btn:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Flash Messages */
+    .flash-messages {
+      margin-bottom: 2rem;
+    }
+
+    .flash-alert {
+      background: rgba(247, 37, 133, 0.1);
+      border: 1px solid rgba(247, 37, 133, 0.3);
+      border-left: 4px solid var(--danger);
+      color: var(--danger);
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .flash-notice {
+      background: rgba(6, 214, 160, 0.1);
+      border: 1px solid rgba(6, 214, 160, 0.3);
+      border-left: 4px solid var(--success);
+      color: var(--success);
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Filters Section */
+    .filters-section {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 300px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 3rem;
+      border: 2px solid var(--primary-light);
+      border-radius: 50px;
+      background: white;
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+    }
+
+    .filter-controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 0.8rem 1rem;
+      border: 2px solid var(--primary-light);
+      border-radius: var(--border-radius);
+      background: white;
+      color: var(--dark);
+      font-weight: 500;
+      min-width: 150px;
+      transition: var(--transition);
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Table Section */
+    .table-section {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .table-header h3 {
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .table-header p {
+      color: var(--gray);
+    }
+
+    .table-wrapper {
+      overflow: auto;
+      max-height: 600px;
+    }
+
+    .files-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .files-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .files-table th {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    .files-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .files-table tbody tr {
+      transition: var(--transition);
+    }
+
+    .files-table tbody tr:hover {
+      background: rgba(67, 97, 238, 0.03);
+      transform: translateX(5px);
+    }
+
+    .file-name {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .file-quarter, .file-category {
+      color: var(--gray);
+    }
+
+    .action-btn {
+      padding: 0.5rem 1rem;
+      border: 2px solid;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .download-btn {
+      background: rgba(67, 97, 238, 0.1);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .download-btn:hover {
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+    }
+
+    .delete-btn {
+      background: rgba(247, 37, 133, 0.1);
+      border-color: var(--danger);
+      color: var(--danger);
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .no-file {
+      color: var(--gray);
+      font-style: italic;
+      font-size: 0.8rem;
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--gray);
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .header-text h1 {
+        font-size: 2rem;
+      }
+
+      .upload-card {
+        padding: 1.5rem;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .upload-btn {
+        float: none;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        min-width: auto;
+      }
+
+      .filter-controls {
+        justify-content: center;
+      }
+
+      .actions-cell {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .files-table {
+        font-size: 0.8rem;
+      }
+
+      .files-table th, .files-table td {
+        padding: 0.8rem 0.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .filter-controls {
+        flex-direction: column;
+      }
+
+      .filter-select {
+        min-width: auto;
+      }
+    }
+    .modal-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+    }
+    .modal-box {
+      background: white; padding: 20px; border-radius: 10px; width: 300px; text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>File Upload Center</h1>
+          <p>Manage and organize your files with advanced filtering and search capabilities</p>
+        </div>
+        <%= link_to features_path, class: "back-btn" do %>
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        <% end %>
+      </div>
+    </header>
+
+    <!-- Upload Card -->
+    <section class="upload-card">
+      <div class="upload-header">
+        <h2>Upload New File</h2>
+        <p>Fill in the details and select your file to upload it to the system</p>
+      </div>
+
+      <%= form_with scope: :uploaded_file, url: uploaded_files_path, method: :post, local: true, html: { multipart: true, onsubmit: "validateForm(event)", class: "upload-form" } do |f| %>
+        <div class="form-grid">
+          <div class="form-group">
+            <%= f.label :file_name, "File Name", class: "form-label" %>
+            <%= f.text_field :file_name, id: "file_name", class: "form-input", placeholder: "Enter file name" %>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :quarter, "Quarter", class: "form-label" %>
+            <%= f.select :quarter, ["Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4", "Global"], {}, class: "form-select", id: "quarter" %>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :category, "Category", class: "form-label" %>
+            <%= f.select :category, ["Biosimilars", "Catalogs", "Crosswalks", "Pricings", "Others"], {}, class: "form-select", id: "category" %>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :file, "Select File", class: "form-label" %>
+            <div class="file-input-wrapper">
+              <%= f.file_field :file, id: "file_upload", class: "file-input" %>
+              <label for="file_upload" class="file-input-label">
+                <i class="fas fa-cloud-upload-alt"></i>
+                Choose File
+              </label>
+            </div>
+            <div id="fileSelected" class="file-selected" style="display: none;">
+              <i class="fas fa-check-circle"></i>
+              <span id="selectedFileName">No file selected</span>
+            </div>
+          </div>
+        </div>
+
+        <%= f.submit "Upload File", id: "uploadSubmit", class: "upload-btn", disabled: true %>
+        <div style="clear: both;"></div>
+      <% end %>
+    </section>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+      <% if flash[:alert] %>
+        <div class="flash-alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%= flash[:alert] %>
+        </div>
+      <% elsif flash[:notice] %>
+        <div class="flash-notice">
+          <i class="fas fa-check-circle"></i>
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search by file name..." class="search-input">
+      </div>
+
+      <div class="filter-controls">
+        <select id="quarterFilter" class="filter-select">
+          <option value="">All Quarters</option>
+          <option value="quarter 1">Quarter 1</option>
+          <option value="quarter 2">Quarter 2</option>
+          <option value="quarter 3">Quarter 3</option>
+          <option value="quarter 4">Quarter 4</option>
+          <option value="global">Global</option>
+        </select>
+
+        <select id="categoryFilter" class="filter-select">
+          <option value="">All Categories</option>
+          <option value="biosimilars">Biosimilars</option>
+          <option value="catalogs">Catalogs</option>
+          <option value="crosswalks">Crosswalks</option>
+          <option value="pricings">Pricings</option>
+          <option value="others">Others</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Files Table -->
+    <section class="table-section">
+      <div class="table-header">
+        <h3>Uploaded Files</h3>
+        <p>All your uploaded files are listed below. Use search and filters to find specific files.</p>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="files-table">
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Quarter</th>
+              <th>Category</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="filesTableBody">
+            <% if @files.any? %>
+              <% @files.order(created_at: :desc).each do |file| %>
+                <tr>
+                  <td class="file-name"><%= file.file_name %></td>
+                  <td class="file-quarter"><%= file.quarter %></td>
+                  <td class="file-category"><%= file.category %></td>
+                  <td class="actions-cell">
+                    <% if file.file.attached? %>
+                      <%= link_to rails_blob_path(file.file, disposition: "attachment"), class: "action-btn download-btn" do %>
+                        <i class="fas fa-download"></i> Download
+                      <% end %>
+                    <% else %>
+                      <span class="no-file">No File</span>
+                    <% end %>
+                    <button onclick="openDeleteModal('<%= file.id %>', '<%= file.file_name %>')">
+                      <i class="fas fa-trash"></i> Delete
+                    </button>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="4">
+                  <div class="empty-state">
+                    <div class="empty-icon">
+                      <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h3>No Files Uploaded Yet</h3>
+                    <p>Upload your first file to get started</p>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <!-- Delete Password Modal -->
+      <div id="deleteModal" style="display:none;" class="modal-bg">
+        <div class="modal-box">
+          <h3>Enter Password to Delete File</h3>
+
+       <%= form_with url: delete_with_password_uploaded_file_path,
+              method: :post,
+              id: "deleteForm",
+                      local: true do %>
+
+          <%= hidden_field_tag :file_id, nil, id: "file_id" %>
+          <%= password_field_tag :password, nil, placeholder: "Enter password", required: true %>
+
+          <button type="submit">Delete</button>
+        <% end %>
+
+
+
+
+        <button onclick="closeDeleteModal()">Cancel</button>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <script>
+    // FRONTEND VALIDATION BEFORE UPLOAD
+    function validateForm(event) {
+      const fileName = document.getElementById("file_name").value.trim();
+      const quarter = document.getElementById("quarter").value;
+      const category = document.getElementById("category").value;
+      const fileInput = document.getElementById("file_upload");
+
+      if (!fileName || !quarter || !category || !fileInput.files.length) {
+        event.preventDefault();
+        showValidationError("⚠️ Please fill all fields and select a file before uploading.");
+        return false;
+      }
+      return true;
+    }
+
+    function showValidationError(message) {
+      // Remove existing error if any
+      const existingError = document.querySelector('.validation-error');
+      if (existingError) existingError.remove();
+
+      // Create error message
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'flash-alert validation-error';
+      errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+      
+      // Insert before the form
+      const form = document.querySelector('.upload-form');
+      form.parentNode.insertBefore(errorDiv, form);
+
+      // Remove after 5 seconds
+      setTimeout(() => {
+        errorDiv.remove();
+      }, 5000);
+    }
+
+    // File input handling
+    document.getElementById('file_upload').addEventListener('change', function(e) {
+      const fileSelected = document.getElementById('fileSelected');
+      const fileName = document.getElementById('selectedFileName');
+      const uploadBtn = document.getElementById('uploadSubmit');
+
+      if (this.files.length > 0) {
+        fileSelected.style.display = 'flex';
+        fileName.textContent = this.files[0].name;
+        uploadBtn.disabled = false;
+        
+        // Add success animation
+        fileSelected.animate([
+          { transform: 'scale(0.95)', opacity: 0.8 },
+          { transform: 'scale(1)', opacity: 1 }
+        ], { duration: 300, easing: 'ease-out' });
+      } else {
+        fileSelected.style.display = 'none';
+        uploadBtn.disabled = true;
+      }
+    });
+
+    // LIVE SEARCH FUNCTIONALITY
+    function liveSearch() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#filesTableBody tr");
+
+      rows.forEach(row => {
+        if (row.cells.length > 1) { // Skip empty state row
+          const name = row.cells[0].textContent.toLowerCase();
+          row.style.display = name.includes(query) ? "" : "none";
+        }
+      });
+    }
+
+    // FILTER FUNCTIONALITY
+    function applyFilters() {
+      const quarter = document.getElementById("quarterFilter").value.toLowerCase();
+      const category = document.getElementById("categoryFilter").value.toLowerCase();
+      const rows = document.querySelectorAll("#filesTableBody tr");
+
+      rows.forEach(row => {
+        if (row.cells.length > 1) { // Skip empty state row
+          const rowQuarter = row.cells[1].textContent.toLowerCase();
+          const rowCategory = row.cells[2].textContent.toLowerCase();
+          const matchesQuarter = !quarter || rowQuarter === quarter;
+          const matchesCategory = !category || rowCategory === category;
+          row.style.display = matchesQuarter && matchesCategory ? "" : "none";
+        }
+      });
+    }
+
+    // Event listeners for search and filters
+    document.getElementById('searchInput').addEventListener('input', liveSearch);
+    document.getElementById('quarterFilter').addEventListener('change', applyFilters);
+    document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+
+    // Initialize file input label click
+    document.querySelector('.file-input-label').addEventListener('click', function() {
+      document.getElementById('file_upload').click();
+    });
+    //Password for the deletion of a file
+   function openDeleteModal(fileId) {
+      document.getElementById("file_id").value = fileId;
+      document.getElementById("deleteModal").style.display = "block";
+    }
+    function closeDeleteModal() {
+      document.getElementById("deleteModal").style.display = "none";
+    }
+
+
+
+  </script>
+</body>
+</html>

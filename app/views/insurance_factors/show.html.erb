@@ -1,0 +1,11 @@
+<h1>Details</h1>
+
+<p><strong>Primary Payor:</strong> <%= @insurance_factor.primary_payor_name %></p>
+<p><strong>Plan:</strong> <%= @insurance_factor.benefit_plan_name %></p>
+<p><strong>Category:</strong> <%= @insurance_factor.category %></p>
+<p><strong>Rate %:</strong> <%= @insurance_factor.rate_percent %></p>
+<p><strong>Factor:</strong> <%= @insurance_factor.insurance_factor %></p>
+<p><strong>Team:</strong> <%= @insurance_factor.team_id %></p>
+
+<%= link_to "Edit", edit_insurance_factor_path(@insurance_factor) %> |
+<%= link_to "Back", insurance_factors_path %>

@@ -1,0 +1,858 @@
+<div class="upload-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Payors and Their Insurances</h1>
+        <p>Manage and view all payor information and their associated insurances</p>
+      </div>
+      <%= link_to features_path, class: "back-btn" do %>
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      <% end %>
+    </div>
+  </header>
+
+  <!-- Upload Card -->
+  <section class="upload-card">
+    <div class="upload-header">
+      <div class="upload-icon">
+        <i class="fas fa-building"></i>
+      </div>
+      <div class="upload-text">
+        <h2>Upload Payors Excel File</h2>
+        <p>Supported formats: .xlsx, .xls (Maximum file size: 10MB)</p>
+      </div>
+    </div>
+
+    <%= form_with url: upload_payors_path, local: true, multipart: true, class: "upload-form", id: "uploadForm" do |form| %>
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-placeholder">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <h3>Drag & Drop Your Payors File</h3>
+          <p>or click to browse your computer</p>
+        </div>
+        <%= form.file_field :file, id: "fileInput", class: "file-input", accept: ".xlsx,.xls" %>
+        
+        <div id="fileInfo" class="file-info" style="display: none;">
+          <div class="file-details">
+            <i class="fas fa-file-excel"></i>
+            <div class="file-meta">
+              <div class="file-name" id="fileName">No file selected</div>
+              <div class="file-size" id="fileSize">0 KB</div>
+            </div>
+            <button type="button" id="removeFile" class="remove-btn">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="upload-actions">
+        <%= form.submit "Upload Payors File", class: "upload-btn", id: "uploadBtn", disabled: true %>
+        
+        <div class="upload-tips">
+          <div class="tip-item">
+            <i class="fas fa-info-circle"></i>
+            <span>Ensure your Excel file contains payor names and insurance information</span>
+          </div>
+          <div class="tip-item">
+            <i class="fas fa-database"></i>
+            <span>Data will be validated and processed automatically</span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+  <!-- Flash Messages -->
+  <% if flash[:alert] || flash[:notice] %>
+    <div class="flash-messages">
+      <% if flash[:alert] %>
+        <div class="flash-message alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="flash-message notice">
+          <i class="fas fa-check-circle"></i>
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Data Table Section -->
+  <section class="data-section">
+    <div class="section-header">
+      <h3>Payors Overview</h3>
+      <p class="section-subtitle">Total <%= @payors.count %> payor<%= 's' if @payors.count != 1 %> registered</p>
+    </div>
+
+    <% if @payors.any? %>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="table-header">
+                <div class="header-content">
+                  <i class="fas fa-user-tie"></i>
+                  Payor Name
+                </div>
+              </th>
+              <th class="table-header">
+                <div class="header-content">
+                  <i class="fas fa-tag"></i>
+                  Generic Name
+                </div>
+              </th>
+              <th class="table-header">
+                <div class="header-content">
+                  <i class="fas fa-shield-alt"></i>
+                  Insurances
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @payors.each do |payor| %>
+              <tr class="table-row">
+                <td class="table-cell">
+                  <div class="cell-content">
+                    <i class="fas fa-building cell-icon"></i>
+                    <span class="cell-text"><%= payor.name.capitalize %></span>
+                  </div>
+                </td>
+                <td class="table-cell">
+                  <div class="cell-content">
+                    <i class="fas fa-file-signature cell-icon"></i>
+                    <span class="cell-text"><%= payor.generic_name.capitalize %></span>
+                  </div>
+                </td>
+                <td class="table-cell">
+                  <div class="cell-content">
+                    <i class="fas fa-list-ul cell-icon"></i>
+                    <div class="insurance-tags">
+                      <% payor.insurances.map { |i| i.name.capitalize }.each do |insurance| %>
+                        <span class="insurance-tag"><%= insurance %></span>
+                      <% end %>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-database"></i>
+        </div>
+        <h4>No Payors Found</h4>
+        <p>Upload an Excel file to see payor data here</p>
+      </div>
+    <% end %>
+  </section>
+</div>
+
+<style>
+  /* Reuse all existing CSS variables from the upload component */
+  :root {
+    --primary: #4361ee;
+    --primary-light: #6c8aff;
+    --primary-dark: #3a56d4;
+    --secondary: #7209b7;
+    --accent: #4cc9f0;
+    --danger: #f72585;
+    --warning: #ff9e00;
+    --success: #06d6a0;
+    --light: #f8f9fc;
+    --dark: #2b2d42;
+    --gray: #8d99ae;
+    --border-radius: 16px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.4s ease;
+  }
+
+  .upload-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* Header Styles - Same as upload component */
+  .header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .header-text h1 {
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-text p {
+    color: var(--gray);
+    font-size: 1.1rem;
+  }
+
+  .back-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+  }
+
+  .back-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+    color: white;
+    text-decoration: none;
+  }
+
+  /* Upload Card - Same as upload component */
+  .upload-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 3rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border-top: 4px solid var(--primary);
+  }
+
+  .upload-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .upload-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .upload-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 2rem;
+  }
+
+  .upload-text h2 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .upload-text p {
+    color: var(--gray);
+    font-size: 1rem;
+  }
+
+  /* Upload Area - Same as upload component */
+  .upload-area {
+    border: 3px dashed var(--primary-light);
+    border-radius: var(--border-radius);
+    padding: 3rem 2rem;
+    text-align: center;
+    background: rgba(67, 97, 238, 0.02);
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .upload-area:hover {
+    border-color: var(--primary);
+    background: rgba(67, 97, 238, 0.05);
+  }
+
+  .upload-area.dragover {
+    border-color: var(--success);
+    background: rgba(6, 214, 160, 0.05);
+    transform: scale(1.02);
+  }
+
+  .upload-placeholder i {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+  }
+
+  .upload-placeholder h3 {
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+  }
+
+  .upload-placeholder p {
+    color: var(--gray);
+    font-size: 0.9rem;
+  }
+
+  .file-input {
+    position: absolute;
+    left: -9999px;
+  }
+
+  /* File Info - Same as upload component */
+  .file-info {
+    animation: slideDown 0.3s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .file-details {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: var(--light);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--success);
+  }
+
+  .file-details i {
+    font-size: 2rem;
+    color: var(--success);
+  }
+
+  .file-meta {
+    flex: 1;
+  }
+
+  .file-name {
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.3rem;
+  }
+
+  .file-size {
+    color: var(--gray);
+    font-size: 0.8rem;
+  }
+
+  .remove-btn {
+    background: rgba(247, 37, 133, 0.1);
+    border: 2px solid var(--danger);
+    color: var(--danger);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .remove-btn:hover {
+    background: var(--danger);
+    color: white;
+  }
+
+  /* Upload Actions - Same as upload component */
+  .upload-actions {
+    text-align: center;
+  }
+
+  .upload-btn {
+    background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 1rem 3rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .upload-btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(6, 214, 160, 0.4);
+  }
+
+  .upload-btn:disabled {
+    background: var(--gray);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .upload-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 1rem;
+    background: var(--light);
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--accent);
+  }
+
+  .tip-item i {
+    color: var(--accent);
+    margin-top: 0.2rem;
+  }
+
+  .tip-item span {
+    color: var(--gray);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  /* Flash Messages - Same as upload component */
+  .flash-messages {
+    margin-bottom: 2rem;
+  }
+
+  .flash-message {
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: slideIn 0.5s ease;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .flash-message.alert {
+    background: rgba(247, 37, 133, 0.1);
+    border: 1px solid rgba(247, 37, 133, 0.3);
+    border-left: 4px solid var(--danger);
+    color: var(--danger);
+  }
+
+  .flash-message.notice {
+    background: rgba(6, 214, 160, 0.1);
+    border: 1px solid rgba(6, 214, 160, 0.3);
+    border-left: 4px solid var(--success);
+    color: var(--success);
+  }
+
+  /* Data Section */
+  .data-section {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    margin-top: 2rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+  }
+
+  .data-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-header h3 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-subtitle {
+    color: var(--gray);
+    font-size: 1rem;
+  }
+
+  /* Table Container */
+  .table-container {
+    overflow-x: auto;
+    border-radius: var(--border-radius);
+    background: var(--light);
+    padding: 1px;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+
+  /* Table Header */
+  .table-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    padding: 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .table-header:first-child {
+    border-top-left-radius: var(--border-radius);
+  }
+
+  .table-header:last-child {
+    border-top-right-radius: var(--border-radius);
+  }
+
+  /* Table Rows */
+  .table-row {
+    border-bottom: 1px solid rgba(141, 153, 174, 0.1);
+    transition: var(--transition);
+  }
+
+  .table-row:hover {
+    background: rgba(67, 97, 238, 0.03);
+    transform: scale(1.01);
+  }
+
+  .table-row:last-child {
+    border-bottom: none;
+  }
+
+  .table-cell {
+    padding: 1.5rem;
+    color: var(--dark);
+  }
+
+  .cell-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cell-icon {
+    color: var(--primary);
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+  }
+
+  .cell-text {
+    font-weight: 500;
+  }
+
+  /* Insurance Tags */
+  .insurance-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .insurance-tag {
+    background: rgba(6, 214, 160, 0.1);
+    color: var(--success);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(6, 214, 160, 0.2);
+    transition: var(--transition);
+  }
+
+  .insurance-tag:hover {
+    background: var(--success);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--gray);
+  }
+
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(141, 153, 174, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: var(--gray);
+    font-size: 2rem;
+  }
+
+  .empty-state h4 {
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .upload-container {
+      padding: 1rem;
+    }
+
+    .header-content {
+      flex-direction: column;
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    .header-text h1 {
+      font-size: 2rem;
+    }
+
+    .upload-card {
+      padding: 2rem;
+    }
+
+    .upload-area {
+      padding: 2rem 1rem;
+    }
+
+    .data-section {
+      padding: 1.5rem;
+    }
+
+    .table-header {
+      padding: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .table-cell {
+      padding: 1rem;
+    }
+
+    .cell-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .insurance-tags {
+      justify-content: flex-start;
+    }
+
+    .header-content {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header-text h1 {
+      font-size: 1.8rem;
+    }
+
+    .upload-card {
+      padding: 1.5rem;
+    }
+
+    .file-details {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    .upload-tips {
+      text-align: left;
+    }
+
+    .data-section {
+      padding: 1rem;
+    }
+
+    .table-header {
+      padding: 0.8rem;
+    }
+
+    .table-cell {
+      padding: 0.8rem;
+    }
+
+    .insurance-tag {
+      font-size: 0.7rem;
+      padding: 0.3rem 0.6rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const removeFile = document.getElementById('removeFile');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadForm = document.getElementById('uploadForm');
+
+    // File input click
+    uploadArea.addEventListener('click', function(e) {
+      if (e.target !== removeFile) {
+        fileInput.click();
+      }
+    });
+
+    // Drag and drop functionality
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', function() {
+      uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      
+      if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        handleFileSelection(e.dataTransfer.files[0]);
+      }
+    });
+
+    // File input change
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files.length) {
+        handleFileSelection(fileInput.files[0]);
+      }
+    });
+
+    // Remove file
+    removeFile.addEventListener('click', function(e) {
+      e.stopPropagation();
+      fileInput.value = '';
+      fileInfo.style.display = 'none';
+      uploadBtn.disabled = true;
+    });
+
+    // Handle file selection
+    function handleFileSelection(file) {
+      if (!file) return;
+
+      // Validate file type
+      const validTypes = ['.xlsx', '.xls'];
+      const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+      
+      if (!validTypes.includes(fileExtension)) {
+        alert('Please select a valid Excel file (.xlsx or .xls)');
+        fileInput.value = '';
+        return;
+      }
+
+      // Validate file size (10MB)
+      const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+      if (file.size > maxSize) {
+        alert('File size exceeds 10MB limit. Please choose a smaller file.');
+        fileInput.value = '';
+        return;
+      }
+
+      // Display file info
+      fileName.textContent = file.name;
+      fileSize.textContent = formatFileSize(file.size);
+      fileInfo.style.display = 'block';
+      uploadBtn.disabled = false;
+
+      // Add success animation
+      fileInfo.animate([
+        { transform: 'scale(0.95)', opacity: 0.8 },
+        { transform: 'scale(1)', opacity: 1 }
+      ], { duration: 300, easing: 'ease-out' });
+    }
+
+    // Format file size
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // Form submission handling
+    uploadForm.addEventListener('submit', function(e) {
+      if (!fileInput.files.length) {
+        e.preventDefault();
+        alert('Please select a file to upload.');
+        return;
+      }
+
+      // Show loading state
+      uploadBtn.disabled = true;
+      uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    });
+  });
+</script>

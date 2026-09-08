@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payala Charan — Software Engineer | Professional Presentation</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        manrope: ['Manrope', 'sans-serif'],
+        playfair: ['Playfair Display', 'serif'],
+      },
+      colors: {
+        brand: { bg: '#E3DDD7', dark: '#1C1C1C', accent: '#6C5CE7', accentLight: '#A29BFE' }
+      }
+    }
+  }
+}
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Manrope', sans-serif; background: #0a0a0f; color: #fff; overflow: hidden; height: 100vh; }
+
+.slide { position: absolute; inset: 0; opacity: 0; transform: translateX(60px); transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; overflow-y: auto; }
+.slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+.slide.exit-left { opacity: 0; transform: translateX(-60px); }
+
+.slide::-webkit-scrollbar { width: 4px; }
+.slide::-webkit-scrollbar-track { background: transparent; }
+.slide::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+
+@keyframes slideUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes scaleIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes slideRight { 0% { opacity: 0; transform: translateX(-20px); } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(108,92,231,0.3); } 50% { box-shadow: 0 0 40px rgba(108,92,231,0.6); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+.animate-item { opacity: 0; transform: translateY(25px); }
+.slide.active .animate-item { animation: slideUp 0.6s ease-out forwards; }
+.slide.active .animate-item:nth-child(1) { animation-delay: 0.1s; }
+.slide.active .animate-item:nth-child(2) { animation-delay: 0.2s; }
+.slide.active .animate-item:nth-child(3) { animation-delay: 0.3s; }
+.slide.active .animate-item:nth-child(4) { animation-delay: 0.4s; }
+.slide.active .animate-item:nth-child(5) { animation-delay: 0.5s; }
+.slide.active .animate-item:nth-child(6) { animation-delay: 0.6s; }
+.slide.active .animate-item:nth-child(7) { animation-delay: 0.7s; }
+.slide.active .animate-item:nth-child(8) { animation-delay: 0.8s; }
+.slide.active .animate-item:nth-child(9) { animation-delay: 0.9s; }
+.slide.active .animate-item:nth-child(10) { animation-delay: 1.0s; }
+.slide.active .animate-item:nth-child(11) { animation-delay: 1.1s; }
+.slide.active .animate-item:nth-child(12) { animation-delay: 1.2s; }
+
+.glass-card { background: rgba(255,255,255,0.04); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
+.glass-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(108,92,231,0.3); transform: translateY(-4px); transition: all 0.4s ease; }
+
+.gradient-text { background: linear-gradient(135deg, #A29BFE, #6C5CE7, #fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.gradient-text-warm { background: linear-gradient(135deg, #fd79a8, #e17055, #fdcb6e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+.bg-grid { background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 40px 40px; }
+.bg-gradient-animated { background: linear-gradient(135deg, #0a0a0f, #1a1a2e, #16213e, #0a0a0f); background-size: 400% 400%; animation: gradientShift 15s ease infinite; }
+
+.accent-border { border-left: 3px solid #6C5CE7; }
+.accent-dot { width: 8px; height: 8px; border-radius: 50%; background: #6C5CE7; display: inline-block; }
+
+.progress-bar { height: 3px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, #6C5CE7, #A29BFE); border-radius: 10px; transition: width 0.5s ease; }
+
+.nav-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); cursor: pointer; transition: all 0.3s ease; }
+.nav-dot.active { background: #6C5CE7; width: 30px; border-radius: 5px; }
+
+.timeline-dot { width: 14px; height: 14px; border-radius: 50%; background: #6C5CE7; border: 3px solid #1a1a2e; z-index: 10; position: relative; }
+.timeline-line { position: absolute; left: 6px; top: 14px; bottom: 0; width: 2px; background: linear-gradient(to bottom, #6C5CE7, rgba(108,92,231,0.1)); }
+
+.tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; background: rgba(108,92,231,0.15); color: #A29BFE; border: 1px solid rgba(108,92,231,0.2); }
+.tag-green { background: rgba(0,184,148,0.15); color: #55efc4; border-color: rgba(0,184,148,0.2); }
+.tag-orange { background: rgba(225,112,85,0.15); color: #fab1a0; border-color: rgba(225,112,85,0.2); }
+.tag-pink { background: rgba(253,121,168,0.15); color: #fd79a8; border-color: rgba(253,121,168,0.2); }
+
+.stat-card { position: relative; overflow: hidden; }
+.stat-card::before { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(108,92,231,0.1), transparent); border-radius: 50%; }
+
+.img-cover { object-fit: cover; width: 100%; height: 100%; }
+
+.keyboard-hint { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.1em; }
+</style>
+</head>
+<body class="bg-gradient-animated bg-grid">
+
+<!-- Navigation Bar -->
+<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-10 py-4" style="background: rgba(10,10,15,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05);">
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">PC</div>
+    <span class="text-sm font-semibold tracking-wide text-white/80">PAYALA CHARAN</span>
+  </div>
+  <div class="flex items-center gap-3" id="navDots"></div>
+  <div class="flex items-center gap-4">
+    <span class="text-xs text-white/40 font-manrope" id="slideCounter">01 / 13</span>
+    <div class="flex gap-2">
+      <button onclick="prevSlide()" class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all duration-300">
+        <iconify-icon icon="solar:arrow-left-linear" width="14" class="text-white/60"></iconify-icon>
+      </button>
+      <button onclick="nextSlide()" class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all duration-300">
+        <iconify-icon icon="solar:arrow-right-linear" width="14" class="text-white/60"></iconify-icon>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Progress Bar -->
+<div class="progress-bar fixed top-[65px] left-0 right-0 z-50">
+  <div class="progress-fill" id="progressFill" style="width: 7.7%"></div>
+</div>
+
+<!-- ==================== SLIDE 1: TITLE ==================== -->
+<div class="slide active" id="slide-0">
+  <div class="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <!-- Background Image -->
+    <div class="absolute inset-0">
+      <img src="https://picsum.photos/seed/techabstract/1920/1080.jpg" class="w-full h-full object-cover opacity-15" alt="">
+      <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-transparent to-[#0a0a0f]"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0f] via-transparent to-[#0a0a0f]"></div>
+    </div>
+    <!-- Floating Orbs -->
+    <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-purple-600/10 blur-[100px]" style="animation: float 6s ease-in-out infinite;"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-pink-600/10 blur-[80px]" style="animation: float 8s ease-in-out infinite 2s;"></div>
+    
+    <div class="relative z-10 text-center max-w-4xl mx-auto px-6">
+      <div class="animate-item mb-6">
+        <span class="tag mb-4">SOFTWARE ENGINEER · FULL-STACK DEVELOPER</span>
+      </div>
+      <h1 class="animate-item font-playfair text-6xl md:text-8xl lg:text-9xl font-bold tracking-tight leading-[0.95] mb-6">
+        <span class="gradient-text">Payala</span><br>
+        <span class="text-white">Charan</span>
+      </h1>
+      <p class="animate-item text-lg md:text-xl text-white/50 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
+        Professional Contributions & Growth Summary — Building robust financial analytics platforms with Ruby on Rails, AWS, and modern DevOps practices.
+      </p>
+      <div class="animate-item flex flex-wrap justify-center gap-3 mb-12">
+        <span class="px-4 py-2 rounded-full text-xs font-semibold bg-white/5 border border-white/10 text-white/60">Ruby on Rails</span>
+        <span class="px-4 py-2 rounded-full text-xs font-semibold bg-white/5 border border-white/10 text-white/60">AWS</span>
+        <span class="px-4 py-2 rounded-full text-xs font-semibold bg-white/5 border border-white/10 text-white/60">DevOps</span>
+        <span class="px-4 py-2 rounded-full text-xs font-semibold bg-white/5 border border-white/10 text-white/60">RSpec</span>
+        <span class="px-4 py-2 rounded-full text-xs font-semibold bg-white/5 border border-white/10 text-white/60">PostgreSQL</span>
+      </div>
+      <div class="animate-item flex items-center justify-center gap-2 text-white/30">
+        <iconify-icon icon="solar:mouse-minimalistic-linear" width="18"></iconify-icon>
+        <span class="text-xs tracking-widest uppercase">Scroll or press → to navigate</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 2: ABOUT ME ==================== -->
+<div class="slide" id="slide-1">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-20 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Left: Image + Info -->
+        <div class="animate-item">
+          <div class="relative">
+            <div class="w-full aspect-[4/5] max-w-md mx-auto rounded-3xl overflow-hidden border border-white/10" style="box-shadow: 0 0 60px rgba(108,92,231,0.15);">
+              <img src="https://picsum.photos/seed/developer-portrait/600/750.jpg" class="img-cover" alt="Payala Charan">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent"></div>
+              <div class="absolute bottom-6 left-6 right-6">
+                <h3 class="text-2xl font-bold text-white mb-1">Payala Charan</h3>
+                <p class="text-sm text-white/50">Software Engineer</p>
+              </div>
+            </div>
+            <!-- Floating Badge -->
+            <div class="absolute -bottom-4 -right-4 glass-card px-4 py-3 flex items-center gap-3" style="animation: pulse-glow 3s infinite;">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <iconify-icon icon="solar:code-bold" width="18" class="text-white"></iconify-icon>
+              </div>
+              <div>
+                <p class="text-xs text-white/40">Experience</p>
+                <p class="text-sm font-bold text-white">1+ Year</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Right: Details -->
+        <div>
+          <div class="animate-item mb-2">
+            <span class="tag">ABOUT ME</span>
+          </div>
+          <h2 class="animate-item font-playfair text-4xl md:text-5xl font-bold tracking-tight mb-6">
+            Crafting Code,<br><span class="gradient-text">Building Futures</span>
+          </h2>
+          <p class="animate-item text-base text-white/50 font-light leading-relaxed mb-8">
+            A passionate full-stack developer specializing in Ruby on Rails, AWS cloud infrastructure, and DevOps automation. Dedicated to building scalable, tested, and production-ready applications that drive real business value.
+          </p>
+          <div class="space-y-4">
+            <div class="animate-item glass-card p-5 flex items-start gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                <iconify-icon icon="solar:buildings-3-bold" width="22" class="text-purple-400"></iconify-icon>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-white mb-1">FAT Project</h4>
+                <p class="text-xs text-white/40">Financial Analytics Tool — Full-stack development with Rails backend, complex business logic & multi-user workflows</p>
+              </div>
+            </div>
+            <div class="animate-item glass-card p-5 flex items-start gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-pink-500/10 flex items-center justify-center flex-shrink-0">
+                <iconify-icon icon="solar:shield-check-bold" width="22" class="text-pink-400"></iconify-icon>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-white mb-1">OG Validation Tool</h4>
+                <p class="text-xs text-white/40">Automated data-validation app with scheduled checks, email alerts & ActiveRecord query visualization</p>
+              </div>
+            </div>
+            <div class="animate-item glass-card p-5 flex items-start gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                <iconify-icon icon="solar:cloud-bold" width="22" class="text-blue-400"></iconify-icon>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-white mb-1">AWS + DevOps</h4>
+                <p class="text-xs text-white/40">Actively upskilling — applied real-world AWS automation for Pricing Catalog file processing workflows</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 3: PROJECTS OVERVIEW ==================== -->
+<div class="slide" id="slide-2">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="text-center mb-14">
+        <div class="animate-item mb-3"><span class="tag">PROJECT PORTFOLIO</span></div>
+        <h2 class="animate-item font-playfair text-4xl md:text-5xl font-bold tracking-tight">Three Pillars of <span class="gradient-text">Impact</span></h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Card 1: FAT -->
+        <div class="animate-item glass-card overflow-hidden group">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://picsum.photos/seed/financial-analytics/600/400.jpg" class="img-cover transition-transform duration-700 group-hover:scale-110" alt="">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent"></div>
+            <div class="absolute top-4 left-4"><span class="tag-green">PRIMARY PROJECT</span></div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:chart-2-bold" width="20" class="text-green-400"></iconify-icon>
+              </div>
+              <h3 class="text-lg font-bold">FAT Project</h3>
+            </div>
+            <p class="text-sm text-white/40 mb-4">Financial Analytics Tool — Biosimilar Drug Analytics & Pricing Platform</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Rails</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">RSpec</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">PostgreSQL</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">AWS</span>
+            </div>
+          </div>
+        </div>
+        <!-- Card 2: OG Validation -->
+        <div class="animate-item glass-card overflow-hidden group">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://picsum.photos/seed/validation-tool/600/400.jpg" class="img-cover transition-transform duration-700 group-hover:scale-110" alt="">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent"></div>
+            <div class="absolute top-4 left-4"><span class="tag-orange">PERSONAL PROJECT</span></div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:verified-check-bold" width="20" class="text-orange-400"></iconify-icon>
+              </div>
+              <h3 class="text-lg font-bold">OG Validation Tool</h3>
+            </div>
+            <p class="text-sm text-white/40 mb-4">Automated data validation supporting app with scheduled checks & email alerts</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Rails</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">ActiveRecord</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Scheduler</span>
+            </div>
+          </div>
+        </div>
+        <!-- Card 3: AWS -->
+        <div class="animate-item glass-card overflow-hidden group">
+          <div class="relative h-48 overflow-hidden">
+            <img src="https://picsum.photos/seed/cloud-devops/600/400.jpg" class="img-cover transition-transform duration-700 group-hover:scale-110" alt="">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent"></div>
+            <div class="absolute top-4 left-4"><span class="tag-pink">SKILL UPGRADE</span></div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:cloud-bold" width="20" class="text-pink-400"></iconify-icon>
+              </div>
+              <h3 class="text-lg font-bold">AWS + DevOps</h3>
+            </div>
+            <p class="text-sm text-white/40 mb-4">Cloud infrastructure & DevOps practices — applied in real project workflows</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">EC2</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">S3</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Lambda</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">CI/CD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 4: FAT PROJECT OVERVIEW ==================== -->
+<div class="slide" id="slide-3">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
+        <!-- Left: Hero Image + Stats -->
+        <div class="lg:col-span-2 animate-item">
+          <div class="relative rounded-3xl overflow-hidden mb-6 border border-white/5" style="box-shadow: 0 0 40px rgba(108,92,231,0.1);">
+            <img src="https://picsum.photos/seed/fintech-dashboard/600/500.jpg" class="w-full aspect-[6/5] object-cover" alt="">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/50 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5">
+              <h3 class="font-playfair text-2xl font-bold mb-1">FAT Project</h3>
+              <p class="text-xs text-white/40">Financial Analytics Tool</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="glass-card p-4 text-center">
+              <p class="text-xl font-bold gradient-text">Full-Stack</p>
+              <p class="text-[10px] text-white/30 mt-1">Role</p>
+            </div>
+            <div class="glass-card p-4 text-center">
+              <p class="text-xl font-bold gradient-text">1 Year</p>
+              <p class="text-[10px] text-white/30 mt-1">Duration</p>
+            </div>
+            <div class="glass-card p-4 text-center">
+              <p class="text-xl font-bold gradient-text">Rails</p>
+              <p class="text-[10px] text-white/30 mt-1">Stack</p>
+            </div>
+          </div>
+        </div>
+        <!-- Right: Key Responsibilities -->
+        <div class="lg:col-span-3">
+          <div class="animate-item mb-3"><span class="tag-green">FAT PROJECT</span></div>
+          <h2 class="animate-item font-playfair text-3xl md:text-4xl font-bold tracking-tight mb-2">Key Responsibilities</h2>
+          <p class="animate-item text-sm text-white/40 mb-8">Biosimilar Drug Analytics & Pricing Platform — May 2025 to May 2026</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">Data Validation & QA across Q1–Q4 datasets</p>
+            </div>
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">Versioning System — full CRUD + multi-user access</p>
+            </div>
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">Filter Logic — Account Type, Hospital, Payor, Product</p>
+            </div>
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">Bulk Percentage Change with background jobs</p>
+            </div>
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">XLSX Export with data consistency checks</p>
+            </div>
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">N+1 Query optimization via Scout APM</p>
+            </div>
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">RSpec Unit Tests — 6+ model files, FactoryBot</p>
+            </div>
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">Admin Panel — Biosimilar Prices, PaperTrail</p>
+            </div>
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">Role-based Access Control for version ownership</p>
+            </div>
+            <div class="animate-item flex items-start gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:check-circle-bold" width="18" class="text-green-400 mt-0.5 flex-shrink-0"></iconify-icon>
+              <p class="text-sm text-white/60">AWS Automation — Pricing Catalog file processing</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 5: MONTHLY CONTRIBUTIONS ==================== -->
+<div class="slide" id="slide-4">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="text-center mb-12">
+        <div class="animate-item mb-3"><span class="tag-green">FAT PROJECT</span></div>
+        <h2 class="animate-item font-playfair text-3xl md:text-5xl font-bold tracking-tight">Monthly <span class="gradient-text">Contributions</span></h2>
+        <p class="animate-item text-sm text-white/40 mt-2">A 12-month journey of continuous delivery — May 2025 to April 2026</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-purple-400 mb-1">MAY 2025</p>
+          <p class="text-sm text-white/70 font-medium">Data validation & filter logic</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-purple-500/30 to-purple-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-purple-400 mb-1">JUN 2025</p>
+          <p class="text-sm text-white/70 font-medium">RSpec unit tests — all critical models</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-purple-500/30 to-purple-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-purple-400 mb-1">JUL 2025</p>
+          <p class="text-sm text-white/70 font-medium">Bug fixes, versioning groundwork, production QA</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-purple-500/30 to-purple-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-purple-400 mb-1">AUG 2025</p>
+          <p class="text-sm text-white/70 font-medium">Bulk % Change, RBAC, multi-user Versions</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-purple-500/30 to-purple-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-pink-400 mb-1">SEP 2025</p>
+          <p class="text-sm text-white/70 font-medium">Jobs/Interactors, UCH workflow, BART API testing</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-pink-500/30 to-pink-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-pink-400 mb-1">OCT 2025</p>
+          <p class="text-sm text-white/70 font-medium">Multi-tenant (team_id), Admin Panel enhancements</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-pink-500/30 to-pink-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-pink-400 mb-1">NOV 2025</p>
+          <p class="text-sm text-white/70 font-medium">Pricing Catalog uploads, Purchase Analytics merge</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-pink-500/30 to-pink-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-pink-400 mb-1">DEC 2025</p>
+          <p class="text-sm text-white/70 font-medium">PaperTrail versioning, Blended Cost logic</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-pink-500/30 to-pink-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-blue-400 mb-1">JAN 2026</p>
+          <p class="text-sm text-white/70 font-medium">NDC pricing, N+1 fixes, RuleEngine validation</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-blue-500/30 to-blue-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-blue-400 mb-1">FEB 2026</p>
+          <p class="text-sm text-white/70 font-medium">Analytics redesign, cost logic overhaul, APM</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-blue-500/30 to-blue-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-blue-400 mb-1">MAR 2026</p>
+          <p class="text-sm text-white/70 font-medium">AWS Pricing Catalog automation, AI Agent arch.</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-blue-500/30 to-blue-500/5"></div>
+        </div>
+        <div class="animate-item glass-card p-4 group">
+          <p class="text-[10px] font-bold text-blue-400 mb-1">APR 2026</p>
+          <p class="text-sm text-white/70 font-medium">PaperTrail QA, email workflows, full data checks</p>
+          <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-blue-500/30 to-blue-500/5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 6: KEY TECHNICAL ACHIEVEMENTS ==================== -->
+<div class="slide" id="slide-5">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="text-center mb-12">
+        <div class="animate-item mb-3"><span class="tag">ACHIEVEMENTS</span></div>
+        <h2 class="animate-item font-playfair text-3xl md:text-5xl font-bold tracking-tight">Key Technical <span class="gradient-text">Achievements</span></h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Versioning -->
+        <div class="animate-item glass-card p-7 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
+          <div class="relative">
+            <div class="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-4">
+              <iconify-icon icon="solar:git-branch-bold" width="22" class="text-purple-400"></iconify-icon>
+            </div>
+            <h3 class="text-lg font-bold mb-3">Versioning System <span class="text-xs text-white/30 font-normal">(End-to-End)</span></h3>
+            <ul class="space-y-2">
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot"></span>Version CRUD with filter persistence</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot"></span>Bulk % change via background jobs</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot"></span>Role-based: owner edit, others read-only</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot"></span>Multi-user validation & export</li>
+            </ul>
+          </div>
+        </div>
+        <!-- RSpec -->
+        <div class="animate-item glass-card p-7 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
+          <div class="relative">
+            <div class="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center mb-4">
+              <iconify-icon icon="solar:test-tube-bold" width="22" class="text-green-400"></iconify-icon>
+            </div>
+            <h3 class="text-lg font-bold mb-3">RSpec Testing Suite</h3>
+            <ul class="space-y-2">
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#55efc4"></span>Unit tests: 6+ model files</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#55efc4"></span>FactoryBot for test data generation</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#55efc4"></span>Edge case coverage & refactoring</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#55efc4"></span>Aligned with latest business logic</li>
+            </ul>
+          </div>
+        </div>
+        <!-- Data QA -->
+        <div class="animate-item glass-card p-7 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
+          <div class="relative">
+            <div class="w-12 h-12 rounded-2xl bg-orange-500/10 flex items-center justify-center mb-4">
+              <iconify-icon icon="solar:document-medicine-bold" width="22" class="text-orange-400"></iconify-icon>
+            </div>
+            <h3 class="text-lg font-bold mb-3">Data Validation & QA</h3>
+            <ul class="space-y-2">
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#fab1a0"></span>Q1–Q4 multi-dataset cross-validation</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#fab1a0"></span>NDC-HCPCS & ASP pricing checks</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#fab1a0"></span>Export XLS vs. frontend comparison</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#fab1a0"></span>Biosimilar pricing sheet preparation</li>
+            </ul>
+          </div>
+        </div>
+        <!-- Performance -->
+        <div class="animate-item glass-card p-7 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
+          <div class="relative">
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-4">
+              <iconify-icon icon="solar:rocket-2-bold" width="22" class="text-blue-400"></iconify-icon>
+            </div>
+            <h3 class="text-lg font-bold mb-3">Performance Optimization</h3>
+            <ul class="space-y-2">
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#74b9ff"></span>Resolved N+1 queries via Scout APM</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#74b9ff"></span>Service objects for complex controller logic</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#74b9ff"></span>Refactored helpers, reduced DB calls</li>
+              <li class="flex items-center gap-2 text-sm text-white/50"><span class="accent-dot" style="background:#74b9ff"></span>Async background job processing</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 7: VERSIONING WORKFLOW ==================== -->
+<div class="slide" id="slide-6">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Left: Description -->
+        <div>
+          <div class="animate-item mb-3"><span class="tag">WORKFLOW</span></div>
+          <h2 class="animate-item font-playfair text-3xl md:text-5xl font-bold tracking-tight mb-4">Versioning <span class="gradient-text">Feature</span></h2>
+          <p class="animate-item text-sm text-white/40 mb-8 leading-relaxed">End-to-end versioning workflow with role-based access, filter persistence, and async bulk processing for the FAT platform.</p>
+          <div class="animate-item rounded-2xl overflow-hidden border border-white/5 mb-6">
+            <img src="https://picsum.photos/seed/workflow-diagram/700/350.jpg" class="w-full aspect-[2/1] object-cover opacity-60" alt="">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent"></div>
+          </div>
+          <div class="animate-item glass-card p-5">
+            <h4 class="text-sm font-bold text-white/80 mb-2">Alert System</h4>
+            <p class="text-xs text-white/40">Unsaved-changes detection on Versions & Conversions screens; prompts before navigation or version switching.</p>
+          </div>
+        </div>
+        <!-- Right: Steps -->
+        <div class="space-y-4">
+          <div class="animate-item glass-card p-5 flex items-start gap-5 relative">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center flex-shrink-0 border border-purple-500/20">
+              <span class="text-lg font-bold gradient-text">1</span>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold mb-1">Apply Filters</h4>
+              <p class="text-xs text-white/40">Select Payor, Hospital, Product, Quarter to define the dataset scope</p>
+            </div>
+          </div>
+          <div class="animate-item glass-card p-5 flex items-start gap-5">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center flex-shrink-0 border border-purple-500/20">
+              <span class="text-lg font-bold gradient-text">2</span>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold mb-1">Create Version</h4>
+              <p class="text-xs text-white/40">Name + save with current filter state for future reference</p>
+            </div>
+          </div>
+          <div class="animate-item glass-card p-5 flex items-start gap-5">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center flex-shrink-0 border border-purple-500/20">
+              <span class="text-lg font-bold gradient-text">3</span>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold mb-1">Bulk Updates</h4>
+              <p class="text-xs text-white/40">Bulk % change via async background jobs for non-blocking operations</p>
+            </div>
+          </div>
+          <div class="animate-item glass-card p-5 flex items-start gap-5">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center flex-shrink-0 border border-purple-500/20">
+              <span class="text-lg font-bold gradient-text">4</span>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold mb-1">Resave / Edit</h4>
+              <p class="text-xs text-white/40">Owner edits; others get read-only view with RBAC enforcement</p>
+            </div>
+          </div>
+          <div class="animate-item glass-card p-5 flex items-start gap-5">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-500/5 flex items-center justify-center flex-shrink-0 border border-purple-500/20">
+              <span class="text-lg font-bold gradient-text">5</span>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold mb-1">Export XLSX</h4>
+              <p class="text-xs text-white/40">Download consistent, validated data with full integrity checks</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 8: TECHNICAL HIGHLIGHTS ==================== -->
+<div class="slide" id="slide-7">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="text-center mb-12">
+        <div class="animate-item mb-3"><span class="tag">DEEP DIVE</span></div>
+        <h2 class="animate-item font-playfair text-3xl md:text-5xl font-bold tracking-tight">Technical <span class="gradient-text">Highlights</span></h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Jobs & Interactors -->
+        <div class="animate-item glass-card p-7 relative overflow-hidden">
+          <div class="absolute -bottom-10 -right-10 opacity-5">
+            <iconify-icon icon="solar:bolt-bold" width="120" class="text-purple-400"></iconify-icon>
+          </div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:bolt-bold" width="20" class="text-yellow-400"></iconify-icon>
+              </div>
+              <h3 class="text-lg font-bold">Jobs & Interactors</h3>
+            </div>
+            <p class="text-sm text-white/40 leading-relaxed">Sidekiq background jobs for async bulk processing; Organizer pattern for clean, testable business logic flow.</p>
+          </div>
+        </div>
+        <!-- UCH Data Model -->
+        <div class="animate-item glass-card p-7 relative overflow-hidden">
+          <div class="absolute -bottom-10 -right-10 opacity-5">
+            <iconify-icon icon="solar:database-bold" width="120" class="text-blue-400"></iconify-icon>
+          </div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:database-bold" width="20" class="text-blue-400"></iconify-icon>
+              </div>
+              <h3 class="text-lg font-bold">UCH Data Model</h3>
+            </div>
+            <p class="text-sm text-white/40 leading-relaxed">UtilizationConversionHistory with version_name, accounting_period_id, team_id — supports per-user data isolation.</p>
+          </div>
+        </div>
+        <!-- Role-Based Access -->
+        <div class="animate-item glass-card p-7 relative overflow-hidden">
+          <div class="absolute -bottom-10 -right-10 opacity-5">
+            <iconify-icon icon="solar:shield-keyhole-bold" width="120" class="text-green-400"></iconify-icon>
+          </div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:shield-keyhole-bold" width="20" class="text-green-400"></iconify-icon>
+              </div>
+              <h3 class="text-lg font-bold">Role-Based Access</h3>
+            </div>
+            <p class="text-sm text-white/40 leading-relaxed">Version owner can edit/delete; other users get read-only access with appropriate UI restrictions.</p>
+          </div>
+        </div>
+        <!-- Alert System -->
+        <div class="animate-item glass-card p-7 relative overflow-hidden">
+          <div class="absolute -bottom-10 -right-10 opacity-5">
+            <iconify-icon icon="solar:bell-bold" width="120" class="text-pink-400"></iconify-icon>
+          </div>
+          <div class="relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:bell-bold" width="20" class="text-pink-400"></iconify-icon>
+              </div>
+              <h3 class="text-lg font-bold">Alert System</h3>
+            </div>
+            <p class="text-sm text-white/40 leading-relaxed">Unsaved-changes detection on Versions & Conversions screens; prompts before navigation or version switching.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Code Snippet Visual -->
+      <div class="animate-item mt-8 glass-card p-6 font-mono text-xs text-white/30 leading-relaxed overflow-x-auto">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+          <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+          <span class="ml-2 text-white/20 text-[10px]">versioning_workflow.rb</span>
+        </div>
+        <code>
+          <span class="text-purple-400">class</span> <span class="text-yellow-300">VersionsController</span> <span class="text-purple-400">&lt; ApplicationController</span><br>
+          &nbsp;&nbsp;<span class="text-purple-400">def</span> <span class="text-blue-300">create</span><br>
+          &nbsp;&nbsp;&nbsp;&nbsp;@version = Version.<span class="text-green-300">new</span>(version_params.merge(<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;owner: current_user,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;team_id: current_team.id<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;))<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;BulkUpdateJob.<span class="text-green-300">perform_later</span>(@version) <span class="text-white/20"># async</span><br>
+          &nbsp;&nbsp;<span class="text-purple-400">end</span><br>
+          <span class="text-purple-400">end</span>
+        </code>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 9: TESTING & QA ==================== -->
+<div class="slide" id="slide-8">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <!-- Left: RSpec -->
+        <div>
+          <div class="animate-item mb-3"><span class="tag-green">QUALITY ASSURANCE</span></div>
+          <h2 class="animate-item font-playfair text-3xl md:text-4xl font-bold tracking-tight mb-8">Testing & <span class="gradient-text">QA</span></h2>
+          <!-- RSpec Card -->
+          <div class="animate-item glass-card p-6 mb-4">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:test-tube-bold" width="20" class="text-green-400"></iconify-icon>
+              </div>
+              <h3 class="text-lg font-bold">RSpec Unit Testing</h3>
+            </div>
+            <p class="text-xs text-white/30 mb-4">Models Covered:</p>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.02]">
+                <iconify-icon icon="solar:file-text-linear" width="14" class="text-green-400/50"></iconify-icon>
+                <span class="text-xs text-white/50 font-mono">utilization_report.rb</span>
+              </div>
+              <div class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.02]">
+                <iconify-icon icon="solar:file-text-linear" width="14" class="text-green-400/50"></iconify-icon>
+                <span class="text-xs text-white/50 font-mono">purchase_history.rb</span>
+              </div>
+              <div class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.02]">
+                <iconify-icon icon="solar:file-text-linear" width="14" class="text-green-400/50"></iconify-icon>
+                <span class="text-xs text-white/50 font-mono">accounting_period.rb</span>
+              </div>
+              <div class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.02]">
+                <iconify-icon icon="solar:file-text-linear" width="14" class="text-green-400/50"></iconify-icon>
+                <span class="text-xs text-white/50 font-mono">admin_user.rb</span>
+              </div>
+              <div class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.02]">
+                <iconify-icon icon="solar:file-text-linear" width="14" class="text-green-400/50"></iconify-icon>
+                <span class="text-xs text-white/50 font-mono">asp_crosswalk.rb</span>
+              </div>
+              <div class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.02]">
+                <iconify-icon icon="solar:file-text-linear" width="14" class="text-green-400/50"></iconify-icon>
+                <span class="text-xs text-white/50 font-mono">biosimilar_price.rb</span>
+              </div>
+              <div class="flex items-center gap-2 p-2 rounded-lg bg-white/[0.02] col-span-2">
+                <iconify-icon icon="solar:file-text-linear" width="14" class="text-green-400/50"></iconify-icon>
+                <span class="text-xs text-white/50 font-mono">invoice_detail.rb</span>
+              </div>
+            </div>
+            <div class="flex gap-2 mt-4">
+              <span class="text-[10px] px-2 py-1 rounded-md bg-green-500/10 text-green-300/60 border border-green-500/10">FactoryBot</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-green-500/10 text-green-300/60 border border-green-500/10">RSpec Rails</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-green-500/10 text-green-300/60 border border-green-500/10">Shoulda Matchers</span>
+            </div>
+          </div>
+        </div>
+        <!-- Right: Data QA -->
+        <div class="space-y-4">
+          <div class="animate-item glass-card p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <iconify-icon icon="solar:calendar-bold" width="18" class="text-purple-400"></iconify-icon>
+              <h4 class="text-sm font-bold">Quarterly Validation</h4>
+            </div>
+            <p class="text-xs text-white/40">Q1–Q4 2025 across Inpatient, Outpatient, Self-pay</p>
+          </div>
+          <div class="animate-item glass-card p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <iconify-icon icon="solar:pill-bold" width="18" class="text-pink-400"></iconify-icon>
+              <h4 class="text-sm font-bold">Drug Groups</h4>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="text-[10px] px-2 py-1 rounded-md bg-pink-500/10 text-pink-300/60">Bevacizumab</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-pink-500/10 text-pink-300/60">Filgrastim</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-pink-500/10 text-pink-300/60">Infliximab</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-pink-500/10 text-pink-300/60">Rituximab</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-pink-500/10 text-pink-300/60">Tocilizumab</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-pink-500/10 text-pink-300/60">Bendamustine</span>
+              <span class="text-[10px] px-2 py-1 rounded-md bg-pink-500/10 text-pink-300/60">Denosumab</span>
+            </div>
+          </div>
+          <div class="animate-item glass-card p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <iconify-icon icon="solar:server-bold" width="18" class="text-blue-400"></iconify-icon>
+              <h4 class="text-sm font-bold">BART API Testing</h4>
+            </div>
+            <p class="text-xs text-white/40">End-to-end Postman testing, discrepancy reporting, KT to team</p>
+          </div>
+          <div class="animate-item glass-card p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <iconify-icon icon="solar:file-download-bold" width="18" class="text-orange-400"></iconify-icon>
+              <h4 class="text-sm font-bold">Export Validation</h4>
+            </div>
+            <p class="text-xs text-white/40">XLS export vs. frontend data consistency</p>
+          </div>
+          <div class="animate-item glass-card p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <iconify-icon icon="solar:filter-bold" width="18" class="text-yellow-400"></iconify-icon>
+              <h4 class="text-sm font-bold">Filter Validation</h4>
+            </div>
+            <p class="text-xs text-white/40">Multi-user, multi-hospital, multi-payor scenarios</p>
+          </div>
+          <div class="animate-item glass-card p-5">
+            <div class="flex items-center gap-3 mb-3">
+              <iconify-icon icon="solar:clipboard-list-bold" width="18" class="text-green-400"></iconify-icon>
+              <h4 class="text-sm font-bold">Pricing Catalog</h4>
+            </div>
+            <p class="text-xs text-white/40">340B, WAC, GPO file upload validation & PaperTrail audit</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 10: OG VALIDATION TOOL ==================== -->
+<div class="slide" id="slide-9">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <!-- Left: Image + Title -->
+        <div>
+          <div class="animate-item mb-3"><span class="tag-orange">PERSONAL PROJECT</span></div>
+          <h2 class="animate-item font-playfair text-3xl md:text-5xl font-bold tracking-tight mb-4">OG Validation <span class="gradient-text-warm">Tool</span></h2>
+          <p class="animate-item text-sm text-white/40 mb-6 leading-relaxed">A supporting application built to automate FAT data validation and improve system transparency.</p>
+          <div class="animate-item relative rounded-3xl overflow-hidden border border-white/5" style="box-shadow: 0 0 40px rgba(225,112,85,0.1);">
+            <img src="https://picsum.photos/seed/validation-dashboard/700/450.jpg" class="w-full aspect-[16/10] object-cover opacity-50" alt="">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent"></div>
+          </div>
+        </div>
+        <!-- Right: Features -->
+        <div class="space-y-5">
+          <div class="animate-item glass-card p-6 flex items-start gap-4 group">
+            <div class="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-green-500/20 transition-colors">
+              <iconify-icon icon="solar:check-circle-bold" width="22" class="text-green-400"></iconify-icon>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold mb-1">Automated Data Validation</h4>
+              <p class="text-xs text-white/40 leading-relaxed">Validates data across Conversions, Rankings, and Product Preference screens periodically to ensure accuracy — no manual checks needed.</p>
+            </div>
+          </div>
+          <div class="animate-item glass-card p-6 flex items-start gap-4 group">
+            <div class="w-12 h-12 rounded-2xl bg-pink-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-pink-500/20 transition-colors">
+              <iconify-icon icon="solar:letter-bold" width="22" class="text-pink-400"></iconify-icon>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold mb-1">Error Notification Emails</h4>
+              <p class="text-xs text-white/40 leading-relaxed">Scheduled validation framework that automatically sends error notification emails whenever inconsistencies are detected.</p>
+            </div>
+          </div>
+          <div class="animate-item glass-card p-6 flex items-start gap-4 group">
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
+              <iconify-icon icon="solar:map-bold" width="22" class="text-blue-400"></iconify-icon>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold mb-1">Schema & Table Visualization</h4>
+              <p class="text-xs text-white/40 leading-relaxed">Visualizes complete table relationships and schema mappings, including Payor–Insurance mappings for traceability and debugging.</p>
+            </div>
+          </div>
+          <div class="animate-item glass-card p-6 flex items-start gap-4 group">
+            <div class="w-12 h-12 rounded-2xl bg-yellow-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-yellow-500/20 transition-colors">
+              <iconify-icon icon="solar:magnifer-bold" width="22" class="text-yellow-400"></iconify-icon>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold mb-1">ActiveRecord Query Inspector</h4>
+              <p class="text-xs text-white/40 leading-relaxed">Captures and displays ActiveRecord queries for each page — easier debugging, performance analysis, and backend data verification.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 11: AWS + DEVOPS ==================== -->
+<div class="slide" id="slide-10">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="text-center mb-10">
+        <div class="animate-item mb-3"><span class="tag-pink">SKILL UPGRADE</span></div>
+        <h2 class="animate-item font-playfair text-3xl md:text-5xl font-bold tracking-tight">AWS + <span class="gradient-text">DevOps</span></h2>
+        <p class="animate-item text-sm text-white/40 mt-2">Actively upskilling — already applying knowledge in real project workflows</p>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- AWS Services -->
+        <div class="animate-item glass-card p-7">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+              <iconify-icon icon="solar:cloud-bold" width="20" class="text-yellow-400"></iconify-icon>
+            </div>
+            <h3 class="text-lg font-bold">AWS Services <span class="text-xs text-white/30 font-normal">(Learning)</span></h3>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:server-square-bold" width="18" class="text-orange-400"></iconify-icon>
+              <div><p class="text-xs font-semibold">EC2</p><p class="text-[10px] text-white/30">Virtual servers</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:box-bold" width="18" class="text-green-400"></iconify-icon>
+              <div><p class="text-xs font-semibold">S3</p><p class="text-[10px] text-white/30">File storage</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:bolt-circle-bold" width="18" class="text-blue-400"></iconify-icon>
+              <div><p class="text-xs font-semibold">Lambda</p><p class="text-[10px] text-white/30">Serverless</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:shield-check-bold" width="18" class="text-red-400"></iconify-icon>
+              <div><p class="text-xs font-semibold">IAM</p><p class="text-[10px] text-white/30">Access policies</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:database-bold" width="18" class="text-purple-400"></iconify-icon>
+              <div><p class="text-xs font-semibold">RDS</p><p class="text-[10px] text-white/30">Managed DB</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:eye-bold" width="18" class="text-cyan-400"></iconify-icon>
+              <div><p class="text-xs font-semibold">CloudWatch</p><p class="text-[10px] text-white/30">Monitoring</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:refresh-circle-bold" width="18" class="text-pink-400"></iconify-icon>
+              <div><p class="text-xs font-semibold">CodePipeline</p><p class="text-[10px] text-white/30">CI/CD</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <iconify-icon icon="solar:chat-round-dots-bold" width="18" class="text-yellow-400"></iconify-icon>
+              <div><p class="text-xs font-semibold">SQS</p><p class="text-[10px] text-white/30">Message queue</p></div>
+            </div>
+          </div>
+        </div>
+        <!-- Applied in FAT -->
+        <div class="space-y-4">
+          <div class="animate-item glass-card p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-yellow-500/5 to-transparent rounded-bl-[60px]"></div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:file-check-bold" width="20" class="text-yellow-400"></iconify-icon>
+              </div>
+              <h4 class="text-sm font-bold">AWS File Automation</h4>
+            </div>
+            <p class="text-xs text-white/40">Initiated and fine-tuned AWS-based workflow for Pricing Catalog file processing (Mar 2026).</p>
+          </div>
+          <div class="animate-item glass-card p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-500/5 to-transparent rounded-bl-[60px]"></div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:processing-bold" width="20" class="text-purple-400"></iconify-icon>
+              </div>
+              <h4 class="text-sm font-bold">Background Jobs</h4>
+            </div>
+            <p class="text-xs text-white/40">Sidekiq async jobs for bulk percentage updates, conversion criteria — aligned with cloud-native async patterns.</p>
+          </div>
+          <div class="animate-item glass-card p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-pink-500/5 to-transparent rounded-bl-[60px]"></div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:robot-bold" width="20" class="text-pink-400"></iconify-icon>
+              </div>
+              <h4 class="text-sm font-bold">AI Agent Architecture</h4>
+            </div>
+            <p class="text-xs text-white/40">Refined AI Agent architecture design and resolved team_id insertion issues for correct data mapping.</p>
+          </div>
+          <div class="animate-item glass-card p-6 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-green-500/5 to-transparent rounded-bl-[60px]"></div>
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                <iconify-icon icon="solar:rocket-2-bold" width="20" class="text-green-400"></iconify-icon>
+              </div>
+              <h4 class="text-sm font-bold">DevOps Mindset</h4>
+            </div>
+            <p class="text-xs text-white/40">Applied performance monitoring (Scout APM), N+1 fixes, and code refactoring for production reliability.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 12: TECHNICAL SKILLS ==================== -->
+<div class="slide" id="slide-11">
+  <div class="min-h-screen flex items-center justify-center px-6 lg:px-16 pt-24 pb-10">
+    <div class="max-w-6xl w-full mx-auto">
+      <div class="text-center mb-10">
+        <div class="animate-item mb-3"><span class="tag">SKILLSET</span></div>
+        <h2 class="animate-item font-playfair text-3xl md:text-5xl font-bold tracking-tight">Technical <span class="gradient-text">Skills</span></h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Backend -->
+        <div class="animate-item glass-card p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+              <iconify-icon icon="solar:code-bold" width="20" class="text-red-400"></iconify-icon>
+            </div>
+            <h3 class="text-sm font-bold">Backend Development</h3>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Ruby on Rails</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">ActiveRecord</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Service Objects</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Sidekiq</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">RuleEngine</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Interactors</span>
+          </div>
+        </div>
+        <!-- Testing -->
+        <div class="animate-item glass-card p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+              <iconify-icon icon="solar:test-tube-bold" width="20" class="text-green-400"></iconify-icon>
+            </div>
+            <h3 class="text-sm font-bold">Testing & QA</h3>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">RSpec</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">FactoryBot</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Postman</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Manual QA</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Data Validation</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Edge Cases</span>
+          </div>
+        </div>
+        <!-- Frontend -->
+        <div class="animate-item glass-card p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+              <iconify-icon icon="solar:monitor-bold" width="20" class="text-blue-400"></iconify-icon>
+            </div>
+            <h3 class="text-sm font-bold">Frontend & UI</h3>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">JavaScript</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">AJAX</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Stimulus JS</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Filter Logic</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">XLSX Export</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Dynamic UI</span>
+          </div>
+        </div>
+        <!-- Database -->
+        <div class="animate-item glass-card p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+              <iconify-icon icon="solar:database-bold" width="20" class="text-purple-400"></iconify-icon>
+            </div>
+            <h3 class="text-sm font-bold">Database & Performance</h3>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">PostgreSQL</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">N+1 Fix</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Scout APM</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">PaperTrail</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">NDC/HCPCS</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Multi-tenant</span>
+          </div>
+        </div>
+        <!-- Cloud -->
+        <div class="animate-item glass-card p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center">
+              <iconify-icon icon="solar:cloud-bold" width="20" class="text-yellow-400"></iconify-icon>
+            </div>
+            <h3 class="text-sm font-bold">Cloud & DevOps</h3>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">EC2 / S3 / Lambda</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">IAM / RDS / SQS</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">CI/CD Pipelines</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">CodePipeline</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">CloudWatch</span>
+          </div>
+        </div>
+        <!-- Tools -->
+        <div class="animate-item glass-card p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center">
+              <iconify-icon icon="solar:settings-bold" width="20" class="text-pink-400"></iconify-icon>
+            </div>
+            <h3 class="text-sm font-bold">Tools & Practices</h3>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Git / GitHub</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">PR Reviews</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Letter Opener</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">LibreOffice</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Scout APM</span>
+            <span class="text-[10px] px-2 py-1 rounded-md bg-white/5 text-white/50">Admin Panel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SLIDE 13: THANK YOU ==================== -->
+<div class="slide" id="slide-12">
+  <div class="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <!-- Background -->
+    <div class="absolute inset-0">
+      <img src="https://picsum.photos/seed/gratitude-end/1920/1080.jpg" class="w-full h-full object-cover opacity-10" alt="">
+      <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-transparent to-[#0a0a0f]"></div>
+    </div>
+    <div class="absolute top-1/3 left-1/3 w-72 h-72 rounded-full bg-purple-600/8 blur-[120px]" style="animation: float 6s ease-in-out infinite;"></div>
+    <div class="absolute bottom-1/3 right-1/3 w-56 h-56 rounded-full bg-pink-600/8 blur-[100px]" style="animation: float 8s ease-in-out infinite 3s;"></div>
+    
+    <div class="relative z-10 text-center max-w-4xl mx-auto px-6">
+      <h2 class="animate-item font-playfair text-6xl md:text-8xl font-bold tracking-tight mb-4">
+        <span class="gradient-text">Thank You</span>
+      </h2>
+      <p class="animate-item text-lg text-white/40 mb-12">Payala Charan · Software Engineer</p>
+      
+      <!-- Stats -->
+      <div class="animate-item grid grid-cols-2 md:grid-cols-4 gap-4 mb-14">
+        <div class="glass-card p-6 text-center stat-card">
+          <p class="text-3xl md:text-4xl font-bold gradient-text mb-1">12</p>
+          <p class="text-xs text-white/30">Months of<br>Contributions</p>
+        </div>
+        <div class="glass-card p-6 text-center stat-card">
+          <p class="text-3xl md:text-4xl font-bold gradient-text mb-1">30+</p>
+          <p class="text-xs text-white/30">PRs Raised<br>& Resolved</p>
+        </div>
+        <div class="glass-card p-6 text-center stat-card">
+          <p class="text-3xl md:text-4xl font-bold gradient-text mb-1">3</p>
+          <p class="text-xs text-white/30">Projects<br>Delivered</p>
+        </div>
+        <div class="glass-card p-6 text-center stat-card">
+          <p class="text-3xl md:text-4xl font-bold gradient-text mb-1">6+</p>
+          <p class="text-xs text-white/30">Model Test<br>Files Written</p>
+        </div>
+      </div>
+      
+      <!-- Projects -->
+      <div class="animate-item flex flex-wrap justify-center gap-3 mb-10">
+        <span class="tag-green">FAT Project</span>
+        <span class="tag-orange">OG Validation Tool</span>
+        <span class="tag-pink">AWS + DevOps</span>
+      </div>
+      
+      <div class="animate-item">
+        <p class="text-xs text-white/20 tracking-widest uppercase">Built with passion · Delivered with precision</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Keyboard Hints -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4">
+  <div class="keyboard-hint flex items-center gap-1">
+    <kbd class="px-2 py-1 rounded border border-white/10 text-white/30 text-[10px]">←</kbd>
+    <kbd class="px-2 py-1 rounded border border-white/10 text-white/30 text-[10px]">→</kbd>
+    <span class="ml-1">Navigate</span>
+  </div>
+</div>
+
+<script>
+const totalSlides = 13;
+let currentSlide = 0;
+let isAnimating = false;
+
+// Create nav dots
+const navDotsContainer = document.getElementById('navDots');
+for (let i = 0; i < totalSlides; i++) {
+  const dot = document.createElement('div');
+  dot.className = `nav-dot ${i === 0 ? 'active' : ''}`;
+  dot.onclick = () => goToSlide(i);
+  dot.title = `Slide ${i + 1}`;
+  navDotsContainer.appendChild(dot);
+}
+
+function updateUI() {
+  // Update nav dots
+  document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === currentSlide);
+  });
+  // Update counter
+  document.getElementById('slideCounter').textContent = `${String(currentSlide + 1).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+  // Update progress bar
+  document.getElementById('progressFill').style.width = `${((currentSlide + 1) / totalSlides) * 100}%`;
+}
+
+function goToSlide(index) {
+  if (isAnimating || index === currentSlide || index < 0 || index >= totalSlides) return;
+  isAnimating = true;
+  
+  const prevSlide = document.getElementById(`slide-${currentSlide}`);
+  const nextSlideEl = document.getElementById(`slide-${index}`);
+  
+  // Reset animations on next slide
+  nextSlideEl.querySelectorAll('.animate-item').forEach(el => {
+    el.style.animation = 'none';
+    el.offsetHeight; // trigger reflow
+    el.style.animation = '';
+  });
+  
+  // Determine direction
+  if (index > currentSlide) {
+    prevSlide.classList.remove('active');
+    prevSlide.classList.add('exit-left');
+    nextSlideEl.style.transform = 'translateX(60px)';
+  } else {
+    prevSlide.classList.remove('active');
+    prevSlideEl.style.transform = '';
+    nextSlideEl.style.transform = 'translateX(-60px)';
+  }
+  
+  nextSlideEl.classList.add('active');
+  
+  // Reset scroll position
+  nextSlideEl.scrollTop = 0;
+  
+  currentSlide = index;
+  updateUI();
+  
+  setTimeout(() => {
+    prevSlide.classList.remove('exit-left');
+    prevSlide.style.transform = '';
+    isAnimating = false;
+  }, 700);
+}
+
+function nextSlide() {
+  if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1);
+}
+
+function prevSlide() {
+  if (currentSlide > 0) goToSlide(currentSlide - 1);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault();
+    nextSlide();
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    prevSlide();
+  } else if (e.key === 'Home') {
+    e.preventDefault();
+    goToSlide(0);
+  } else if (e.key === 'End') {
+    e.preventDefault();
+    goToSlide(totalSlides - 1);
+  }
+});
+
+// Mouse wheel navigation
+let wheelTimeout;
+document.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  clearTimeout(wheelTimeout);
+  wheelTimeout = setTimeout(() => {
+    if (e.deltaY > 0) nextSlide();
+    else prevSlide();
+  }, 50);
+}, { passive: false });
+
+// Touch navigation
+let touchStartX = 0;
+let touchStartY = 0;
+document.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+});
+document.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+    if (dx < 0) nextSlide();
+    else prevSlide();
+  }
+});
+
+// Initialize
+updateUI();
+</script>
+</body>
+</html>

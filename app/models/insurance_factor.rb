@@ -1,0 +1,2 @@
+class InsuranceFactor < ApplicationRecord
+end

@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Excel Tally Validation — Modern UI</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --danger: #f72585;
+      --warning: #ff9e00;
+      --success: #06d6a0;
+      --light: #f8f9fc;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.4s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--dark);
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header Styles */
+    .header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-text h1 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-text p {
+      color: var(--gray);
+      font-size: 1.1rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    .clear-btn {
+      background: linear-gradient(135deg, var(--danger) 0%, #f55f7c 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(247, 37, 133, 0.3);
+    }
+
+    .clear-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(247, 37, 133, 0.4);
+      color: white;
+    }
+
+    /* Alert Banner */
+    .alert-banner {
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: var(--shadow);
+    }
+
+    .alert-banner.notice {
+      background-color: rgba(6, 214, 160, 0.1);
+      border-left: 5px solid var(--success);
+      color: #04926c;
+    }
+
+    .alert-banner.alert {
+      background-color: rgba(247, 37, 133, 0.1);
+      border-left: 5px solid var(--danger);
+      color: #c51b65;
+    }
+
+    /* Double Uploader Section */
+    .uploader-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .uploader-card h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--dark);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .uploader-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .upload-zone {
+      border: 3px dashed var(--primary-light);
+      border-radius: var(--border-radius);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      background: rgba(67, 97, 238, 0.01);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--primary);
+      background: rgba(67, 97, 238, 0.03);
+    }
+
+    .upload-zone.dragover {
+      border-color: var(--success);
+      background: rgba(6, 214, 160, 0.05);
+      transform: scale(1.01);
+    }
+
+    .upload-zone-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .upload-zone.grouped .upload-zone-icon {
+      background: linear-gradient(135deg, var(--secondary) 0%, #a03cff 100%);
+    }
+    .upload-zone.grouped {
+      border-color: #a03cff;
+    }
+
+    .upload-zone h3 {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .upload-zone p {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-selected-info {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--light);
+      border-radius: 10px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      color: var(--success);
+      border: 1px solid rgba(6, 214, 160, 0.2);
+    }
+
+    .uploader-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 1rem 3rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(6, 214, 160, 0.4);
+    }
+
+    /* Summary Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border-top: 4px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card.total { border-top-color: var(--primary); }
+    .stat-card.rate { border-top-color: var(--success); }
+    .stat-card.errors { border-top-color: var(--danger); }
+    .stat-card.mismatch-amt { border-top-color: var(--secondary); }
+
+    .stat-icon-wrapper {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+    }
+
+    .stat-icon-wrapper.total { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); }
+    .stat-icon-wrapper.rate { background: linear-gradient(135deg, var(--success) 0%, #05c291 100%); }
+    .stat-icon-wrapper.errors { background: linear-gradient(135deg, var(--danger) 0%, #f55f7c 100%); }
+    .stat-icon-wrapper.mismatch-amt { background: linear-gradient(135deg, var(--secondary) 0%, #a03cff 100%); }
+
+    .stat-card-details h3 {
+      font-size: 0.85rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-card-details span {
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .stat-card.total span { color: var(--primary); }
+    .stat-card.rate span { color: var(--success); }
+    .stat-card.errors span { color: var(--danger); }
+    .stat-card.mismatch-amt span { color: var(--secondary); }
+
+    /* Controls Panel */
+    .controls-panel {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 350px;
+      flex-grow: 1;
+      max-width: 500px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      border: 2px solid #e0e6ed;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+    }
+
+    .filter-options {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.6rem 1.2rem;
+      border: 2px solid #e0e6ed;
+      background: white;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--dark);
+      transition: var(--transition);
+    }
+
+    .filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 10px rgba(67, 97, 238, 0.2);
+    }
+
+    /* Main Table and Collapse Grid */
+    .table-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
+
+    .table-info-bar {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(248, 249, 252, 0.5);
+    }
+
+    .table-info-bar h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .table-info-bar p {
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .tally-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .tally-table th {
+      background: #f8f9fc;
+      color: var(--dark);
+      font-weight: 700;
+      padding: 1rem 1.5rem;
+      border-bottom: 2px solid #e0e6ed;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tally-table tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
+    }
+
+    .tally-table tbody tr.summary-row:hover {
+      background-color: rgba(67, 97, 238, 0.02);
+    }
+
+    .tally-table td {
+      padding: 1.2rem 1.5rem;
+      font-size: 0.95rem;
+      vertical-align: middle;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge.match {
+      background: rgba(6, 214, 160, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(6, 214, 160, 0.4);
+    }
+
+    .badge.mismatch {
+      background: rgba(247, 37, 133, 0.1);
+      color: var(--danger);
+      border: 1px solid rgba(247, 37, 133, 0.4);
+    }
+
+    .badge.partial {
+      background: rgba(114, 50, 160, 0.08);
+      color: var(--secondary);
+      border: 1px solid rgba(114, 50, 160, 0.22);
+    }
+
+    .badge.type-match {
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+    }
+
+    .badge.type-grouped {
+      background: rgba(255, 158, 0, 0.1);
+      color: var(--warning);
+    }
+
+    .badge.type-indiv {
+      background: rgba(141, 153, 174, 0.15);
+      color: #636d7a;
+    }
+
+    /* Expanded Details Area */
+    .details-row {
+      background-color: #fafbfe;
+    }
+
+    .inner-comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .inner-comparison-table th {
+      background: #f1f3f9;
+      color: var(--dark);
+      font-size: 0.8rem;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid #e0e6ed;
+      text-align: left;
+    }
+
+    .inner-comparison-table td {
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid #f1f3f9;
+      font-size: 0.9rem;
+    }
+
+    .inner-comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .loading-card {
+      background: white;
+      padding: 3rem;
+      border-radius: var(--border-radius);
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .spinner {
+      font-size: 3.5rem;
+      color: var(--primary);
+      animation: spin 1s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-card h3 {
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-card p {
+      color: var(--gray);
+      font-size: 0.95rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      padding: 5rem 2rem;
+      text-align: center;
+      color: var(--gray);
+    }
+
+    .empty-state-icon {
+      font-size: 5rem;
+      color: var(--primary-light);
+      margin-bottom: 1.5rem;
+      opacity: 0.6;
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .uploader-grid {
+        grid-template-columns: 1fr;
+      }
+      .controls-panel {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-box {
+        min-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%# Validation helper methods and constants are provided by TallyValidationsHelper %>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Excel Tally Validation</h1>
+          <p>Reconcile Individual Records against Grouped Sheets side-by-side</p>
+        </div>
+        <div class="header-actions">
+          <%= link_to features_path, class: "back-btn" do %>
+            <i class="fas fa-arrow-left"></i> Features Dashboard
+          <% end %>
+          <% if @validated_data.any? %>
+            <%= button_to clear_history_tally_validations_path, method: :delete, class: "clear-btn", data: { confirm: "Are you sure you want to clear validation history?" } do %>
+              <i class="fas fa-trash-alt"></i> Clear Results
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </header>
+
+    <!-- Flash Messages -->
+    <% flash.each do |type, message| %>
+      <div class="alert-banner <%= type %>">
+        <i class="<%= type == 'notice' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle' %>"></i>
+        <span><%= message %></span>
+      </div>
+    <% end %>
+
+    <!-- Uploader Card -->
+    <div class="uploader-card">
+      <h2><i class="fas fa-file-import"></i> Upload Datasets</h2>
+      <%= form_with url: upload_tally_validations_path, method: :post, local: true, multipart: true, id: "uploadForm" do |f| %>
+        <div class="uploader-grid">
+          <!-- Individual File -->
+          <div class="upload-zone" id="indivZone" onclick="document.getElementById('indivFileInput').click()">
+            <div class="upload-zone-icon">
+              <i class="fas fa-file-excel"></i>
+            </div>
+            <h3>Individual Records File</h3>
+            <p>Drag and drop or click to upload the detailed records file (.xlsx or .csv)</p>
+            <%= f.file_field :individual_file, class: "file-input", id: "indivFileInput", onchange: "handleFileSelect(this, 'indivZone')" %>
+            <div class="file-selected-info" id="indivZoneInfo">
+              <i class="fas fa-check"></i> <span class="file-name-span">No file selected</span>
+            </div>
+          </div>
+
+          <!-- Grouped File -->
+          <div class="upload-zone grouped" id="groupedZone" onclick="document.getElementById('groupedFileInput').click()">
+            <div class="upload-zone-icon">
+              <i class="fas fa-table"></i>
+            </div>
+            <h3>Grouped Summary File</h3>
+            <p>Drag and drop or click to upload the grouped summaries file (.xlsx or .csv)</p>
+            <%= f.file_field :grouped_file, class: "file-input", id: "groupedFileInput", onchange: "handleFileSelect(this, 'groupedZone')" %>
+            <div class="file-selected-info" id="groupedZoneInfo">
+              <i class="fas fa-check"></i> <span class="file-name-span">No file selected</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="uploader-actions">
+          <%= f.submit class: "submit-btn", id: "submitBtn" do %>
+            <i class="fas fa-sync-alt"></i> Run Tally Validation
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @validated_data.any? %>
+      <!-- Stats Summary -->
+      <%
+        total_groups = @validated_data.size
+        passed_groups = @validated_data.select { |row| row["status"] == "match" }.size
+        failed_groups = @validated_data.select { |row| row["status"] == "mismatch" }.size
+        total_individual_records = @validated_data.map { |row| row["individual_records"] ? row["individual_records"].size : 0 }.sum
+      %>
+      <div class="stats-grid">
+        <div class="stat-card total">
+          <div class="stat-icon-wrapper total">
+            <i class="fas fa-cubes"></i>
+          </div>
+          <div class="stat-card-details">
+            <h3>Total Groups</h3>
+            <span><%= total_groups %></span>
+          </div>
+        </div>
+        <div class="stat-card rate">
+          <div class="stat-icon-wrapper rate">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-card-details">
+            <h3>Passed Groups</h3>
+            <span><%= passed_groups %></span>
+          </div>
+        </div>
+        <div class="stat-card errors">
+          <div class="stat-icon-wrapper errors">
+            <i class="fas fa-times-circle"></i>
+          </div>
+          <div class="stat-card-details">
+            <h3>Failed Groups</h3>
+            <span><%= failed_groups %></span>
+          </div>
+        </div>
+        <div class="stat-card mismatch-amt">
+          <div class="stat-icon-wrapper mismatch-amt">
+            <i class="fas fa-database"></i>
+          </div>
+          <div class="stat-card-details">
+            <h3>Individual Records</h3>
+            <span><%= total_individual_records %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls Panel -->
+      <div class="controls-panel">
+        <div class="search-box">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-input" id="tableSearch" placeholder="Search by generic name, payor, plan, NDC, financial class, or HCPCS..." onkeyup="filterTable()">
+        </div>
+        <div class="filter-options">
+          <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+          <button class="filter-btn" onclick="setFilter('passed', this)">Passed</button>
+          <button class="filter-btn" onclick="setFilter('failed', this)">Failed</button>
+        </div>
+      </div>
+
+      <!-- Table Card -->
+      <div class="table-card">
+        <div class="table-info-bar">
+          <div>
+            <h2>Tally Validation Results</h2>
+            <p>Grouped records are shown first with a green or red status badge. Expand any row to inspect grouped values, validation detail, and matching individual records.</p>
+          </div>
+          <p>
+            <strong>Individual File:</strong> <%= @individual_file_name %><br>
+            <strong>Grouped File:</strong> <%= @grouped_file_name %>
+          </p>
+        </div>
+
+        <div class="table-container">
+          <table class="tally-table" id="resultsTable">
+            <thead>
+              <tr>
+                <th style="width: 50px;"></th>
+                <th>Type</th>
+                <th>Generic Name</th>
+                <th>Financial Class</th>
+                <th>Primary Payor</th>
+                <th>Benefit Plan</th>
+                <th>HCPCS</th>
+                <th>NDC</th>
+                <th>Package Size</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @validated_data.each_with_index do |row, group_index| %>
+                <%
+                  row_type = row["type"]
+                  status = row["status"]
+                  
+                  # Label mapping
+                  type_class = case row_type
+                               when "matched_group" then "type-match"
+                               when "only_in_grouped" then "type-grouped"
+                               when "only_in_individual" then "type-indiv"
+                               when "duplicate_grouped" then "type-indiv"
+                               else "type-indiv"
+                               end
+
+                  type_label = case row_type
+                               when "matched_group" then "Reconciled"
+                               when "only_in_grouped" then "Grouped Only"
+                               when "only_in_individual" then "Individual Only"
+                               when "duplicate_grouped" then "Duplicate"
+                               else "Reconciled"
+                               end
+                  
+                  badge_class = status == "match" ? "match" : (status == "partial" ? "partial" : "mismatch")
+                  badge_label = if status == "match"
+                                  "✓ Passed"
+                                elsif status == "partial"
+                                  "➤ Partial"
+                                elsif row_type == "duplicate_grouped"
+                                  "✗ Duplicate"
+                                elsif row_type == "only_in_grouped"
+                                  "✗ Unexpected"
+                                elsif row_type == "only_in_individual"
+                                  "✗ Missing"
+                                else
+                                  "✗ Failed"
+                                end
+
+                  status_color = status == "match" ? "var(--success)" : (status == "partial" ? "var(--secondary)" : "var(--danger)")
+                  row_bg = status == "match" ? "rgba(6, 214, 160, 0.01)" : (status == "partial" ? "rgba(114, 50, 160, 0.02)" : "rgba(247, 37, 133, 0.02)")
+                %>
+                <!-- Grouped Row (Summary) -->
+                <tr class="summary-row" data-status="<%= status %>" data-type="<%= row_type %>" onclick="toggleDetails(<%= group_index %>)" style="cursor: pointer; background-color: <%= row_bg %>; border-left: 4px solid <%= status_color %>; font-weight: 600;">
+                  <td style="text-align: center;">
+                    <a href="javascript:void(0)" style="color: #4361ee; text-decoration: none; font-size: 1.2rem;">
+                      <i class="fas fa-chevron-right" id="chevron-<%= group_index %>" style="transition: transform 0.3s;"></i>
+                    </a>
+                  </td>
+                  <td>
+                    <span class="badge <%= type_class %>" style="font-size: 0.75rem;"><%= type_label %></span>
+                  </td>
+                  <td><%= (row.dig("grouped_row_data", "GENERIC NAME") || row.dig("keys", "GENERIC NAME")) %></td>
+                  <td><%= (row.dig("grouped_row_data", "FINANCIAL CLASS") || row.dig("keys", "FINANCIAL CLASS")) %></td>
+                  <td><%= (row.dig("grouped_row_data", "PRIMARY PAYOR NAME") || row.dig("keys", "PRIMARY PAYOR NAME")) %></td>
+                  <td><%= (row.dig("grouped_row_data", "BENEFIT PLAN NAME") || row.dig("keys", "BENEFIT PLAN NAME")) %></td>
+                  <td><%= (row.dig("grouped_row_data", "HCPCS CODE") || row.dig("keys", "HCPCS CODE")) %></td>
+                  <td><%= (row.dig("grouped_row_data", "NDC CODE") || row.dig("keys", "NDC CODE")) %></td>
+                  <td><%= (row.dig("grouped_row_data", "PACKAGE SIZE") || row.dig("keys", "PACKAGE SIZE")) %></td>
+                  <td>
+                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                      <span class="badge <%= badge_class %>" style="font-size: 0.75rem;"><%= badge_label %></span>
+                      <button type="button" class="back-btn" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="event.stopPropagation(); toggleIndivTable(<%= group_index %>, this, event)">Reconciled</button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- Details Row (19 Column Side-by-side & Individual list) -->
+                <tr class="details-row" id="details-<%= group_index %>" style="display: none; background: #fafbfe;">
+                  <td colspan="10" style="padding: 0;">
+                    
+                    <div class="details-card-wrapper" style="padding: 1.5rem; background: #fafbfe; border-radius: 12px; border: 1px solid #e0e6ed; margin: 10px;">
+
+                      <!-- Section 1: Group Identity Keys -->
+                      <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem; border-bottom: 1px solid #e0e6ed; padding-bottom: 5px; display: flex; align-items: center; gap: 0.5rem;">
+                          <i class="fas fa-fingerprint"></i> Grouping Identity Columns
+                        </h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                          <% grouping_columns.each do |key| %>
+                            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                              <div style="font-size: 0.75rem; color: var(--gray); font-weight: 700; text-transform: uppercase;"><%= key %></div>
+                              <div style="font-size: 0.9rem; font-weight: 600; color: var(--dark); word-break: break-all;"><%= row.dig("keys", key) || "-" %></div>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+
+                      <!-- Section 2: Validations Grid -->
+                      <div style="margin-bottom: 1.5rem;">
+                        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem; border-bottom: 1px solid #e0e6ed; padding-bottom: 5px; display: flex; align-items: center; gap: 0.5rem;">
+                          <i class="fas fa-check-double"></i> Column Verification Metrics
+                        </h4>
+                        
+                        <!-- 3-Column Grid for Metrics -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem;">
+                          <% (summation_columns + cost_columns + percentage_columns).each do |col| %>
+                            <%
+                              res = row.dig("columns", col) || {}
+                              actual = res["actual"]
+                              expected = res["expected"]
+                              status = res["status"]
+                              message = res["message"]
+                              diff = res["diff"]
+
+                              bg_color = "rgba(141, 153, 174, 0.05)"
+                              border_color = "#cbd5e1"
+                              text_color = "var(--gray)"
+                              badge_label = "Unknown"
+                              
+                              if status == "passed"
+                                bg_color = "rgba(6, 214, 160, 0.05)"
+                                border_color = "rgba(6, 214, 160, 0.4)"
+                                text_color = "#04926c"
+                                badge_label = "✓ Passed"
+                              elsif status == "failed"
+                                bg_color = "rgba(247, 37, 133, 0.05)"
+                                border_color = "rgba(247, 37, 133, 0.4)"
+                                text_color = "#c51b65"
+                                badge_label = "✗ Failed"
+                              elsif status == "partial"
+                                bg_color = "rgba(114, 50, 160, 0.06)"
+                                border_color = "rgba(114, 50, 160, 0.22)"
+                                text_color = "var(--secondary)"
+                                badge_label = "➤ Partial"
+                              elsif status == "warning" || status == "not_calculable"
+                                bg_color = "rgba(255, 158, 0, 0.05)"
+                                border_color = "rgba(255, 158, 0, 0.4)"
+                                text_color = "#b26a00"
+                                badge_label = "⚠ Warning"
+                              end
+
+                              if message.present?
+                                badge_label = "⚠ #{message}"
+                              end
+                            %>
+                            
+                            <div style="background: <%= bg_color %>; border: 1px solid <%= border_color %>; padding: 0.75rem; border-radius: 10px; display: flex; flex-direction: column; justify-content: space-between;">
+                              <div style="font-weight: 700; font-size: 0.8rem; text-transform: uppercase; color: var(--dark); margin-bottom: 0.5rem;"><%= col %></div>
+                              
+                              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                                <div style="font-size: 0.85rem; color: var(--gray);">Grouped (Actual):</div>
+                                <div style="font-weight: 700; font-size: 0.95rem;"><%= format_val(col, actual) %></div>
+                              </div>
+                              
+                              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div style="font-size: 0.85rem; color: var(--gray);">Expected (Indiv):</div>
+                                <div style="font-weight: 700; font-size: 0.95rem; color: var(--primary-dark);"><%= format_val(col, expected) %></div>
+                              </div>
+
+                              <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed <%= border_color %>; padding-top: 0.5rem; margin-top: 0.25rem;">
+                                <div style="font-size: 0.8rem; font-weight: 700; color: <%= text_color %>;"><%= badge_label %></div>
+                                <% if diff.present? && diff.to_f != 0.0 %>
+                                  <div style="font-size: 0.8rem; font-weight: 700; color: <%= diff.to_f < 0 ? '#c51b65' : '#04926c' %>;">
+                                    Diff: <%= format_val(col, diff) %>
+                                  </div>
+                                <% end %>
+                              </div>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+
+                      <!-- Section 3: Individual Records Toggle & Table -->
+                      <div style="margin-top: 1.5rem;">
+                        <% if row["individual_records"].present? && row["individual_records"].any? %>
+                          <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <button type="button" class="back-btn" style="cursor: pointer; padding: 0.5rem 1.25rem; font-size: 0.85rem; border-radius: 8px;" onclick="toggleIndivTable(<%= group_index %>, this, event)">
+                              <i class="fas fa-chevron-right" id="indiv-chevron-<%= group_index %>"></i> View Individual Records (<%= row["individual_records"].size %>)
+                            </button>
+                          </div>
+
+                          <div id="indiv-container-<%= group_index %>" style="display: none; margin-top: 1rem; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: white;">
+                            <div style="padding: 0.75rem; background: #f8f9fc; border-bottom: 1px solid #cbd5e1; font-weight: 700; font-size: 0.9rem; color: var(--dark);">
+                              <i class="fas fa-list-ol"></i> Matching Individual Records (<%= row["individual_records"].size %> rows)
+                            </div>
+                            <div style="overflow-x: auto;">
+                              <table class="inner-comparison-table" style="box-shadow: none; border-radius: 0; margin-top: 0;">
+                                <thead>
+                                  <tr>
+                                    <th>Generic Name</th>
+                                    <th>NDC Code</th>
+                                    <th>HCPCS Code</th>
+                                    <th>Total Units</th>
+                                    <th>Total Cost</th>
+                                    <th>Total Insurance Payment</th>
+                                    <th>Total Margin</th>
+                                    <th>Product Cost Per Unit</th>
+                                    <th>Conversion Product Cost Per Unit</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <% row["individual_records"].each do |indiv_rec| %>
+                                    <tr>
+                                      <td><%= indiv_rec["GENERIC NAME"] %></td>
+                                      <td><%= indiv_rec["NDC CODE"] %></td>
+                                      <td><%= indiv_rec["HCPCS CODE"] %></td>
+                                      <td style="text-align: right;"><%= format_val("TOTAL UNITS", indiv_rec["TOTAL UNITS"]) %></td>
+                                      <td style="text-align: right;"><%= format_val("TOTAL PRODUCT COST", indiv_rec["TOTAL PRODUCT COST"]) %></td>
+                                      <td style="text-align: right;"><%= format_val("TOTAL INSURANCE PAYMENT", indiv_rec["TOTAL INSURANCE PAYMENT"]) %></td>
+                                      <td style="text-align: right;"><%= format_val("TOTAL MARGIN", indiv_rec["TOTAL MARGIN"]) %></td>
+                                      <td style="text-align: right;"><%= format_val("PRODUCT COST PER UNIT", indiv_rec["PRODUCT COST PER UNIT"]) %></td>
+                                      <td style="text-align: right;"><%= format_val("CONVERSION PRODUCT COST PER UNIT", indiv_rec["CONVERSION PRODUCT COST PER UNIT"]) %></td>
+                                    </tr>
+                                  <% end %>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        <% else %>
+                          <div style="background: rgba(247, 37, 133, 0.05); border: 1px dashed rgba(247, 37, 133, 0.4); padding: 1rem; border-radius: 10px; text-align: center; color: #c51b65; font-weight: 600;">
+                            <i class="fas fa-exclamation-circle"></i> No corresponding individual records found for this grouped key.
+                          </div>
+                        <% end %>
+                      </div>
+
+                    </div>
+
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% else %>
+      <!-- Empty State -->
+      <div class="table-card">
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <i class="fas fa-file-invoice"></i>
+          </div>
+          <h3>No Tally Validation Performed Yet</h3>
+          <p>Select your Individual records sheet and Grouped records sheet above and run the verification to display discrepancies.</p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-card">
+      <i class="fas fa-sync-alt spinner"></i>
+      <h3>Analyzing Datasets</h3>
+      <p>Performing group aggregation and running cell tally check. This might take a few seconds...</p>
+    </div>
+  </div>
+
+  <!-- Script for interactivity -->
+  <script>
+    let activeFilter = 'all';
+
+    // Highlight drag and drop zones
+    const zones = ['indivZone', 'groupedZone'];
+    zones.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        el.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          el.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        el.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          el.classList.remove('dragover');
+        }, false);
+      });
+
+      el.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        const fileInput = el.querySelector('.file-input');
+        if (files.length > 0) {
+          fileInput.files = files;
+          handleFileSelect(fileInput, id);
+        }
+      }, false);
+    });
+
+    function handleFileSelect(input, zoneId) {
+      const infoEl = document.getElementById(zoneId + 'Info');
+      const nameSpan = infoEl.querySelector('.file-name-span');
+      if (input.files && input.files.length > 0) {
+        nameSpan.textContent = input.files[0].name;
+        infoEl.style.display = 'inline-flex';
+      } else {
+        infoEl.style.display = 'none';
+      }
+    }
+
+    // Toggle details row when clicking summary row
+    function toggleDetails(index) {
+      const detailsRow = document.getElementById('details-' + index);
+      const icon = document.getElementById('chevron-' + index);
+      if (!detailsRow) return;
+
+      if (detailsRow.style.display === 'none') {
+        detailsRow.style.display = 'table-row';
+        if (icon) icon.style.transform = 'rotate(90deg)';
+      } else {
+        detailsRow.style.display = 'none';
+        if (icon) icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    // Toggle individual records table inside card
+    function toggleIndivTable(index, button, event) {
+      event.stopPropagation(); // prevent collapsing the outer details card
+      const container = document.getElementById('indiv-container-' + index);
+      const icon = document.getElementById('indiv-chevron-' + index);
+      if (!container) return;
+
+      // Ensure the details row is visible (the individual container lives inside it)
+      const detailsRow = document.getElementById('details-' + index);
+      const chevron = document.getElementById('chevron-' + index);
+      if (detailsRow && detailsRow.style.display === 'none') {
+        detailsRow.style.display = 'table-row';
+        if (chevron) chevron.style.transform = 'rotate(90deg)';
+      }
+
+      if (container.style.display === 'none') {
+        container.style.display = 'block';
+        if (icon) {
+          icon.className = 'fas fa-chevron-down';
+        }
+        button.innerHTML = `<i class="fas fa-chevron-down" id="indiv-chevron-${index}"></i> Hide Individual Records`;
+      } else {
+        container.style.display = 'none';
+        if (icon) {
+          icon.className = 'fas fa-chevron-right';
+        }
+        button.innerHTML = `<i class="fas fa-chevron-right" id="indiv-chevron-${index}"></i> View Individual Records`;
+      }
+    }
+
+    // Filter by type or status
+    function setFilter(filter, button) {
+      activeFilter = filter;
+      
+      // Update active button state
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      filterTable();
+    }
+
+    // Combine Search + Filter
+    function filterTable() {
+      const searchQuery = document.getElementById('tableSearch').value.toLowerCase();
+      const rows = document.querySelectorAll('.summary-row');
+      
+      rows.forEach((row, groupIndex) => {
+        const rowText = row.innerText.toLowerCase();
+        const rowStatus = row.getAttribute('data-status');
+        const detailsRow = document.getElementById('details-' + groupIndex);
+
+        // Check search match
+        const matchesSearch = rowText.includes(searchQuery);
+
+        // Check filter match
+        let matchesFilter = false;
+        if (activeFilter === 'all') {
+          matchesFilter = true;
+        } else if (activeFilter === 'passed') {
+          matchesFilter = (rowStatus === 'match');
+        } else if (activeFilter === 'failed') {
+          matchesFilter = (rowStatus === 'mismatch');
+        }
+
+        if (matchesSearch && matchesFilter) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+          if (detailsRow) {
+            detailsRow.style.display = 'none';
+            const icon = document.getElementById('chevron-' + groupIndex);
+            if (icon) icon.style.transform = 'rotate(0deg)';
+          }
+        }
+      });
+    }
+
+    // Form submit loading trigger
+    const form = document.getElementById('uploadForm');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        const indivVal = document.getElementById('indivFileInput').value;
+        const grpVal = document.getElementById('groupedFileInput').value;
+
+        if (indivVal && grpVal) {
+          document.getElementById('loadingOverlay').classList.add('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

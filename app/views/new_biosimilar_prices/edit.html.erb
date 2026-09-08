@@ -1,0 +1,165 @@
+<div class="upload-container nbp-page nbp-page--compact">
+  <header class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Edit biosimilar price</h1>
+        <p>Update fields and save your changes</p>
+      </div>
+      <%= link_to new_biosimilar_prices_path, class: "back-btn" do %>
+        <i class="fas fa-arrow-left"></i> Back to list
+      <% end %>
+    </div>
+  </header>
+
+  <% if flash[:alert] || flash[:notice] %>
+    <div class="flash-messages">
+      <% if flash[:alert] %>
+        <div class="flash-message alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="flash-message notice">
+          <i class="fas fa-check-circle"></i>
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <section class="nbp-panel nbp-panel--manual">
+    <%= render "form" %>
+    <div class="nbp-edit-footer">
+      <%= link_to new_biosimilar_price_path(@new_biosimilar_price), class: "nbp-text-link" do %>
+        <i class="fas fa-eye"></i> View record
+      <% end %>
+    </div>
+  </section>
+</div>
+
+<style>
+  .nbp-page--compact {
+    --primary: #4361ee;
+    --primary-light: #6c8aff;
+    --secondary: #7209b7;
+    --success: #06d6a0;
+    --danger: #f72585;
+    --light: #f8f9fc;
+    --dark: #2b2d42;
+    --gray: #8d99ae;
+    --border-radius: 16px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+    color: var(--dark);
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+    min-height: calc(100vh - 20px);
+  }
+
+  .nbp-page--compact .header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .nbp-page--compact .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .nbp-page--compact .header-text h1 {
+    font-weight: 800;
+    font-size: 2rem;
+    margin: 0 0 0.35rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nbp-page--compact .header-text p {
+    margin: 0;
+    color: var(--gray);
+  }
+
+  .nbp-page--compact .back-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border-radius: 50px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    transition: var(--transition);
+  }
+
+  .nbp-page--compact .back-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+  }
+
+  .nbp-page--compact .flash-messages { margin-bottom: 1.25rem; }
+
+  .nbp-page--compact .flash-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .nbp-page--compact .flash-message.alert {
+    background: rgba(247, 37, 133, 0.1);
+    border-left: 4px solid var(--danger);
+    color: #9d174d;
+  }
+
+  .nbp-page--compact .flash-message.notice {
+    background: rgba(6, 214, 160, 0.1);
+    border-left: 4px solid var(--success);
+    color: #047857;
+  }
+
+  .nbp-page--compact .nbp-panel {
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--secondary);
+  }
+
+  .nbp-edit-footer {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(142, 153, 175, 0.25);
+  }
+
+  .nbp-text-link {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .nbp-text-link:hover {
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,158 @@
+<%= form_with(model: @new_biosimilar_price, local: true, class: "nbp-form") do |f| %>
+  <% if @new_biosimilar_price.errors.any? %>
+    <div class="nbp-form-errors" role="alert">
+      <strong><%= pluralize(@new_biosimilar_price.errors.count, "issue") %> to fix:</strong>
+      <ul>
+        <% @new_biosimilar_price.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="nbp-form-grid">
+    <div class="nbp-form-field">
+      <%= f.label :generic_name, "Generic name" %>
+      <%= f.text_field :generic_name, class: "nbp-form-input" %>
+    </div>
+
+    <div class="nbp-form-field">
+      <%= f.label :hcpcs_code, "HCPCS code" %>
+      <%= f.text_field :hcpcs_code, class: "nbp-form-input" %>
+    </div>
+
+    <div class="nbp-form-field">
+      <%= f.label :ndc_code, "NDC code" %>
+      <%= f.text_field :ndc_code, class: "nbp-form-input" %>
+    </div>
+
+    <div class="nbp-form-field">
+      <%= f.label :billing_unit %>
+      <%= f.number_field :billing_unit, step: :any, class: "nbp-form-input" %>
+    </div>
+
+    <div class="nbp-form-field">
+      <%= f.label :reimbursement_per_billing_unit, "Reimbursement per billing unit" %>
+      <%= f.number_field :reimbursement_per_billing_unit, step: :any, class: "nbp-form-input" %>
+    </div>
+
+    <div class="nbp-form-field">
+      <%= f.label :gpo_cost, "GPO cost" %>
+      <%= f.number_field :gpo_cost, step: :any, class: "nbp-form-input" %>
+    </div>
+
+    <div class="nbp-form-field">
+      <%= f.label :cost_three_forty_b, "340B cost" %>
+      <%= f.number_field :cost_three_forty_b, step: :any, class: "nbp-form-input" %>
+    </div>
+
+    <div class="nbp-form-field">
+      <%= f.label :team_id, "Team ID" %>
+      <%= f.text_field :team_id, class: "nbp-form-input" %>
+    </div>
+
+    <div class="nbp-form-field nbp-form-field--check">
+      <%= f.check_box :best_margin, class: "nbp-form-check" %>
+      <%= f.label :best_margin, "Best margin", class: "nbp-form-check-label" %>
+    </div>
+
+    <div class="nbp-form-field nbp-form-field--check">
+      <%= f.check_box :utilization_best_margin, class: "nbp-form-check" %>
+      <%= f.label :utilization_best_margin, "Utilization best margin", class: "nbp-form-check-label" %>
+    </div>
+  </div>
+
+  <div class="nbp-form-actions">
+    <%= f.submit(@new_biosimilar_price.new_record? ? "Create record" : "Save changes", class: "nbp-form-submit") %>
+  </div>
+<% end %>
+
+<style>
+  .nbp-form-errors {
+    background: rgba(247, 37, 133, 0.08);
+    border: 1px solid rgba(247, 37, 133, 0.35);
+    border-left: 4px solid #f72585;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    color: #9d174d;
+    font-size: 0.9rem;
+  }
+
+  .nbp-form-errors ul { margin: 0.5rem 0 0 1.1rem; padding: 0; }
+
+  .nbp-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 1.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .nbp-form-grid { grid-template-columns: 1fr; }
+  }
+
+  .nbp-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .nbp-form-field--check {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+    padding-top: 1.5rem;
+  }
+
+  .nbp-form-field label:not(.nbp-form-check-label) {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #2b2d42;
+  }
+
+  .nbp-form-input {
+    border: 1px solid rgba(142, 153, 175, 0.45);
+    border-radius: 12px;
+    padding: 0.65rem 0.85rem;
+    font-size: 1rem;
+    transition: border 0.2s, box-shadow 0.2s;
+  }
+
+  .nbp-form-input:focus {
+    outline: none;
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+  }
+
+  .nbp-form-check {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: #4361ee;
+  }
+
+  .nbp-form-check-label { font-weight: 600; font-size: 0.9rem; color: #2b2d42; margin: 0; }
+
+  .nbp-form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .nbp-form-submit {
+    background: linear-gradient(135deg, #4361ee 0%, #6c8aff 100%);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.75rem 1.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .nbp-form-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(67, 97, 238, 0.35);
+  }
+</style>

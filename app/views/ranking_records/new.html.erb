@@ -1,0 +1,588 @@
+<div class="upload-container rrk-upload">
+  <header class="header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Upload ranking sheet</h1>
+        <p>Excel file with generic names and payor columns — validated against preferences</p>
+      </div>
+      <%= link_to ranking_records_path, class: "back-btn" do %>
+        <i class="fas fa-arrow-left"></i> Back
+      <% end %>
+    </div>
+  </header>
+
+  <% if flash[:alert] || flash[:notice] %>
+    <div class="flash-messages">
+      <% if flash[:alert] %>
+        <div class="flash-message alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="flash-message notice">
+          <i class="fas fa-check-circle"></i>
+          <%= flash[:notice] %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <section class="upload-card">
+    <div class="upload-header">
+      <div class="upload-icon"><i class="fas fa-file-excel"></i></div>
+      <div class="upload-text">
+        <h2>Select your file</h2>
+        <p>Formats: .xlsx, .xls</p>
+      </div>
+    </div>
+
+    <%= form_with url: ranking_records_path, multipart: true, method: :post, local: true, class: "upload-form", id: "rrkUploadForm" do %>
+      <div class="upload-settings" style="display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem;">
+        <div class="setting-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; flex: 1; max-width: 220px;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: var(--dark); text-transform: uppercase; letter-spacing: 0.5px;">Team ID</label>
+          <%= select_tag :team_id, options_for_select([["Team 209", "209"], ["Team 198", "198"]], "198"), class: "settings-select", style: "width: 100%; padding: 0.75rem 1rem; border-radius: 10px; border: 2px solid rgba(67, 97, 238, 0.2); font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--dark); outline: none; background: var(--light); cursor: pointer;" %>
+        </div>
+        <div class="setting-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; flex: 1; max-width: 220px;">
+          <label style="font-size: 0.85rem; font-weight: 700; color: var(--dark); text-transform: uppercase; letter-spacing: 0.5px;">Accounting Period</label>
+          <%= select_tag :accounting_period_id, options_for_select((1..7).map { |n| ["Period #{n}", n] }, 7), class: "settings-select", style: "width: 100%; padding: 0.75rem 1rem; border-radius: 10px; border: 2px solid rgba(67, 97, 238, 0.2); font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--dark); outline: none; background: var(--light); cursor: pointer;" %>
+        </div>
+      </div>
+
+      <div class="upload-area" id="rrkUploadArea">
+        <div class="upload-placeholder">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <h3>Drag and drop here</h3>
+          <p>or click to browse</p>
+        </div>
+        <%= file_field_tag :file, id: "rrkFileInput", class: "file-input", accept: ".xlsx,.xls" %>
+
+        <div id="rrkFileInfo" class="file-info" style="display: none;">
+          <div class="file-details">
+            <i class="fas fa-file-excel"></i>
+            <div class="file-meta">
+              <div class="file-name" id="rrkFileName"></div>
+              <div class="file-size" id="rrkFileSize"></div>
+            </div>
+            <button type="button" id="rrkRemoveFile" class="remove-btn" aria-label="Remove file">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="upload-actions">
+        <%= submit_tag "Validate rankings", class: "upload-btn", id: "rrkUploadBtn", disabled: true %>
+        <div class="upload-tips">
+          <div class="tip-item">
+            <i class="fas fa-info-circle"></i>
+            <span>First column should be Generic Name; remaining columns are payors.</span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="upload-card debug-card">
+    <div class="upload-header">
+      <div class="upload-icon"><i class="fas fa-bug"></i></div>
+      <div class="upload-text">
+        <h2>Debug Payor Preferences</h2>
+        <p>Enter generic group and payor to see DB insurances quickly.</p>
+      </div>
+    </div>
+    <form id="rrkDebugForm" class="debug-form">
+      <input id="debugGroup" class="debug-input" placeholder="Generic group (e.g. BENDAMUSTINE)" required />
+      <input id="debugPayor" class="debug-input" placeholder="Payor (e.g. PACIFICSOURCE MEDICARE ADVANTAGE)" required />
+      <button type="submit" class="debug-btn" id="debugBtn">
+        <i class="fas fa-search"></i> Lookup
+      </button>
+    </form>
+    <div id="debugResult" class="debug-result" style="display:none;"></div>
+  </section>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var area = document.getElementById("rrkUploadArea");
+    var input = document.getElementById("rrkFileInput");
+    var info = document.getElementById("rrkFileInfo");
+    var nameEl = document.getElementById("rrkFileName");
+    var sizeEl = document.getElementById("rrkFileSize");
+    var removeBtn = document.getElementById("rrkRemoveFile");
+    var btn = document.getElementById("rrkUploadBtn");
+    var form = document.getElementById("rrkUploadForm");
+    if (!area || !input) return;
+
+    function fmt(bytes) {
+      if (!bytes) return "0 KB";
+      var k = 1024, i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + ["Bytes", "KB", "MB", "GB"][i];
+    }
+
+    function onFile(file) {
+      if (!file) return;
+      var ext = "." + file.name.split(".").pop().toLowerCase();
+      if (ext !== ".xlsx" && ext !== ".xls") {
+        alert("Please choose an Excel file (.xlsx or .xls).");
+        input.value = "";
+        return;
+      }
+      nameEl.textContent = file.name;
+      sizeEl.textContent = fmt(file.size);
+      info.style.display = "block";
+      btn.disabled = false;
+    }
+
+    area.addEventListener("click", function (e) {
+      if (e.target !== removeBtn && !removeBtn.contains(e.target)) input.click();
+    });
+    area.addEventListener("dragover", function (e) {
+      e.preventDefault();
+      area.classList.add("dragover");
+    });
+    area.addEventListener("dragleave", function () {
+      area.classList.remove("dragover");
+    });
+    area.addEventListener("drop", function (e) {
+      e.preventDefault();
+      area.classList.remove("dragover");
+      if (e.dataTransfer.files.length) {
+        input.files = e.dataTransfer.files;
+        onFile(e.dataTransfer.files[0]);
+      }
+    });
+    input.addEventListener("change", function () {
+      if (input.files.length) onFile(input.files[0]);
+    });
+    removeBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      input.value = "";
+      info.style.display = "none";
+      btn.disabled = true;
+    });
+    form.addEventListener("submit", function () {
+      if (input.files.length) {
+        btn.disabled = true;
+        btn.value = "Processing…";
+      }
+    });
+
+    var debugForm = document.getElementById("rrkDebugForm");
+    var debugGroup = document.getElementById("debugGroup");
+    var debugPayor = document.getElementById("debugPayor");
+    var debugBtn = document.getElementById("debugBtn");
+    var debugResult = document.getElementById("debugResult");
+
+    if (debugForm) {
+      debugForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var groupVal = (debugGroup.value || "").trim();
+        var payorVal = (debugPayor.value || "").trim();
+        if (!groupVal || !payorVal) return;
+
+        debugBtn.disabled = true;
+        debugBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Looking up…';
+
+        fetch("<%= lookup_insurances_ranking_records_path %>", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+          },
+          body: JSON.stringify({
+            generic_name_group: groupVal,
+            payor: payorVal,
+            accounting_period_id: 6
+          })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            debugResult.style.display = "block";
+            var parsed = Array.isArray(data.parsed_insurances) ? data.parsed_insurances : [];
+            var raw = Array.isArray(data.raw_insurances) ? data.raw_insurances : [];
+            debugResult.innerHTML =
+              "<h4>Lookup Result</h4>" +
+              "<p><strong>Group:</strong> " + data.generic_name_group + "</p>" +
+              "<p><strong>Payor:</strong> " + data.payor + "</p>" +
+              "<p><strong>Found Records:</strong> " + data.found_records + "</p>" +
+              "<p><strong>Parsed Insurances:</strong> " + (parsed.length ? parsed.join(", ") : "None") + "</p>" +
+              "<details><summary>Raw DB values</summary><pre>" + JSON.stringify(raw, null, 2) + "</pre></details>";
+          })
+          .catch(function () {
+            debugResult.style.display = "block";
+            debugResult.innerHTML = "<p class='debug-error'>Lookup failed. Please try again.</p>";
+          })
+          .finally(function () {
+            debugBtn.disabled = false;
+            debugBtn.innerHTML = '<i class="fas fa-search"></i> Lookup';
+          });
+      });
+    }
+  });
+</script>
+
+<style>
+  .rrk-upload {
+    --primary: #4361ee;
+    --primary-light: #6c8aff;
+    --secondary: #7209b7;
+    --accent: #4cc9f0;
+    --success: #06d6a0;
+    --danger: #f72585;
+    --light: #f8f9fc;
+    --dark: #2b2d42;
+    --gray: #8d99ae;
+    --border-radius: 16px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+    color: var(--dark);
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+    min-height: calc(100vh - 20px);
+    box-sizing: border-box;
+  }
+
+  .rrk-upload .header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .rrk-upload .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .rrk-upload .header-text h1 {
+    font-weight: 800;
+    font-size: clamp(1.45rem, 4vw, 2rem);
+    margin: 0 0 0.35rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .rrk-upload .header-text p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.98rem;
+  }
+
+  .rrk-upload .back-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    border-radius: 50px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    transition: var(--transition);
+  }
+
+  .rrk-upload .back-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+  }
+
+  .flash-messages { margin-bottom: 1.25rem; }
+
+  .flash-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .flash-message.alert {
+    background: rgba(247, 37, 133, 0.1);
+    border-left: 4px solid var(--danger);
+    color: #9d174d;
+  }
+
+  .flash-message.notice {
+    background: rgba(6, 214, 160, 0.1);
+    border-left: 4px solid var(--success);
+    color: #047857;
+  }
+
+  .upload-card {
+    background: #fff;
+    border-radius: var(--border-radius);
+    padding: 2.5rem 2rem;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--primary);
+  }
+
+  .upload-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+  }
+
+  .upload-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.75rem;
+  }
+
+  .upload-text h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.4rem;
+    color: var(--dark);
+  }
+
+  .upload-text p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.95rem;
+  }
+
+  .upload-area {
+    border: 3px dashed var(--primary-light);
+    border-radius: var(--border-radius);
+    padding: 2.25rem 1.5rem;
+    text-align: center;
+    background: rgba(67, 97, 238, 0.02);
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+
+  .upload-area:hover {
+    border-color: var(--primary);
+    background: rgba(67, 97, 238, 0.05);
+  }
+
+  .upload-area.dragover {
+    border-color: var(--success);
+    background: rgba(6, 214, 160, 0.06);
+  }
+
+  .upload-placeholder i {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 0.65rem;
+  }
+
+  .upload-placeholder h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1.1rem;
+    color: var(--dark);
+  }
+
+  .upload-placeholder p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.88rem;
+  }
+
+  .file-input {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+  }
+
+  .file-details {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--light);
+    border-radius: 12px;
+    border-left: 4px solid var(--success);
+    text-align: left;
+  }
+
+  .file-details i {
+    font-size: 1.5rem;
+    color: var(--success);
+  }
+
+  .file-meta { flex: 1; }
+
+  .file-name {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.95rem;
+  }
+
+  .file-size {
+    color: var(--gray);
+    font-size: 0.82rem;
+  }
+
+  .remove-btn {
+    background: rgba(247, 37, 133, 0.1);
+    border: 2px solid var(--danger);
+    color: var(--danger);
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .remove-btn:hover {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .upload-actions {
+    text-align: center;
+  }
+
+  .upload-btn {
+    background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.85rem 2.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+    transition: var(--transition);
+  }
+
+  .upload-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  .upload-btn:disabled {
+    background: var(--gray);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .upload-tips {
+    margin-top: 1.25rem;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--light);
+    border-radius: 12px;
+    border-left: 3px solid var(--accent);
+    color: var(--gray);
+    font-size: 0.88rem;
+    text-align: left;
+  }
+
+  .tip-item i {
+    color: var(--accent);
+    margin-top: 0.12rem;
+  }
+
+  .debug-card {
+    margin-top: 1.5rem;
+    border-top-color: var(--secondary);
+  }
+
+  .debug-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .debug-input {
+    border: 1px solid rgba(142, 153, 175, 0.5);
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.92rem;
+    width: 100%;
+  }
+
+  .debug-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.12);
+  }
+
+  .debug-btn {
+    background: linear-gradient(135deg, var(--accent), #06b6d4);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    padding: 0.7rem 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .debug-result {
+    margin-top: 1rem;
+    background: var(--light);
+    border-left: 4px solid var(--primary);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    font-size: 0.9rem;
+    color: var(--dark);
+  }
+
+  .debug-result h4 {
+    margin: 0 0 0.5rem;
+  }
+
+  .debug-result p {
+    margin: 0.3rem 0;
+  }
+
+  .debug-result pre {
+    margin: 0.65rem 0 0;
+    white-space: pre-wrap;
+    background: #fff;
+    border: 1px solid rgba(142, 153, 175, 0.35);
+    border-radius: 8px;
+    padding: 0.55rem;
+    font-size: 0.78rem;
+  }
+
+  .debug-error {
+    color: #9d174d;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .debug-form {
+      grid-template-columns: 1fr;
+    }
+    .debug-btn {
+      width: 100%;
+    }
+  }
+</style>

@@ -1,0 +1,2 @@
+module PaymentFactorsHelper
+end

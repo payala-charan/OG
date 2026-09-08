@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Features Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+ <!-- app/views/features/index.html.erb -->
+  <div class="features-dashboard">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="container">
+        <div class="header-content">
+          <div class="welcome-section">
+            <h1>Welcome to Your Dashboard</h1>
+            <p>Choose from our powerful features to manage your data efficiently</p>
+          </div>
+          <div class="user-actions">
+            <%= link_to root_path, method: :delete, class: "btn-login" do %>
+              <i class="fas fa-sign-out-alt"></i> Home
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Features Grid -->
+    <main class="features-main">
+      <div class="container">
+        <div class="section-title">
+          <h2>Our Features</h2>
+          <p>Powerful tools to streamline your workflow and enhance productivity</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Excel Validation Feature -->
+          <div class="feature-card" data-aos="fade-up">
+            <div class="feature-icon">
+              <i class="fas fa-file-excel"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Excel Validation</h3>
+              <p>Validate and process your Excel files with advanced data integrity checks and automated validation rules.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Data integrity validation</li>
+                <li><i class="fas fa-check-circle"></i> Format verification</li>
+                <li><i class="fas fa-check-circle"></i> Automated error detection</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to validations_path, class: "btn-primary" do %>
+                <i class="fas fa-play-circle"></i> Start Validation
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('excel')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Document Storage Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Document Storage</h3>
+              <p>Securely store, manage, and organize your documents with advanced search and retrieval capabilities.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Secure cloud storage</li>
+                <li><i class="fas fa-check-circle"></i> Advanced search</li>
+                <li><i class="fas fa-check-circle"></i> Version control</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to uploaded_files_path, class: "btn-primary" do %>
+                <i class="fas fa-folder-open"></i> Manage Files
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('storage')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Screen Analysis Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="150">
+            <div class="feature-icon">
+              <i class="fas fa-desktop"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Screen Analysis</h3>
+              <p>Upload screen images, add summaries, copy text quickly, and adjust image/text layout dynamically.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Image + text entry per screen</li>
+                <li><i class="fas fa-check-circle"></i> 70/30 default split with manual resize</li>
+                <li><i class="fas fa-check-circle"></i> Copy summary instantly</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to screen_analyses_path, class: "btn-primary" do %>
+                <i class="fas fa-eye"></i> Open Screen Analysis
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('screen')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Payor Analysis Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Payor Analysis</h3>
+              <p>Analyze payor preferences and generate insights to optimize your revenue cycle management.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Preference analysis</li>
+                <li><i class="fas fa-check-circle"></i> Trend identification</li>
+                <li><i class="fas fa-check-circle"></i> Revenue optimization</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to payor_preferences_path, class: "btn-primary" do %>
+                <i class="fas fa-chart-bar"></i> View Analysis
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('payor')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Biosimilar Upload Feature -->
+          <div class="feature-card" data-aos="fade-up">
+            <div class="feature-icon">
+              <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Biosimilar Upload</h3>
+              <p>Upload and validate biosimilar price data with our advanced validation tools.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Data integrity validation</li>
+                <li><i class="fas fa-check-circle"></i> Format verification</li>
+                <li><i class="fas fa-check-circle"></i> Analysis and reporting</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to new_biosimilar_prices_path, class: "btn-primary" do %>
+                <i class="fas fa-play-circle"></i> Upload Data
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('biosimilar')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Preference Analysis Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Product Preference Analysis</h3>
+              <p>Analyze product preferences and generate insights to optimize your marketing and sales strategies.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Preference analysis</li>
+                <li><i class="fas fa-check-circle"></i> Trend identification</li>
+                <li><i class="fas fa-check-circle"></i> Revenue optimization</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to product_preference_records_path, class: "btn-primary" do %>
+                <i class="fas fa-chart-bar"></i> View Analysis
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('preference')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Rankings Validation Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="feature-icon">
+              <i class="fas fa-list-ol"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Rankings Validation</h3>
+              <p>Validate and analyze rankings data to ensure accuracy and consistency.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Reference analysis</li>
+                <li><i class="fas fa-check-circle"></i> Data consistency checks</li>
+                <li><i class="fas fa-check-circle"></i> Validation reports</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to ranking_records_path, class: "btn-primary" do %>
+                <i class="fas fa-chart-bar"></i> View Analysis
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('rankings')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Screening Code Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+            <div class="feature-icon">
+              <i class="fas fa-robot"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Voice Assistance</h3>
+              <p>Interact with our AI assistant using voice commands and get instant voice responses for your queries.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Voice command recognition</li>
+                <li><i class="fas fa-check-circle"></i> Real-time voice responses</li>
+                <li><i class="fas fa-check-circle"></i> Natural conversation flow</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to voice_path, class: "btn-primary" do %>
+                <i class="fas fa-microphone"></i> Start Voice Chat
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('voice')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Schema Analysis Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+            <div class="feature-icon">
+              <i class="fas fa-project-diagram"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Schema Mapping</h3>
+              <p>Generate highly interactive relational database diagrams instantly from your application schema.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Drag and Drop generation</li>
+                <li><i class="fas fa-check-circle"></i> Inferred relational mapping</li>
+                <li><i class="fas fa-check-circle"></i> Detailed interactive column view</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to schema_visualizers_path, class: "btn-primary" do %>
+                <i class="fas fa-sitemap"></i> Map Database
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('schema_mapping')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- GitHub Analytics Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+            <div class="feature-icon">
+              <i class="fab fa-github"></i>
+            </div>
+            <div class="feature-content">
+              <h3>GitHub Analytics</h3>
+              <p>Connect your GitHub account to analyze organizational repositories, pull requests, and author contributions dynamically.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Real-time PR Tracking</li>
+                <li><i class="fas fa-check-circle"></i> Historical timelines</li>
+                <li><i class="fas fa-check-circle"></i> Interactive data charts</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to github_path, class: "btn-primary" do %>
+                <i class="fas fa-chart-line"></i> View Analytics
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('github')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Automations Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+            <div class="feature-icon">
+              <i class="fas fa-magic"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Automations</h3>
+              <p>Trigger automated workflows that download sheets, validate data, map rankings and store results instantly.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> One-click automation</li>
+                <li><i class="fas fa-check-circle"></i> Support for conversions & rankings</li>
+                <li><i class="fas fa-check-circle"></i> Instant results storage</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to automations_path, class: "btn-primary" do %>
+                <i class="fas fa-play-circle"></i> Start Automations
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('auto_validation')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+          <!-- Browser Automation Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="700">
+            <div class="feature-icon">
+              <i class="fas fa-vials"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Browser Tests</h3>
+              <p>Trigger end-to-end Capybara browser tests natively through the background job runner.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Visual UI Testing</li>
+                <li><i class="fas fa-check-circle"></i> Headless support ready</li>
+                <li><i class="fas fa-check-circle"></i> Non-blocking execution</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= button_to run_automation_path, method: :post, class: "btn-primary" do %>
+                <i class="fas fa-play"></i> Run Tests
+              <% end %>
+              <br>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('browser_tests')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+          <!-- Alert Notifications Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="800">
+            <div class="feature-icon">
+              <i class="fas fa-bell"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Alert Hub</h3>
+              <p>Manage email subscribers and automatically dispatch error notifications to the team when pipelines fail.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Seamless EmailJS Integration</li>
+                <li><i class="fas fa-check-circle"></i> Dynamic Error Parsing</li>
+                <li><i class="fas fa-check-circle"></i> Automated Dispatching</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to alert_emails_path, class: "btn-primary" do %>
+                <i class="fas fa-envelope-open-text"></i> Open Alert Hub
+              <% end %>
+              <br>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('alerts')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+          
+          <!-- Auto Scheduler Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="800">
+            <div class="feature-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Global Auto Scheduler</h3>
+              <p>Execute exhaustive 100-combination validation pipeline routines via background Jobs.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Batch Job Spawning</li>
+                <li><i class="fas fa-check-circle"></i> Granular Live Tracking</li>
+                <li><i class="fas fa-check-circle"></i> 100+ Network Permutations</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to automation_schedules_path, class: "btn-primary" do %>
+                <i class="fas fa-server"></i> Open Scheduler
+              <% end %>
+              <br>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('scheduler')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Pricing Catalogs Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="900">
+            <div class="feature-icon">
+              <i class="fas fa-file-excel"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Pricing Catalogs</h3>
+              <p>Upload your massive Excel dataset and provide NDC codes to compute automated analytics.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Dynamic Column Mapping</li>
+                <li><i class="fas fa-check-circle"></i> Mathematical Operations</li>
+                <li><i class="fas fa-check-circle"></i> Instant File Processing</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to pricing_catalogs_path, class: "btn-primary" do %>
+                <i class="fas fa-calculator"></i> Open Catalogs
+              <% end %>
+              <br>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('pricing_catalogs')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Rails Console Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="950">
+            <div class="feature-icon">
+              <i class="fas fa-terminal"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Rails Console</h3>
+              <p>Execute Ruby/Rails queries safely across different projects with real-time results and data protection.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Cross-project query execution</li>
+                <li><i class="fas fa-check-circle"></i> Destructive operation blocking</li>
+                <li><i class="fas fa-check-circle"></i> Real-time result display</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to console_path, class: "btn-primary" do %>
+                <i class="fas fa-code"></i> Open Console
+              <% end %>
+              <br>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('rails_console')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Product Rankings Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="1000">
+            <div class="feature-icon">
+              <i class="fas fa-trophy"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Product Rankings</h3>
+              <p>Comprehensive overview of margin-based biosimilar product rankings matched across insurances.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Best Margin Detection</li>
+                <li><i class="fas fa-check-circle"></i> Dynamic Insurance Mapping</li>
+                <li><i class="fas fa-check-circle"></i> Auto Rank Assignments</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to product_rankings_path, class: "btn-primary" do %>
+                <i class="fas fa-chart-bar"></i> View Rankings
+              <% end %>
+              <br>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('product_rankings')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+          <!-- Universal File Conversion Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="1050">
+            <div class="feature-icon">
+              <i class="fas fa-file-export"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Universal File Conversion</h3>
+              <p>Convert various file formats (CSV, PDF, TXT, DOCX) to a clean Excel spreadsheet instantly.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Multiple format support</li>
+                <li><i class="fas fa-check-circle"></i> Automatic text extraction</li>
+                <li><i class="fas fa-check-circle"></i> Instant download</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to file_conversions_path, class: "btn-primary" do %>
+                <i class="fas fa-exchange-alt"></i> Convert Files
+              <% end %>
+              <br>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('file_conversion')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+          <!-- Excel Tally Validation Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="1100">
+            <div class="feature-icon" style="background: linear-gradient(135deg, var(--secondary) 0%, #a03cff 100%);">
+              <i class="fas fa-balance-scale"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Excel Tally Validation</h3>
+              <p>Reconcile Individual Records against Grouped spreadsheets side-by-side to identify data integrity variances.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Double-file validation</li>
+                <li><i class="fas fa-check-circle"></i> 15-column cell comparison</li>
+                <li><i class="fas fa-check-circle"></i> Visual discrepancy reports</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to tally_validations_path, class: "btn-primary" do %>
+                <i class="fas fa-check-double"></i> Start Tally Check
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('tally_validation')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+          <!-- Insurance Preference Validator Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="1125">
+            <div class="feature-icon" style="background: linear-gradient(135deg, var(--success) 0%, var(--primary) 100%);">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Insurance Preference Validator</h3>
+              <p>Compare Biosimilar insurance lists against the Master preference table, flag missing/extra plans, and download a color-coded workbook.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Deterministic code validation</li>
+                <li><i class="fas fa-check-circle"></i> Optional model second opinion</li>
+                <li><i class="fas fa-check-circle"></i> Formula-safe Excel annotation</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to insurance_preference_validations_path, class: "btn-primary" do %>
+                <i class="fas fa-shield-alt"></i> Open Validator
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('insurance_pref')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+          <!-- Brand Insurance Mapper Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="1150">
+            <div class="feature-icon" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">
+              <i class="fas fa-project-diagram"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Brand Insurance Mapper</h3>
+              <p>Extract unique insurance networks mapped to individual pharmaceutical brands from visual grid matrices.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Grid matrix parsing</li>
+                <li><i class="fas fa-check-circle"></i> Comma-separated splitting</li>
+                <li><i class="fas fa-check-circle"></i> Normalized Excel downloads</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to brand_insurance_mappings_path, class: "btn-primary" do %>
+                <i class="fas fa-project-diagram"></i> Open Mapper
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('brand_mapping')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+          <!-- Quarter Status Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="1200">
+            <div class="feature-icon" style="background: linear-gradient(135deg, var(--secondary) 0%, var(--danger) 100%);">
+              <i class="fas fa-chart-pie"></i>
+            </div>
+            <div class="feature-content">
+              <h3>Quarter Status Dashboard</h3>
+              <p>Monitor existing data load status for teams and accounting periods across prices, payors, and preference models.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Three-table data statuses</li>
+                <li><i class="fas fa-check-circle"></i> Extract metrics summary</li>
+                <li><i class="fas fa-check-circle"></i> Developer Note instructions</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to quarter_statuses_path, class: "btn-primary" do %>
+                <i class="fas fa-chart-pie"></i> View Statuses
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('quarter_status')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Quick Stats Section -->
+        <div class="stats-section" data-aos="fade-up">
+          <div class="section-title">
+            <h2>Platform Overview</h2>
+            <p>Real-time insights into your platform usage and performance</p>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-file-contract"></i>
+              </div>
+              <div class="stat-info">
+                <h3>Files Processed</h3>
+                <span class="stat-number">1,247</span>
+                <span class="stat-trend up">+12% this month</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-check-double"></i>
+              </div>
+              <div class="stat-info">
+                <h3>Validations Completed</h3>
+                <span class="stat-number">892</span>
+                <span class="stat-trend up">+8% this month</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="stat-info">
+                <h3>Analysis Generated</h3>
+                <span class="stat-number">156</span>
+                <span class="stat-trend up">+15% this month</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-microphone"></i>
+              </div>
+              <div class="stat-info">
+                <h3>Voice Interactions</h3>
+                <span class="stat-number">324</span>
+                <span class="stat-trend up">+25% this month</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- How It Works Section -->
+        <div class="how-it-works" data-aos="fade-up">
+          <div class="section-title">
+            <h2>How It Works</h2>
+            <p>Simple steps to get started with our platform</p>
+          </div>
+          <div class="steps-grid">
+            <div class="step-card">
+              <div class="step-number">1</div>
+              <h3>Upload Your Files</h3>
+              <p>Easily upload Excel files or documents through our intuitive interface</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">2</div>
+              <h3>Automated Processing</h3>
+              <p>Our system automatically validates and processes your data</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">3</div>
+              <h3>Get Insights</h3>
+              <p>Access detailed analysis and reports for informed decision making</p>
+            </div>
+            <div class="step-card">
+              <div class="step-number">4</div>
+              <h3>Voice Interaction</h3>
+              <p>Use voice commands to interact with AI assistant for instant responses</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Feature Info Modal -->
+    <div id="featureModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeFeatureInfo()">&times;</span>
+        <div id="modalContent">
+          <!-- Dynamic content will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSS Styles with Your Color Theme -->
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --danger: #f72585;
+      --warning: #ff9e00;
+      --success: #06d6a0;
+      --light: #f8f9fc;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.4s ease;
+    }
+
+    .features-dashboard {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--dark);
+    }
+
+    .dashboard-header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .welcome-section h1 {
+      font-weight: 800;
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .welcome-section p {
+      color: var(--gray);
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .btn-login {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      border-radius: 50px;
+      padding: 0.6rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-login:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+      text-decoration: none;
+    }
+
+    .features-main {
+      padding: 4rem 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title h2 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+
+    .section-title p {
+      color: var(--gray);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-bottom: 5rem;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      text-align: center;
+      border-top: 4px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      border-top: 4px solid var(--primary);
+    }
+
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .feature-icon i {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .feature-content h3 {
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--dark);
+      font-size: 1.5rem;
+    }
+
+    .feature-content p {
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .feature-benefits {
+      list-style: none;
+      padding: 0;
+      margin: 1.5rem 0;
+      text-align: left;
+    }
+
+    .feature-benefits li {
+      padding: 0.5rem 0;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+    }
+
+    .feature-benefits i {
+      color: var(--success);
+      margin-right: 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .feature-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border: none;
+      color: white;
+      border-radius: 50px;
+      padding: 0.8rem 1.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    .btn-outline-primary {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      border-radius: 50px;
+      padding: 0.8rem 1.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .btn-outline-primary:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-3px);
+      text-decoration: none;
+    }
+
+    .stats-section {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 3rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 5rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 2rem;
+      background: var(--light);
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+      width: 70px;
+      height: 70px;
+      background: rgba(67, 97, 238, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.8rem;
+    }
+
+    .stat-info h3 {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark);
+      display: block;
+      line-height: 1;
+    }
+
+    .stat-trend {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    .stat-trend.up {
+      color: var(--success);
+    }
+
+    .how-it-works {
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+      border-radius: var(--border-radius);
+      padding: 3rem;
+      margin-bottom: 4rem;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .step-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .step-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .step-number {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin: 0 auto 1.5rem;
+    }
+
+    .step-card h3 {
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+
+    .step-card p {
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 3rem;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 600px;
+      position: relative;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .close-modal {
+      position: absolute;
+      right: 1.5rem;
+      top: 1.5rem;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--gray);
+      transition: var(--transition);
+    }
+
+    .close-modal:hover {
+      color: var(--dark);
+    }
+
+    .feature-list, .benefits-list {
+      list-style: none;
+      padding: 0;
+      margin: 1.5rem 0;
+    }
+
+    .feature-list li, .benefits-list li {
+      padding: 0.8rem 0;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+    }
+
+    .feature-list i {
+      color: var(--primary);
+      margin-right: 1rem;
+    }
+
+    .benefits-list i {
+      color: var(--success);
+      margin-right: 1rem;
+    }
+
+    /* Animation Classes */
+    [data-aos] {
+      opacity: 0;
+      transition: all 0.6s ease;
+    }
+
+    [data-aos].aos-animate {
+      opacity: 1;
+    }
+
+    [data-aos="fade-up"] {
+      transform: translateY(30px);
+    }
+
+    [data-aos="fade-up"].aos-animate {
+      transform: translateY(0);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+      }
+
+      .welcome-section h1 {
+        font-size: 1.8rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn-primary, .btn-outline-primary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-section, .how-it-works {
+        padding: 2rem;
+      }
+
+      .section-title h2 {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .features-main {
+        padding: 2rem 0;
+      }
+
+      .feature-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .modal-content {
+        padding: 2rem 1.5rem;
+        margin: 10% auto;
+      }
+    }
+  </style>
+
+  <!-- JavaScript -->
+  <script>
+    // Simple AOS (Animate On Scroll) implementation
+    function initAOS() {
+      const elements = document.querySelectorAll('[data-aos]');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('aos-animate');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      elements.forEach(element => {
+        observer.observe(element);
+      });
+    }
+
+    // Feature Info Modal
+    function showFeatureInfo(feature) {
+      const modal = document.getElementById('featureModal');
+      const content = document.getElementById('modalContent');
+      
+      const featureInfo = {
+        excel: {
+          title: 'Excel Validation',
+          description: 'Our Excel Validation tool provides comprehensive data validation capabilities for your spreadsheets with advanced error detection and automated processing.',
+          features: [
+            'Automated data type validation and format consistency checks',
+            'Duplicate detection and elimination algorithms',
+            'Formula verification and error reporting',
+            'Data integrity validation with custom rules',
+            'Batch processing for multiple files'
+          ],
+          benefits: [
+            'Reduce manual validation time by up to 80%',
+            'Ensure 99.9% data accuracy and consistency',
+            'Automated error reporting with detailed insights'
+          ]
+        },
+        storage: {
+          title: 'Document Storage',
+          description: 'Secure and organized document management system with enterprise-grade security and advanced collaboration features.',
+          features: [
+            'Secure cloud storage with military-grade encryption',
+            'Advanced search, filtering, and metadata management',
+            'Version control with complete history tracking',
+            'Real-time collaboration tools and sharing',
+            'Automated backup and disaster recovery'
+          ],
+          benefits: [
+            'Centralized document management across teams',
+            'Enhanced security compliance and access control',
+            'Streamlined document retrieval and sharing processes'
+          ]
+        },
+        payor: {
+          title: 'Payor Analysis',
+          description: 'Advanced analytics platform for understanding payor behavior, optimizing revenue cycles, and driving data-informed decisions.',
+          features: [
+            'Comprehensive payor preference analysis and trending',
+            'Machine learning-powered trend identification and forecasting',
+            'Revenue optimization insights and recommendations',
+            'Customizable performance metrics and KPIs',
+            'Automated reporting and dashboard generation'
+          ],
+          benefits: [
+            'Improve revenue cycle efficiency by 30-40%',
+            'Identify optimization opportunities and revenue leaks',
+            'Make data-driven decisions with confidence'
+          ]
+        },
+        voice: {
+          title: 'Voice Assistance',
+          description: 'Advanced AI-powered voice assistant that understands natural language and provides instant voice responses to your queries with intelligent conversation capabilities.',
+          features: [
+            'Real-time speech recognition with 99% accuracy',
+            'Natural language processing for contextual understanding',
+            'Text-to-speech with multiple voice options and languages',
+            'Conversation memory and context retention',
+            'Auto-stop detection and intelligent query processing'
+          ],
+          benefits: [
+            'Hands-free operation for increased productivity',
+            'Instant voice responses with natural conversation flow',
+            'Accessible interface for all user skill levels'
+          ]
+        },
+        screen: {
+          title: 'Screen Analysis',
+          description: 'Intelligent screen capture tool designed to streamline data entry by natively embedding visual layouts mapping instantly into database inputs.',
+          features: [
+            'Split-screen dynamic resizing architecture',
+            'Instant clipboard synchronization',
+            'Automated extraction summaries generated natively',
+            'Optimized data-entry layout processing'
+          ],
+          benefits: [
+            'Massively accelerates manual text transcription natively',
+            'Eliminates the need for multiple external monitor setups',
+            'Maintains source-of-truth visual records securely'
+          ]
+        },
+        biosimilar: {
+          title: 'Biosimilar Upload',
+          description: 'Targeted processing engine securely resolving complex CMS and HCPCS billing mappings seamlessly through drag-and-drop file ingestors.',
+          features: [
+            'Specialized NDC and HCPCS format detection algorithms',
+            'Native biosimilar cross-referencing logic',
+            'Bulk-upload processing optimizations safely handled via Roo'
+          ],
+          benefits: [
+            'Drastically reduces complex medical billing mapping errors',
+            'Safely matches biosimilars across varying unique payor networks',
+            'Extracts clean CMS margins instantly and reliably'
+          ]
+        },
+        preference: {
+          title: 'Product Preference Analysis',
+          description: 'Aggregates historical organizational behaviors natively determining explicit preferred product selections across multiple competing environments.',
+          features: [
+            'Longitudinal data mapping securely integrated',
+            'Algorithmic preference ranking natively executing',
+            'Detailed comparative visual dashboards'
+          ],
+          benefits: [
+            'Removes complete guesswork from inventory and policy assignments',
+            'Identifies hidden systematic reporting trends securely',
+            'Enhances targeted marketing resolutions natively'
+          ]
+        },
+        rankings: {
+          title: 'Rankings Validation',
+          description: 'Powerful multi-tier analytical validation engine intercepting specific Team IDs verifying numerical rankings mathematically against live dynamic margins.',
+          features: [
+            'Explicit generic name parsing and brand extraction algorithms',
+            'Custom Team ID and Accounting Period bound API filters',
+            'Dynamic backend CMS margin comparisons natively sorting arrays'
+          ],
+          benefits: [
+            'Ensures submitted datasets perfectly adhere to current explicit CMS standards',
+            'Prevents mathematically incorrect rankings from natively entering the core systems',
+            'Provides instant Success/Failure color-coded cell-level feedback instantly'
+          ]
+        },
+        schema_mapping: {
+          title: 'Schema Mapping & Visualization',
+          description: 'Automatically analyzes your explicit application database structure generating a beautiful, completely interactive graph mapping entity relationships securely.',
+          features: [
+            'VisJS powered interactive physical networking charts',
+            'Detailed clickable table nodes revealing column typing metadata dynamically',
+            'Singleton persistent SQLite database mappings'
+          ],
+          benefits: [
+            'Eliminates outdated physical backend structural documentation safely',
+            'Instantly identifies missing node relationships seamlessly',
+            'Accelerates engineering application onboarding significantly'
+          ]
+        },
+        github: {
+          title: 'GitHub Analytics Overhauls',
+          description: 'Real-time repository tracking mapping your Top Organizational Contributors into massive Stacked Bar charts providing macroscopic API data-intelligence natively.',
+          features: [
+            'Secure OAuth integrated API multi-organizational ingestion safely',
+            'Hot-swappable Javascript Timeline logic safely bound to explicit Chart.js structures',
+            'Macroscopic Account-wide aggregation reporting bypassing specific repos securely'
+          ],
+          benefits: [
+            'Visualize complex architectural project momentum dynamically',
+            'Gamify and explicitly track precise authorship records securely',
+            'Identify merging blockades and open pipeline bottlenecks perfectly'
+          ]
+        },
+        auto_validation: {
+          title: 'Auto Validation Workflow',
+          description: 'One-click automated Excel validation system that downloads the latest sheets from connected applications, validates data integrity, and stores results in the database instantly.',
+          features: [
+            'Automated Excel sheet download from external applications',
+            'Real-time data validation with comprehensive error checking',
+            'Instant result storage in AutoValidateRecord table',
+            'Progress tracking with visual feedback and loading indicators',
+            'Error handling with detailed failure reporting'
+          ],
+          benefits: [
+            'Eliminates manual validation processes completely',
+            'Ensures data accuracy with automated quality checks',
+            'Provides instant feedback and result storage',
+            'Reduces processing time from hours to seconds'
+          ]
+        },
+        browser_tests: {
+          title: 'Automated Browser Testing',
+          description: 'Leverage the Capybara framework directly from the web interface to run comprehensive end-to-end user workflows completely in the background without needing terminal access.',
+          features: [
+            'Spawns detached background processes to prevent request blocking',
+            'Environment-aware automation runner skipping interactive waits automatically',
+            'Full DOM-level interaction mirroring real human browser metrics'
+          ],
+          benefits: [
+            'Empowers non-technical users to execute structural integration tests',
+            'Keeps the Rails web server fully responsive and unblocked during execution'
+          ]
+        },
+        alerts: {
+          title: 'Alert Hub Notification Center',
+          description: 'A powerful automated dispatch system tightly coupled with your automation pipelines to email targeted teams the moment backend mismatches are flagged.',
+          features: [
+            'Seamless client-side dispatching integrated with EmailJS natively',
+            'Dynamic backend string parsing for precise Error and Sheet targeting',
+            'Scalable recipient database architecture gracefully handled via Rails Models'
+          ],
+          benefits: [
+            'Reduces the latency between a backend failure and a human engineer investigating',
+            'Zero additional server overhead as the dispatch relies strictly on background-synced client APIs',
+            'Aesthetically cohesive dashboards keeping pipeline management centralized safely'
+          ]
+        },
+        scheduler: {
+          title: 'Global Automation Scheduler',
+          description: 'A powerful orchestration dashboard that dispatches exhaustive 100-combination parameter checking pipelines automatically using Background Jobs securely.',
+          features: [
+            'Dynamic time-based execution frequency loops native to SolidQueue',
+            'Granular atomic tracking isolating failed permutations specifically',
+            'Time-delayed asynchronous throttling protecting sensitive external endpoints perfectly'
+          ],
+          benefits: [
+            'Achieve 100% test coverage iteratively without manually selecting parameters blindly',
+            'Real-time macroscopic progress bars providing deep operational confidence easily',
+            'Fully decoupled from the mainline Web Process guaranteeing fluid UI experiences natively'
+          ]
+        },
+        pricing_catalogs: {
+          title: 'Pricing Catalogs',
+          description: 'A sophisticated pricing feature that allows bulk Excel uploads of varying structures, mapping specific columns to generate intelligent mathematical computations.',
+          features: [
+            'JSONB persistent storage accommodating massive irregular data uploads safely',
+            'Dynamic Custom Math equations calculating precise value ratios (e.g. Price/Qty)',
+            'Instant CSV and Table result-set generations sorted intelligently'
+          ],
+          benefits: [
+            'Streamline legacy Excel math tracking into a responsive, permanent web application seamlessly',
+            'Safely persist NDC code validations ensuring absolute lowest-cost selections accurately',
+            'Share exported pipeline results natively bypassing raw document transfers securely'
+          ]
+        },
+        product_rankings: {
+          title: 'Product Rankings',
+          description: 'A powerful tool calculating optimal biosimilar rankings matched across active insurances by identifying highest Three-Forty-B margins securely.',
+          features: [
+            'Instant Insurance matching and validation',
+            'Descending Three-Forty-B CMS margin sorts',
+            'Premium Data Tabulation for direct oversight'
+          ],
+          benefits: [
+            'Maximize revenue by identifying best-ranked choices',
+            'Cross-reference margins with active payload data instantly',
+            'Eliminate manual grouping or lookups entirely'
+          ]
+        },
+        tally_validation: {
+          title: 'Excel Tally Validation',
+          description: 'Group individual record spreadsheets by keys and tally 15 financial metrics side-by-side against grouped spreadsheets to verify calculations.',
+          features: [
+            'Simultaneous double-file upload validation',
+            'Robust 6-key group aggregation algorithm',
+            '15-column side-by-side cellular discrepancy tallying',
+            'Clear validation mapping tags and status metrics'
+          ],
+          benefits: [
+            'Ensure absolute synchronization between granular individual data and grouped summaries',
+            'Pinpoint cellular math discrepancies down to exact decimal variances instantly',
+            'Interactive expand/collapse grid for streamlined reconciliation audits'
+          ]
+        },
+        insurance_pref: {
+          title: 'Insurance Preference Validator',
+          description: 'Upload a Master insurance preference workbook and a Biosimilar sheet to validate covered plans per brand, then download an annotated copy with a color-coded Claude Insurances column.',
+          features: [
+            'Parses stacked Master category blocks and unions Y-marked plans per brand',
+            'Fuzzy brand matching with Leuprolide family+month rules and explicit overrides',
+            'Insurance comparison that avoids false substring matches',
+            'Optional LLM second-opinion pass that never replaces the code result'
+          ],
+          benefits: [
+            'Catch missing required plans before a sheet is published',
+            'Keep live cost/margin formulas intact when inserting the output column',
+            'Review spelling variants separately from truly missing coverage'
+          ]
+        },
+        brand_mapping: {
+          title: 'Brand Insurance Mapper',
+          description: 'A dedicated utility designed to extract, compile, and clean brand preference matrices mapping coverage options dynamically.',
+          features: [
+            'Dynamic grid column mapping for drug names and rows for payor lines',
+            'Robust splitting of comma-separated multiple insurance items',
+            'Full support for Y and X mapping values',
+            'Zebra-striped formatted multi-sheet Excel generation'
+          ],
+          benefits: [
+            'Say goodbye to manually copy-pasting complex excel grid files',
+            'Export dual reports: summary and normalized details simultaneously',
+            'Seamlessly integrate output mappings into target billing systems'
+          ]
+        },
+        quarter_status: {
+          title: 'Quarter Status Dashboard',
+          description: 'A read-only dashboard showing the data coverage status of team IDs and accounting periods across three primary tables, complete with developer instructions.',
+          features: [
+            'Dynamic counts compilation for NewBiosimilarPrice, Payor, and PayorPreference tables',
+            'Granular extraction status for brand names, strengths, and insurance arrays',
+            'Interactive copy-to-clipboard buttons for developer jobs & seed runners'
+          ],
+          benefits: [
+            'Gain immediate visibility into data load completeness across teams',
+            'Easily reference correct rails runner and console commands',
+            'Zero model dependencies or risky file system write side-effects'
+          ]
+        }
+      };
+
+      const info = featureInfo[feature];
+      content.innerHTML = `
+        <h2 style="color: var(--primary); margin-bottom: 1rem;">${info.title}</h2>
+        <p style="color: var(--gray); margin-bottom: 2rem; line-height: 1.6;">${info.description}</p>
+        
+        <h3 style="color: var(--dark); margin-bottom: 1rem;">Key Features:</h3>
+        <ul class="feature-list">
+          ${info.features.map(feature => `<li><i class="fas fa-check"></i> ${feature}</li>`).join('')}
+        </ul>
+        
+        <h3 style="color: var(--dark); margin-bottom: 1rem; margin-top: 2rem;">Benefits:</h3>
+        <ul class="benefits-list">
+          ${info.benefits.map(benefit => `<li><i class="fas fa-star"></i> ${benefit}</li>`).join('')}
+        </ul>
+      `;
+
+      modal.style.display = 'block';
+    }
+
+    function closeFeatureInfo() {
+      document.getElementById('featureModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('featureModal');
+      if (event.target === modal) {
+        closeFeatureInfo();
+      }
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      initAOS();
+    });
+  </script>
+</body>
+</html>

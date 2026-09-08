@@ -1,0 +1,99 @@
+<div class="ip-wrap">
+  <style>
+    .ip-wrap { --primary:#4361ee; --danger:#f72585; --success:#06d6a0; --warning:#ff9e00; --dark:#2b2d42; --gray:#8d99ae; --card:#fff; font-family: Inter, "Segoe UI", sans-serif; color: var(--dark); }
+    .ip-wrap { max-width: 1180px; margin: 0 auto; padding: 1.5rem; }
+    .ip-hero { background: #fff; border-radius: 16px; padding: 1.75rem 2rem; box-shadow: 0 10px 30px rgba(0,0,0,.06); margin-bottom: 1.5rem; }
+    .ip-hero h1 { margin: 0 0 .4rem; font-size: 2rem; background: linear-gradient(135deg,#4361ee,#7209b7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .ip-hero p { color: var(--gray); margin: 0; }
+    .ip-card { background:#fff; border-radius:16px; padding:1.5rem 2rem; box-shadow:0 10px 30px rgba(0,0,0,.06); margin-bottom:1.5rem; }
+    .ip-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .ip-field label { display:block; font-weight:700; margin-bottom:.4rem; }
+    .ip-field input[type=file], .ip-field input[type=text] { width:100%; padding:.7rem; border:1px solid #e5e7eb; border-radius:10px; }
+    .ip-check { display:flex; align-items:flex-start; gap:.7rem; margin:1rem 0; padding:1rem; background:#f8f9fc; border-radius:12px; }
+    .ip-btn { display:inline-flex; align-items:center; gap:.5rem; background:linear-gradient(135deg,#4361ee,#6c8aff); color:#fff; border:0; border-radius:999px; padding:.75rem 1.3rem; font-weight:700; cursor:pointer; text-decoration:none; }
+    .ip-btn.danger { background:linear-gradient(135deg,#f72585,#f55f7c); }
+    .ip-alert { padding:1rem 1.2rem; border-radius:12px; margin-bottom:1rem; font-weight:600; }
+    .ip-alert.notice { background:rgba(6,214,160,.12); color:#04926c; }
+    .ip-alert.alert { background:rgba(247,37,133,.1); color:#c51b65; }
+    .ip-table { width:100%; border-collapse:collapse; }
+    .ip-table th, .ip-table td { text-align:left; padding:.7rem .5rem; border-bottom:1px solid #eef1f6; }
+    .ip-chip { display:inline-block; padding:.15rem .55rem; border-radius:999px; font-size:.75rem; font-weight:700; }
+    .ip-chip-pass { background:#d1fae5; color:#047857; }
+    .ip-chip-fail { background:#fee2e2; color:#b91c1c; }
+    .ip-chip-review { background:#fef3c7; color:#92400e; }
+    .ip-chip-neutral { background:#e5e7eb; color:#374151; }
+    @media (max-width: 800px) { .ip-grid { grid-template-columns:1fr; } }
+  </style>
+
+  <div class="ip-hero">
+    <h1>Insurance Preference Validator</h1>
+    <p>Upload a Master preference workbook and a Biosimilar sheet. Code validation always runs first; model validation is an optional second opinion.</p>
+  </div>
+
+  <% if flash[:notice] %><div class="ip-alert notice"><%= flash[:notice] %></div><% end %>
+  <% if flash[:alert] %><div class="ip-alert alert"><%= flash[:alert] %></div><% end %>
+
+  <div class="ip-card">
+    <h2 style="margin-top:0;">New validation</h2>
+    <%= form_with url: insurance_preference_validations_path, method: :post, multipart: true, local: true, data: { turbo: false } do %>
+      <div class="ip-grid">
+        <div class="ip-field">
+          <label for="master_file">Master Preference Table</label>
+          <%= file_field_tag :master_file, accept: ".xlsx,.xlsm,.xls", required: true %>
+        </div>
+        <div class="ip-field">
+          <label for="biosimilar_file">Biosimilar sheet</label>
+          <%= file_field_tag :biosimilar_file, accept: ".xlsx,.xlsm,.xls", required: true %>
+        </div>
+      </div>
+      <div class="ip-field" style="margin-top:1rem;">
+        <label for="claude_column_name">Output column name</label>
+        <%= text_field_tag :claude_column_name, InsurancePreference::Config::CLAUDE_COLUMN_NAME %>
+      </div>
+      <label class="ip-check">
+        <%= check_box_tag :model_validation_enabled, "1", false %>
+        <span>
+          <strong>Also run model validation</strong><br>
+          <span style="color:#8d99ae;font-weight:400;">Optional LLM cross-check after the deterministic pass. Never replaces code results.</span>
+        </span>
+      </label>
+      <button type="submit" class="ip-btn"><i class="fas fa-play"></i> Run validation</button>
+    <% end %>
+  </div>
+
+  <div class="ip-card">
+    <h2 style="margin-top:0;">Recent runs</h2>
+    <% if @runs.any? %>
+      <table class="ip-table">
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Files</th>
+            <th>Status</th>
+            <th>Model</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @runs.each do |run| %>
+            <tr>
+              <td><%= run.created_at.strftime("%b %d, %Y %l:%M %p") %></td>
+              <td>
+                <%= run.master_file_name %><br>
+                <span style="color:#8d99ae;"><%= run.biosimilar_file_name %></span>
+              </td>
+              <td><%= ip_status_chip(run.status.to_s.upcase) %></td>
+              <td><%= run.model_validation_enabled? ? "On" : "Off" %></td>
+              <td>
+                <%= link_to "Open", insurance_preference_validation_path(run), class: "ip-btn" %>
+                <%= button_to "Delete", insurance_preference_validation_path(run), method: :delete, class: "ip-btn danger", form: { style: "display:inline;" }, data: { turbo_confirm: "Delete this run?" } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p style="color:#8d99ae;">No runs yet. Upload both workbooks to start.</p>
+    <% end %>
+  </div>
+</div>

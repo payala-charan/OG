@@ -1,0 +1,35 @@
+<h1>Insurance Factors</h1>
+
+<%= link_to "Upload / New", new_insurance_factor_path %>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Primary Payor</th>
+      <th>Plan</th>
+      <th>Category</th>
+      <th>Rate %</th>
+      <th>Factor</th>
+      <th>Team</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @insurance_factors.each do |rec| %>
+      <tr>
+        <td><%= rec.primary_payor_name %></td>
+        <td><%= rec.benefit_plan_name %></td>
+        <td><%= rec.category %></td>
+        <td><%= rec.rate_percent %></td>
+        <td><%= rec.insurance_factor %></td>
+        <td><%= rec.team_id %></td>
+        <td>
+          <%= link_to "Show", rec %> |
+          <%= link_to "Edit", edit_insurance_factor_path(rec) %> |
+          <%= link_to "Delete", rec, method: :delete, data: { confirm: "Are you sure?" } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

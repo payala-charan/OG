@@ -1,0 +1,2 @@
+class AlertEmail < ApplicationRecord
+end

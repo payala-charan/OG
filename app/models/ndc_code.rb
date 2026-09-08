@@ -1,0 +1,2 @@
+class NdcCode < ApplicationRecord
+end

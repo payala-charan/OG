@@ -1,0 +1,75 @@
+<%= render 'shared_styles' %>
+
+<div class="screen-analyses-dashboard">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="welcome-section">
+          <h1>Create New Screen Analysis</h1>
+          <p>Upload a screenshot and provide a summary text for side-by-side analysis</p>
+        </div>
+        <div class="user-actions">
+          <% if @team_id.present? %>
+            <%= link_to screen_analysis_path(@team_id), class: "btn-header" do %>
+              <i class="fas fa-arrow-left"></i> Back to <%= @team_id.to_s == '198' ? 'Riverside' : 'St Charles' %>
+            <% end %>
+          <% else %>
+            <%= link_to screen_analyses_path, class: "btn-header" do %>
+              <i class="fas fa-arrow-left"></i> Back to Hub
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="features-main">
+    <div class="container">
+      <div class="card-form">
+        <%= form_with model: @screen_analysis, url: screen_analyses_path, local: true, multipart: true do |f| %>
+          <% if @screen_analysis.errors.any? %>
+            <div class="error-list">
+              <h4><i class="fas fa-exclamation-circle"></i> <%= pluralize(@screen_analysis.errors.count, "error") %> prohibited this record from being saved:</h4>
+              <ul>
+                <% @screen_analysis.errors.full_messages.each do |m| %>
+                  <li><%= m %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <div class="field">
+            <%= f.label :team_id, "Target Team" %>
+            <%= f.select :team_id, [["Riverside (Team 198)", 198], ["St Charles (Team 209)", 209]], { selected: @team_id || 198 }, { class: "form-control" } %>
+          </div>
+
+          <div class="field">
+            <%= f.label :title, "Screen Name" %>
+            <%= f.text_field :title, placeholder: "e.g., Home Page View", class: "form-control" %>
+          </div>
+
+          <div class="field">
+            <%= f.label :summary, "Screen Summary" %>
+            <%= f.text_area :summary, rows: 6, placeholder: "Describe what this screen represents...", class: "form-control" %>
+          </div>
+
+          <div class="field">
+            <%= f.label :image, "Screenshot Image" %>
+            <%= f.file_field :image, accept: "image/png,image/jpeg,image/jpg", class: "form-control" %>
+          </div>
+
+          <div class="actions" style="margin-top: 2.5rem; display: flex; gap: 1rem;">
+            <button type="submit" class="btn-primary">
+              <i class="fas fa-save"></i> Create Screen Analysis
+            </button>
+            <%= link_to screen_analyses_path, class: "btn-secondary" do %>
+              Cancel
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</div>

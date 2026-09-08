@@ -1,0 +1,12 @@
+<h2>Upload Excel</h2>
+
+<%= form_with url: insurance_factors_path, multipart: true, local: true do %>
+  <%= file_field_tag :file %>
+  <%= submit_tag "Upload" %>
+<% end %>
+
+<hr>
+
+<h2>Manual Entry</h2>
+
+<%= render "form" %>

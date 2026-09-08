@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Excel Validation Tool — Modern UI</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #6c8aff;
+      --primary-dark: #3a56d4;
+      --secondary: #7209b7;
+      --accent: #4cc9f0;
+      --danger: #f72585;
+      --warning: #ff9e00;
+      --success: #06d6a0;
+      --light: #f8f9fc;
+      --dark: #2b2d42;
+      --gray: #8d99ae;
+      --border-radius: 16px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --transition: all 0.4s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: var(--dark);
+      background: linear-gradient(135deg, #f5f7ff 0%, #f0f4ff 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header Styles */
+    .header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .header-text h1 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-text p {
+      color: var(--gray);
+      font-size: 1.1rem;
+    }
+
+    .back-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+
+    /* Upload Card */
+    .upload-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-top: 4px solid transparent;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      border-top: 4px solid var(--primary);
+    }
+
+    .upload-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .upload-header h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--dark);
+    }
+
+    .upload-header p {
+      color: var(--gray);
+      margin-top: 0.5rem;
+    }
+
+    .upload-area {
+      border: 3px dashed var(--primary-light);
+      border-radius: var(--border-radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      background: rgba(67, 97, 238, 0.02);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(67, 97, 238, 0.05);
+    }
+
+    .upload-area.dragover {
+      border-color: var(--success);
+      background: rgba(6, 214, 160, 0.05);
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      color: white;
+      font-size: 2rem;
+    }
+
+    .upload-text h3 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .upload-text p {
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+    }
+
+    .browse-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+    }
+
+    .browse-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+    }
+
+    .file-info {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--light);
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--success);
+    }
+
+    .file-name {
+      font-weight: 600;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .validation-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .criteria-select {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid var(--primary-light);
+      border-radius: 50px;
+      background: white;
+      color: var(--dark);
+      font-weight: 500;
+      min-width: 250px;
+      transition: var(--transition);
+    }
+
+    .criteria-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .criteria-select--team {
+      min-width: 160px;
+    }
+
+    .validate-btn {
+      background: linear-gradient(135deg, var(--success) 0%, #05c291 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .validate-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(6, 214, 160, 0.4);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: var(--transition);
+      border-top: 4px solid transparent;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card.total { border-top-color: var(--primary); }
+    .stat-card.valid { border-top-color: var(--success); }
+    .stat-card.errors { border-top-color: var(--danger); }
+    .stat-card.total-errors { border-top-color: var(--warning); }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .stat-icon.total { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); }
+    .stat-icon.valid { background: linear-gradient(135deg, var(--success) 0%, #05c291 100%); }
+    .stat-icon.errors { background: linear-gradient(135deg, var(--danger) 0%, #f55f7c 100%); }
+    .stat-icon.total-errors { background: linear-gradient(135deg, var(--warning) 0%, #ffb143 100%); }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card.total .stat-number { color: var(--primary); }
+    .stat-card.valid .stat-number { color: var(--success); }
+    .stat-card.errors .stat-number { color: var(--danger); }
+    .stat-card.total-errors .stat-number { color: var(--warning); }
+
+    .stat-label {
+      color: var(--gray);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* Controls Section */
+    .controls-section {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 300px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 3rem;
+      border: 2px solid var(--primary-light);
+      border-radius: 50px;
+      background: white;
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+    }
+
+    .control-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .control-btn.error {
+      background: rgba(247, 37, 133, 0.1);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .control-btn.error:hover {
+      background: var(--danger);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .control-btn.secondary {
+      background: rgba(141, 153, 174, 0.1);
+      border-color: var(--gray);
+      color: var(--dark);
+    }
+
+    .control-btn.secondary:hover {
+      background: var(--gray);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .results-info {
+      color: var(--gray);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    /* Errors Section */
+    .errors-section {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--danger);
+    }
+
+    .errors-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .errors-header h3 {
+      font-weight: 700;
+      color: var(--danger);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .errors-count {
+      background: var(--danger);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .errors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .error-card {
+      background: rgba(247, 37, 133, 0.05);
+      border: 1px solid rgba(247, 37, 133, 0.2);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .error-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(247, 37, 133, 0.15);
+      border-color: var(--danger);
+    }
+
+    .error-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--danger);
+    }
+
+    .error-header {
+      font-weight: 700;
+      color: var(--danger);
+      margin-bottom: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .error-details {
+      font-size: 0.85rem;
+      color: var(--dark);
+    }
+
+    .error-details div {
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .error-hint {
+      font-size: 0.75rem;
+      color: var(--gray);
+      margin-top: 0.8rem;
+      font-style: italic;
+    }
+
+    /* Table Section */
+    .table-section {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .table-header {
+      padding: 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .table-header h3 {
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .table-header p {
+      color: var(--gray);
+    }
+
+    .table-controls {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .filter-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 0.6rem 1rem;
+      border: 2px solid var(--primary-light);
+      border-radius: 50px;
+      background: white;
+      color: var(--dark);
+      font-weight: 500;
+      min-width: 180px;
+      transition: var(--transition);
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .table-info {
+      color: var(--gray);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .table-wrapper {
+      overflow: auto;
+      max-height: 600px;
+    }
+
+    .validation-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .validation-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .validation-table th {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 21;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .validation-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .validation-table tbody tr {
+      transition: var(--transition);
+    }
+
+    .validation-table tbody tr:hover {
+      background: rgba(67, 97, 238, 0.03);
+    }
+
+    .cell-valid {
+      background: rgba(6, 214, 160, 0.08);
+      color: var(--success);
+      border-left: 3px solid var(--success);
+    }
+
+    .cell-error {
+      background: rgba(247, 37, 133, 0.08);
+      color: var(--danger);
+      border-left: 3px solid var(--danger);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .cell-error:hover {
+      background: rgba(247, 37, 133, 0.12);
+    }
+
+    .cell-close {
+      background: rgba(114, 9, 183, 0.08); /* --secondary color */
+      color: var(--secondary);
+      border-left: 3px solid var(--secondary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .cell-close:hover {
+      background: rgba(114, 9, 183, 0.12);
+    }
+
+    .cell-normal {
+      color: var(--dark);
+      width: 1000px;
+    }
+    .cell-alternatives {
+      color: var(--dark);
+      width: 800px;   /* increase as needed */
+      min-width: 700px;
+      max-width: 1000px; 
+      white-space: normal; /* allow wrapping */
+      word-wrap: break-word;
+      border: 1px dotted #ddd;
+    }
+
+    .cell-highlight {
+      animation: pulseHighlight 2s ease-in-out;
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+      border-radius: 4px;
+    }
+
+    @keyframes pulseHighlight {
+      0% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.6); }
+      70% { box-shadow: 0 0 0 10px rgba(67, 97, 238, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); }
+    }
+
+    .cell-details {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      margin-top: 0.3rem;
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .loading-content {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: clamp(2rem, 5vw, 3rem);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .loading-spinner {
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      color: var(--primary);
+      margin-bottom: 1rem;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-content h3 {
+      font-weight: 700;
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      margin-bottom: 0.75rem;
+      color: var(--dark);
+    }
+
+    .loading-content p {
+      color: var(--gray);
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 4px;
+    }
+
+    /* Empty States */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--gray);
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .header-text h1 {
+        font-size: 2rem;
+      }
+
+      .upload-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+      .validation-controls {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .criteria-select, .validate-btn {
+        width: 100%;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-box {
+        min-width: auto;
+      }
+
+      .control-buttons {
+        justify-content: center;
+      }
+
+      .errors-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-controls {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .upload-card, .errors-section, .table-section {
+        padding: 1.5rem;
+      }
+
+      .upload-area {
+        padding: 2rem 1rem;
+      }
+
+      .stat-card {
+        padding: 1.5rem;
+      }
+
+      .control-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="header-text">
+          <h1>Excel Validation Dashboard</h1>
+          <p>Upload an Excel file, validate rows and inspect mismatches with precision</p>
+        </div>
+        <%= link_to features_path, class: "back-btn" do %>
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        <% end %>
+      </div>
+    </header>
+
+    <!-- Upload Card -->
+    <section class="upload-card">
+      <div class="upload-header">
+        <div>
+          <h2>Upload & Validate</h2>
+          <p>Drag & drop or choose an Excel file (.xlsx/.xls). Choose team ID and conversion criteria, then click Validate.</p>
+        </div>
+      </div>
+
+      <%= form_with url: upload_validations_path, local: true, multipart: true, html: { id: "uploadForm", class: "upload-form" } do |form| %>
+        <div id="uploadArea" class="upload-area">
+          <div class="upload-icon">
+            <i class="fas fa-file-excel"></i>
+          </div>
+          <div class="upload-text">
+            <h3>Upload Your Excel File</h3>
+            <p>Supported formats: .xlsx, .xls (Max 10MB)</p>
+          </div>
+          
+          <button type="button" id="browseBtn" class="browse-btn">
+            <i class="fas fa-folder-open"></i> Browse Files
+          </button>
+
+          <div id="fileInfo" class="file-info" style="display: none;">
+            <div class="file-name">
+              <i class="fas fa-check-circle"></i>
+              <span id="selectedFileName">No file selected</span>
+            </div>
+          </div>
+
+          <%= form.file_field :file, id: "fileInput", accept: ".xlsx,.xls", class: "hidden" %>
+        </div>
+
+        <div class="validation-controls">
+          <%= form.select :team_id,
+            options_for_select([["198", "198"], ["209", "209"]], params[:team_id].presence || "209"),
+            {},
+            class: "criteria-select criteria-select--team",
+            aria: { label: "Team ID" } %>
+
+          <%= form.select :conversion_criteria,
+            options_for_select([
+              ["Highest Margin (Default)", "highest_margin"],
+              ["Highest Percent Margin", "percent_margin"],
+              ["Low Cost", "low_cost"],
+              ["Preferred Product", "preferred_product"]
+            ]), { prompt: "Select conversion criteria" }, class: "criteria-select" %>
+
+          <%= form.submit "Validate Excel File", id: "validateBtn", class: "validate-btn", disabled: true do %>
+            <i class="fas fa-play-circle"></i> Validate Excel File
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;" role="dialog" aria-hidden="true">
+      <div class="loading-content">
+        <div class="loading-spinner" aria-hidden="true">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <h3>Processing Validation</h3>
+        <p>Please wait while we process your Excel file...</p>
+        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <% if @extracted_headers.present? && @validated_data.present? %>
+      <% total_rows = @validated_data.length %>
+      <% valid_rows = @validated_data.count { |r| r.all? { |_k, v| !v.is_a?(Hash) || v[:match] } } %>
+      <% rows_with_errors = @validated_data.count { |r| r.any? { |_k, v| v.is_a?(Hash) && !v[:match] } } %>
+      <% total_errors = @validated_data.sum { |r| r.count { |_k, v| v.is_a?(Hash) && !v[:match] } } %>
+
+      <!-- Summary Cards -->
+      <section class="stats-grid">
+        <div class="stat-card total">
+          <div class="stat-icon total"><i class="fas fa-layer-group"></i></div>
+          <div class="stat-number"><%= @validated_data.length %></div>
+          <div class="stat-label">Total Rows</div>
+        </div>
+
+        <div class="stat-card valid">
+          <div class="stat-icon valid"><i class="fas fa-check-circle"></i></div>
+          <div class="stat-number">
+            <%= @validated_data.count { |row| row.values.none? { |cell| cell.is_a?(Hash) && !(cell["match"] || cell[:match]) } } %>
+          </div>
+          <div class="stat-label">Valid Rows</div>
+        </div>
+
+        <div class="stat-card errors">
+          <div class="stat-icon errors"><i class="fas fa-exclamation-triangle"></i></div>
+          <div class="stat-number">
+            <%= @validated_data.count { |row| row.values.any? { |cell| cell.is_a?(Hash) && !(cell["match"] || cell[:match]) } } %>
+          </div>
+          <div class="stat-label">Rows with Errors</div>
+        </div>
+
+        <div class="stat-card total-errors">
+          <div class="stat-icon total-errors"><i class="fas fa-times-circle"></i></div>
+          <div class="stat-number">
+            <%= @validated_data.sum { |row| row.values.count { |cell| cell.is_a?(Hash) && !(cell["match"] || cell[:match]) } } %>
+          </div>
+          <div class="stat-label">Total Errors</div>
+        </div>
+      </section>
+
+
+      <!-- Controls Section -->
+      <section class="controls-section">
+        <div class="search-box">
+          <i class="fas fa-search search-icon"></i>
+          <input type="search" id="quickSearch" placeholder="Search rows (brand, ndc, strength, etc.)" class="search-input">
+        </div>
+
+        <div class="control-buttons">
+          <button id="toggleErrorsBtn" class="control-btn error">
+            <i class="fas fa-list"></i> Toggle Error List
+          </button>
+          <button id="clearHighlights" class="control-btn secondary">
+            <i class="fas fa-broom"></i> Clear Highlights
+          </button>
+        </div>
+
+        <div class="results-info">
+          Showing: <span id="visibleCount"><%= @validated_data.length %></span> rows
+        </div>
+      </section>
+
+      <!-- Error List Section -->
+      <section id="errorsSection" class="errors-section">
+        <div class="errors-header">
+          <h3>
+            <i class="fas fa-exclamation-circle"></i>
+            Validation Errors
+            <% total_errors = @validated_data.sum { |row| row.values.count { |cell| cell.is_a?(Hash) && !(cell["match"] || cell[:match]) } } %>
+            <span class="errors-count" id="errorsSummaryCount"><%= total_errors %></span>
+          </h3>
+          <div class="error-hint">Click any error to jump to the cell</div>
+        </div>
+
+        <div id="errorList" class="errors-grid">
+          <% if total_errors > 0 %>
+            <% @validated_data.each_with_index do |row, row_index| %>
+              <% row.each do |header, cell| %>
+                <% next unless cell.is_a?(Hash) %>
+
+                <% match  = cell["match"]  || cell[:match] %>
+                <% actual = cell["actual"] || cell[:actual] %>
+                <% calc   = cell["calc"]   || cell[:calc] %>
+
+                <% unless match %>
+                  <div class="error-card" data-row="<%= row_index %>" data-column="<%= header %>">
+                    <div class="error-header">
+                      <span>Row <%= row_index + 1 %> • <%= header %></span>
+                    </div>
+                    <div class="error-details">
+                      <div>
+                        <i class="fas fa-tag"></i>
+                        <strong>Actual:</strong> <%= actual.presence || 'N/A' %>
+                      </div>
+                      <div>
+                        <i class="fas fa-calculator"></i>
+                        <strong>Expected:</strong> <%= number_with_precision(calc, precision: 2) %>
+                      </div>
+                    </div>
+                    <div class="error-hint">
+                      <i class="fas fa-mouse-pointer"></i> Click to highlight this cell
+                    </div>
+                  </div>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% else %>
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fas fa-check-circle"></i></div>
+              <h3>No Validation Errors Found</h3>
+              <p>All data has passed successfully! 🎉</p>
+            </div>
+          <% end %>
+        </div>
+      </section>
+      
+      <!-- Main Table Section -->
+      <!-- Main Table Section -->
+      <section class="table-section">
+        <% if @validated_data.present? %>
+
+          <div class="table-header">
+            <h3>Validated Excel Data</h3>
+            <p>Rows with mismatches are highlighted. Click any error cell to see detailed information.</p>
+          </div>
+
+          <div class="table-controls">
+            <div class="filter-controls">
+              <label class="filter-label">Filter by status:</label>
+              <select id="rowFilter" class="filter-select">
+                <option value="all">All rows</option>
+                <option value="valid">Only valid rows</option>
+                <option value="errors">Only rows with errors</option>
+              </select>
+            </div>
+
+            <div class="table-info">
+              Columns: <strong><%= @extracted_headers.reject { |h| ['created_at', 'updated_at'].include?(h.downcase) }.length %></strong> •
+              Rows: <strong><%= @validated_data.length %></strong>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="validation-table">
+              <thead>
+                <tr>
+                  <% @extracted_headers.reject { |h| ['created_at', 'updated_at'].include?(h.downcase) }.each do |header| %>
+                    <th><%= header %></th>
+                  <% end %>
+                </tr>
+              </thead>
+
+              <tbody id="validatedBody">
+                <% @validated_data.each_with_index do |row, row_index| %>
+                  <% row_has_error = row.any? { |_k, v| v.is_a?(Hash) && !v["match"] && !v[:match] } %>
+
+                  <tr id="row-<%= row_index %>" data-row-errors="<%= row_has_error %>">
+                    <% @extracted_headers.reject { |h| ['created_at', 'updated_at'].include?(h.downcase) }.each do |header| %>
+
+                      <% cell = row[header] %>
+
+                      <% if cell.is_a?(Hash) %>
+
+                        <% actual = cell["actual"] || cell[:actual] %>
+                        <% calc   = cell["calc"]   || cell[:calc] %>
+                        <% match  = cell["match"]  || cell[:match] %>
+                        <% status = cell["status"] || cell[:status] || (match ? "exact" : "error") %>
+
+                        <% if status == "exact" %>
+                          <td class="cell-valid">
+                            <div class="cell-value"><%= actual.presence || 'N/A' %></div>
+                            <div class="cell-details">Calc: <%= number_with_precision(calc, precision: 2) %></div>
+                          </td>
+                        <% elsif status == "close" %>
+                          <td class="cell-close" data-row="<%= row_index %>" data-column="<%= header %>">
+                            <div class="cell-value"><%= actual.presence || 'N/A' %></div>
+                            <div class="cell-details">Expected: <%= number_with_precision(calc, precision: 2) %> (Close Match)</div>
+                          </td>
+                        <% else %>
+                          <td class="cell-error" data-row="<%= row_index %>" data-column="<%= header %>">
+                            <div class="cell-value"><%= actual.presence || 'N/A' %></div>
+                            <div class="cell-details">Expected: <%= number_with_precision(calc, precision: 2) %></div>
+                          </td>
+                        <% end %>
+
+                      <% else %>
+                       <td class="<%= header == 'ALTERNATIVES' ? 'cell-alternatives' : 'cell-normal' %>">
+                          <% if header == "ALTERNATIVES" && cell.is_a?(Array) %>
+                            <% cell.each do |item| %>
+                              <% brand   = item[:brand]   || item["brand"] %>
+                              <% product = item[:product] || item["product"] %>
+                              <% value   = item[:value]   || item["value"] %>
+
+                              <div>
+                                brand: <%= brand %>,
+                                product: <%= product %>,
+                                value: <%= value %>
+                              </div>
+                            <% end %>
+                          <% elsif cell.is_a?(Array) %>
+                            <!-- For PAYOR INSURANCES and other array columns, show array as-is -->
+                            <%= cell.join(", ") %>
+
+                          <% else %>
+                            <%= cell %>
+                          <% end %>
+
+                        </td>
+
+
+                      <% end %>
+                    <% end %>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+
+        <% else %>
+          <!-- Empty State -->
+          <section class="upload-card">
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="fas fa-file-excel"></i>
+              </div>
+              <h3>No Excel File Uploaded</h3>
+              <p>Upload an Excel file to start validation and see the results here.</p>
+            </div>
+          </section>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Upload area functionality
+      const uploadForm = document.getElementById('uploadForm');
+      const uploadArea = document.getElementById('uploadArea');
+      const fileInput = document.getElementById('fileInput');
+      const browseBtn = document.getElementById('browseBtn');
+      const fileInfo = document.getElementById('fileInfo');
+      const selectedFileName = document.getElementById('selectedFileName');
+      const validateBtn = document.getElementById('validateBtn');
+      const loadingOverlay = document.getElementById('loading-overlay');
+      const progressFill = document.getElementById('progress-fill');
+
+      if(uploadForm) {
+        uploadForm.addEventListener('submit', () => {
+          if (loadingOverlay) loadingOverlay.style.display = 'flex';
+          let width = 0;
+          if (progressFill) {
+            const interval = setInterval(() => {
+              if (width >= 90) {
+                clearInterval(interval);
+              } else {
+                width += Math.random() * 15;
+                if (width > 90) width = 90;
+                progressFill.style.width = width + '%';
+              }
+            }, 300);
+          }
+        });
+      }
+
+      // Browse button click
+      browseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        fileInput.click();
+      });
+
+      // Drag and drop functionality
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
+
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+      });
+
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files.length) {
+          fileInput.files = e.dataTransfer.files;
+          handleFileSelection(e.dataTransfer.files[0]);
+        }
+      });
+
+      // File input change
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) {
+          handleFileSelection(fileInput.files[0]);
+        }
+      });
+
+      function handleFileSelection(file) {
+        selectedFileName.textContent = file.name;
+        fileInfo.style.display = 'block';
+        validateBtn.disabled = false;
+        
+        // Add success animation
+        fileInfo.animate([
+          { transform: 'scale(0.95)', opacity: 0.8 },
+          { transform: 'scale(1)', opacity: 1 }
+        ], { duration: 300, easing: 'ease-out' });
+      }
+
+      // Only initialize table functionality if we have data
+      <% if @extracted_headers.present? && @validated_data.present? %>
+        const headers = <%= raw @extracted_headers.reject { |h| ['created_at', 'updated_at'].include?(h.downcase) }.to_json %>;
+        const errorCards = document.querySelectorAll('.error-card');
+        const errorCells = document.querySelectorAll('.cell-error, .cell-close');
+
+        // Error card click - jump to cell
+        errorCards.forEach(card => {
+          card.addEventListener('click', () => {
+            const rowIndex = card.dataset.row;
+            const column = card.dataset.column;
+            jumpToCell(rowIndex, column);
+          });
+        });
+
+        // Error cell click - jump and highlight
+        errorCells.forEach(cell => {
+          cell.addEventListener('click', () => {
+            const rowIndex = cell.dataset.row;
+            const column = cell.dataset.column;
+            jumpToCell(rowIndex, column);
+          });
+        });
+
+        function jumpToCell(rowIndex, column) {
+          // Clear existing highlights
+          document.querySelectorAll('.cell-highlight').forEach(el => {
+            el.classList.remove('cell-highlight');
+          });
+
+          // Find header index
+          const headerIndex = headers.indexOf(column);
+          if (headerIndex === -1) return;
+
+          const rowEl = document.getElementById(`row-${rowIndex}`);
+          if (!rowEl) return;
+
+          const targetCell = rowEl.children[headerIndex];
+          if (!targetCell) return;
+
+          // Add highlight and scroll into view
+          targetCell.classList.add('cell-highlight');
+          targetCell.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center',
+            inline: 'center'
+          });
+
+          // Add subtle bounce effect
+          targetCell.animate([
+            { transform: 'translateY(0)' },
+            { transform: 'translateY(-8px)' },
+            { transform: 'translateY(0)' }
+          ], { duration: 500, easing: 'ease-out' });
+        }
+
+        // Toggle errors section
+        const toggleErrorsBtn = document.getElementById('toggleErrorsBtn');
+        const errorsSection = document.getElementById('errorsSection');
+        toggleErrorsBtn.addEventListener('click', () => {
+          errorsSection.style.display = errorsSection.style.display === 'none' ? 'block' : 'none';
+          toggleErrorsBtn.innerHTML = errorsSection.style.display === 'none' ? 
+            '<i class="fas fa-list"></i> Show Error List' : 
+            '<i class="fas fa-list"></i> Hide Error List';
+        });
+
+        // Clear highlights
+        const clearHighlightsBtn = document.getElementById('clearHighlights');
+        clearHighlightsBtn.addEventListener('click', () => {
+          document.querySelectorAll('.cell-highlight').forEach(el => {
+            el.classList.remove('cell-highlight');
+          });
+        });
+
+        // Row filtering
+        const rowFilter = document.getElementById('rowFilter');
+        rowFilter.addEventListener('change', () => {
+          const filterValue = rowFilter.value;
+          document.querySelectorAll('#validatedBody tr').forEach(tr => {
+            const hasError = tr.dataset.rowErrors === 'true';
+            if (filterValue === 'all') {
+              tr.style.display = '';
+            } else if (filterValue === 'valid') {
+              tr.style.display = hasError ? 'none' : '';
+            } else if (filterValue === 'errors') {
+              tr.style.display = hasError ? '' : 'none';
+            }
+          });
+          updateVisibleCount();
+        });
+
+        // Quick search
+        const quickSearch = document.getElementById('quickSearch');
+        quickSearch.addEventListener('input', () => {
+          const query = quickSearch.value.trim().toLowerCase();
+          document.querySelectorAll('#validatedBody tr').forEach(tr => {
+            if (!query) {
+              tr.style.display = '';
+              return;
+            }
+            const text = tr.textContent.toLowerCase();
+            tr.style.display = text.includes(query) ? '' : 'none';
+          });
+          updateVisibleCount();
+        });
+
+        function updateVisibleCount() {
+          const visibleRows = Array.from(document.querySelectorAll('#validatedBody tr'))
+            .filter(tr => tr.style.display !== 'none').length;
+          document.getElementById('visibleCount').textContent = visibleRows;
+        }
+      <% end %>
+    });
+  </script>
+</body>
+</html>

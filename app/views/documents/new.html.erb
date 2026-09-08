@@ -1,0 +1,17 @@
+<h2>Upload a Document/File</h2>
+
+<%= form_with model: @document, local: true, multipart: true do |form| %>
+  <div>
+    <%= form.label :name, "Document Name" %><br>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :file, "Choose File" %><br>
+    <%= form.file_field :file %>
+  </div>
+
+  <div>
+    <%= form.submit "Upload", class: "btn btn-primary" %>
+  </div>
+<% end %>

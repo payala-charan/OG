@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Voice Recorder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 p-10">
+
+  <div class="max-w-xl mx-auto bg-white shadow-xl p-6 rounded-xl">
+    <h1 class="text-2xl font-bold mb-4 text-center">🎤 Voice to Text (Web Speech API)</h1>
+
+    <div class="flex justify-center space-x-4 mb-5">
+      <button id="startBtn"
+              class="px-6 py-3 bg-green-600 text-white rounded-lg shadow hover:bg-green-700">
+        Start Recording
+      </button>
+
+      <button id="stopBtn"
+              class="px-6 py-3 bg-red-600 text-white rounded-lg shadow hover:bg-red-700" disabled>
+        Stop Recording
+      </button>
+    </div>
+
+    <h2 class="text-lg font-semibold mb-2">Converted Text:</h2>
+
+    <textarea id="outputText"
+              class="w-full h-60 p-3 border rounded-lg"
+              placeholder="Your speech will appear here..."></textarea>
+  </div>
+
+
+  <script>
+    let recognition;
+    let isRecording = false;
+
+    // Check if Web Speech API is supported
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+      alert("Your browser does not support Speech Recognition. Use Chrome or Edge.");
+    } else {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = "en-US";
+
+      recognition.onresult = function(event) {
+        let transcript = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        document.getElementById("outputText").value = transcript;
+      };
+
+      recognition.onerror = function(event) {
+        console.error("Speech recognition error:", event.error);
+      };
+    }
+
+    document.getElementById("startBtn").onclick = () => {
+      if (recognition && !isRecording) {
+        recognition.start();
+        isRecording = true;
+        document.getElementById("startBtn").disabled = true;
+        document.getElementById("stopBtn").disabled = false;
+      }
+    };
+
+    document.getElementById("stopBtn").onclick = () => {
+      if (recognition && isRecording) {
+        recognition.stop();
+        isRecording = false;
+        document.getElementById("startBtn").disabled = false;
+        document.getElementById("stopBtn").disabled = true;
+      }
+    };
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,2 @@
+class ProductPreferenceRecord < ApplicationRecord
+end
