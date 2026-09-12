@@ -631,6 +631,12 @@
       border-left: 3px solid var(--success);
     }
 
+    .cell-no-conversion-product {
+      background: #fff9c4;
+      color: #6d5b00;
+      border-left: 3px solid #f4d03f;
+    }
+
     .cell-error {
       background: rgba(247, 37, 133, 0.08);
       color: var(--danger);
@@ -1086,6 +1092,8 @@
               <tbody id="validatedBody">
                 <% @validated_data.each_with_index do |row, row_index| %>
                   <% row_has_error = row.any? { |_k, v| v.is_a?(Hash) && !v["match"] && !v[:match] } %>
+                  <% conversion_product = row["CONVERSION PRODUCT"] %>
+                  <% conversion_product_fallback = conversion_product.is_a?(Hash) && (conversion_product["no_conversion_product"] || conversion_product[:no_conversion_product]) %>
 
                   <tr id="row-<%= row_index %>" data-row-errors="<%= row_has_error %>">
                     <% @extracted_headers.reject { |h| ['created_at', 'updated_at'].include?(h.downcase) }.each do |header| %>
@@ -1117,7 +1125,9 @@
                         <% end %>
 
                       <% else %>
-                       <td class="<%= header == 'ALTERNATIVES' ? 'cell-alternatives' : 'cell-normal' %>">
+                       <% cell_class = header == 'ALTERNATIVES' ? 'cell-alternatives' : 'cell-normal' %>
+                       <% cell_class += ' cell-no-conversion-product' if header == 'ALTERNATIVES' && conversion_product_fallback %>
+                       <td class="<%= cell_class %>">
                           <% if header == "ALTERNATIVES" && cell.is_a?(Array) %>
                             <% cell.each do |item| %>
                               <% brand   = item[:brand]   || item["brand"] %>

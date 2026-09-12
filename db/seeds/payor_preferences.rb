@@ -111,7 +111,7 @@ mapping = {
   "low_cost" => { target_col: "cost_three_forty_b", factor: "min" },
   "percent_margin" => { target_col: "blended_cms_percent_margin", factor: "max" }
 }
-team_id = "209"
+team_id = "198"
 accounting_period_ids = [ 7 ]
 # NewBiosimilarPrice.pluck(:accounting_period_id).uniq.each do |period_id|
 accounting_period_ids.each do |period_id|

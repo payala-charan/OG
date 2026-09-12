@@ -2,7 +2,7 @@ class NewBiosimilarPrice < ApplicationRecord
     def self.extract_brand_and_strength_debug
         target_groups = [ "BEVACIZUMAB", "TRASTUZUMAB", "HYALURONATE SODIUM", "DENOSUMAB", "PEGFILGRASTIM", "FILGRASTIM", "INFLIXIMAB", "RITUXIMAB", "TOCILIZUMAB", "BENDAMUSTINE", "LEUPROLIDE ACETATE" ]
 
-        NewBiosimilarPrice.where(team_id: "209", accounting_period_id: 7, status: nil).find_each do |record|
+        NewBiosimilarPrice.where(team_id: "198", accounting_period_id: 7, status: nil).find_each do |record|
             next unless target_groups.map(&:upcase).include?(record.generic_name_group.to_s.upcase)
             puts "\n=============================="
             puts "🔍 RECORD ID: #{record.id}"
@@ -112,7 +112,7 @@ class NewBiosimilarPrice < ApplicationRecord
         update_column(:extracted_insurances, cleaned)
     end
     # ✅ CLASS METHOD (runs for records matching team_id and accounting_period_id)
-    def self.extract_all_insurances(team_id = "209", accounting_period_id = 7)
+    def self.extract_all_insurances(team_id = "198", accounting_period_id = 7)
         where(team_id: team_id, accounting_period_id: accounting_period_id)
           .where.not(insurances: [ nil, "" ]).find_each do |record|
             record.extract_and_store_insurances
@@ -122,7 +122,7 @@ class NewBiosimilarPrice < ApplicationRecord
     def self.build_payor_insurance_mapping
         # Step 1: Get all groups
         groups = NewBiosimilarPrice.pluck(:generic_name_group).compact.uniq
-        team_id = "209"
+        team_id = "198"
         accounting_period_id = 7
         # Step 2: Get all payors
         payors = InsuranceFactor.pluck(:benefit_plan_name).compact.uniq

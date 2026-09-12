@@ -265,6 +265,7 @@ class ValidationsController < ApplicationController
           insurances_list = insurances_list.compact.map(&:downcase)
           # Ensure brand is in list
           brand_down = brand_name.downcase
+          original_brand_available = insurances_list.include?(brand_down)
           insurances_list << brand_down unless insurances_list.include?(brand_down)
         end
         # debugger
@@ -277,6 +278,7 @@ class ValidationsController < ApplicationController
  
         #checking the conversion criteria for the prefered product
         if conversion_criteria != "preferred_product"
+          no_conversion_product = false
           # Build CMS cost hash dynamically based on charge/financial class
           cms_cost_hash = {}
           insurances_list.compact.each do |insurance|
@@ -328,47 +330,78 @@ class ValidationsController < ApplicationController
             end
           end
           # debugger
-          brand = top_pair[0]
-          corresponding_value = top_pair[1] # highest cms_margin_340b or lowest gpo/340b_cost
-          # Fetch conversion product from Og
-          # debugger
-          if charge_class.to_s.strip.casecmp("Inpatient").zero?
-            # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand, billing_unit_per_package_size: billing_unit_per_package_size, gpo_cost: corresponding_value)
-            #                         .pluck(:generic_name).first.to_s rescue ""
-            calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, gpo_cost: corresponding_value)
-                                    .pluck(:generic_name).first.to_s rescue ""
-          elsif financial_class.to_s.strip.casecmp("Self-Pay").zero?
-            if conversion_criteria == "highest_margin" || conversion_criteria == "low_cost"
-              # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize,billing_unit_per_package_size: billing_unit_per_package_size,  cost_three_forty_b: corresponding_value)
+          if original_brand_available && top_pair[0] && !top_pair[0].nil?
+            brand = top_pair[0]
+            corresponding_value = top_pair[1] # highest cms_margin_340b or lowest gpo/340b_cost
+            # Fetch conversion product from Og
+            # debugger
+            if charge_class.to_s.strip.casecmp("Inpatient").zero?
+              # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand, billing_unit_per_package_size: billing_unit_per_package_size, gpo_cost: corresponding_value)
               #                         .pluck(:generic_name).first.to_s rescue ""
-              calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, cost_three_forty_b: corresponding_value)
-                                                      .pluck(:generic_name).first.to_s rescue ""
+              calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, gpo_cost: corresponding_value)
+                                      .pluck(:generic_name).first.to_s rescue ""
+            elsif financial_class.to_s.strip.casecmp("Self-Pay").zero?
+              if conversion_criteria == "highest_margin" || conversion_criteria == "low_cost"
+                # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize,billing_unit_per_package_size: billing_unit_per_package_size,  cost_three_forty_b: corresponding_value)
+                #                         .pluck(:generic_name).first.to_s rescue ""
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, cost_three_forty_b: corresponding_value)
+                                                        .pluck(:generic_name).first.to_s rescue ""
 
+              else
+                # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize, billing_unit_per_package_size: billing_unit_per_package_size, cms_percent_margin: corresponding_value)
+                #                         .pluck(:generic_name).first.to_s rescue ""
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_percent_margin: corresponding_value)
+                                                        .pluck(:generic_name).first.to_s rescue ""
+              end
             else
-              # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize, billing_unit_per_package_size: billing_unit_per_package_size, cms_percent_margin: corresponding_value)
-              #                         .pluck(:generic_name).first.to_s rescue ""
-              calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_percent_margin: corresponding_value)
-                                                      .pluck(:generic_name).first.to_s rescue ""
+              if conversion_criteria == "highest_margin"
+                # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_margin_340B: corresponding_value)
+                #                          .pluck(:generic_name).first.to_s rescue ""
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_margin_three_forty_b_cost: corresponding_value)
+                                        .pluck(:generic_name).first.to_s rescue ""
+              elsif conversion_criteria == "low_cost"
+                # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize, billing_unit_per_package_size: billing_unit_per_package_size, cost_three_forty_b: corresponding_value)
+                #                         .pluck(:generic_name).first.to_s rescue ""
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, cost_three_forty_b: corresponding_value)
+                                        .pluck(:generic_name).first.to_s rescue ""
+
+              elsif conversion_criteria == "percent_margin"
+                # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_340B_percent_margin: corresponding_value)
+                #                         .pluck(:generic_name).first.to_s rescue ""
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_percent_margin: corresponding_value)
+                                                        .pluck(:generic_name).first.to_s rescue ""
+              end
             end
           else
-            if conversion_criteria == "highest_margin"
-              # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_margin_340B: corresponding_value)
-              #                          .pluck(:generic_name).first.to_s rescue ""
-              calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_margin_three_forty_b_cost: corresponding_value)
+            no_conversion_product = true
+            brand = brand_down
+            if charge_class.to_s.strip.casecmp("Inpatient").zero?
+              calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size)
                                       .pluck(:generic_name).first.to_s rescue ""
-            elsif conversion_criteria == "low_cost"
-              # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize, billing_unit_per_package_size: billing_unit_per_package_size, cost_three_forty_b: corresponding_value)
-              #                         .pluck(:generic_name).first.to_s rescue ""
-              calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, cost_three_forty_b: corresponding_value)
-                                      .pluck(:generic_name).first.to_s rescue ""
+            elsif financial_class.to_s.strip.casecmp("Self-Pay").zero?
+              if conversion_criteria == "highest_margin" || conversion_criteria == "low_cost"
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size)
+                                                        .pluck(:generic_name).first.to_s rescue ""
 
-            elsif conversion_criteria == "percent_margin"
-              # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_340B_percent_margin: corresponding_value)
-              #                         .pluck(:generic_name).first.to_s rescue ""
-              calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_percent_margin: corresponding_value)
-                                                      .pluck(:generic_name).first.to_s rescue ""
+              else
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size)
+                                                        .pluck(:generic_name).first.to_s rescue ""
+              end
+            else
+              if conversion_criteria == "highest_margin"
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size)
+                                        .pluck(:generic_name).first.to_s rescue ""
+              elsif conversion_criteria == "low_cost"
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size)
+                                        .pluck(:generic_name).first.to_s rescue ""
+
+              elsif conversion_criteria == "percent_margin"
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size)
+                                                        .pluck(:generic_name).first.to_s rescue ""
+              end
             end
           end
+
           # Compare with extracted
           extracted_conversion_product = text.call(extracted["CONVERSION PRODUCT"])
           #Building Alternatives for the extracted conversion product
@@ -520,7 +553,8 @@ class ValidationsController < ApplicationController
           actual: extracted_conversion_product,
           calc: calc_conversion_product,
           match: match_conversion_product,
-          status: match_conversion_product ? "exact" : "error"
+          status: match_conversion_product ? "exact" : "error",
+          no_conversion_product: no_conversion_product || false
         }
         validated_row["ALTERNATIVES"] = alternatives
 
