@@ -1,0 +1,42 @@
+<div class="kettering-page kettering-page--narrow">
+  <header class="kettering-header">
+    <div>
+      <p class="kettering-eyebrow">Kettering</p>
+      <h1><%= @kettering_insurance.brand_name %></h1>
+      <p><%= @kettering_insurance.generic_name_group %> · <%= @kettering_insurance.hcpcs_code %></p>
+    </div>
+    <%= link_to "Back to list", kettering_insurances_path, class: "kettering-button kettering-button--muted" %>
+  </header>
+
+  <section class="kettering-detail-card">
+    <% [
+      ["Generic name group", @kettering_insurance.generic_name_group],
+      ["Brand name", @kettering_insurance.brand_name],
+      ["Primary payor name", @kettering_insurance.primary_payor_name],
+      ["Benefit plan name", @kettering_insurance.benefit_plan_name],
+      ["HCPCS code", @kettering_insurance.hcpcs_code],
+      ["Pay rate", @kettering_insurance.pay_rate],
+      ["Price", @kettering_insurance.price]
+    ].each do |label, value| %>
+      <div class="kettering-detail-row">
+        <strong><%= label %></strong>
+        <span><%= value.presence || "-" %></span>
+      </div>
+    <% end %>
+    <div class="kettering-form-actions">
+      <%= link_to "Edit", edit_kettering_insurance_path(@kettering_insurance), class: "kettering-button kettering-button--primary" %>
+      <%= link_to "Delete", @kettering_insurance, data: { turbo_method: :delete, turbo_confirm: "Delete this record?" }, class: "kettering-button kettering-button--muted" %>
+    </div>
+  </section>
+</div>
+
+<style>
+  .kettering-page--narrow { max-width: 900px; }
+  .kettering-detail-card { background: #fff; border: 1px solid #dbe4ea; border-radius: 8px; padding: 1.5rem; }
+  .kettering-detail-row { border-bottom: 1px solid #e7edf1; display: grid; gap: 1rem; grid-template-columns: 1fr 2fr; padding: 1rem 0; }
+  .kettering-detail-row span { color: #526575; }
+  .kettering-form-actions { display: flex; gap: .75rem; margin-top: 1.25rem; }
+  .kettering-button { border: 0; border-radius: 6px; display: inline-block; font-weight: 700; padding: .7rem 1rem; text-decoration: none; }
+  .kettering-button--primary { background: #168aad; color: #fff; }
+  .kettering-button--muted { background: #e9eef2; color: #243447; }
+</style>

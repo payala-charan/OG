@@ -1,0 +1,40 @@
+<%= form_with model: @kettering_insurance, local: true, class: "kettering-form" do |form| %>
+  <% if @kettering_insurance.errors.any? %>
+    <div class="kettering-errors">
+      <strong><%= pluralize(@kettering_insurance.errors.count, "error") %> prevented saving:</strong>
+      <ul>
+        <% @kettering_insurance.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="kettering-fields">
+    <%= form.label :generic_name_group %>
+    <%= form.text_field :generic_name_group, required: true %>
+
+    <%= form.label :brand_name %>
+    <%= form.text_field :brand_name, required: true %>
+
+    <%= form.label :primary_payor_name %>
+    <%= form.text_field :primary_payor_name, required: true %>
+
+    <%= form.label :benefit_plan_name %>
+    <%= form.text_field :benefit_plan_name, required: true %>
+
+    <%= form.label :hcpcs_code %>
+    <%= form.text_field :hcpcs_code, required: true %>
+
+    <%= form.label :pay_rate %>
+    <%= form.number_field :pay_rate, step: "0.0001" %>
+
+    <%= form.label :price %>
+    <%= form.number_field :price, step: "0.0001" %>
+  </div>
+
+  <div class="kettering-form-actions">
+    <%= form.submit class: "kettering-button kettering-button--primary" %>
+    <%= link_to "Cancel", kettering_insurances_path, class: "kettering-button kettering-button--muted" %>
+  </div>
+<% end %>

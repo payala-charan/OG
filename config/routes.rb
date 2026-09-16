@@ -116,6 +116,7 @@ Rails.application.routes.draw do
   end
   resources :quarter_statuses, only: [:index]
   resources :insurance_factors
+  resources :kettering_insurances
   resources :product_preference_records, only: [ :new, :create, :index, :show ]
   resources :ranking_records, only: [ :new, :create, :index, :show ] do
     collection do

@@ -1,0 +1,26 @@
+<div class="kettering-page kettering-page--narrow">
+  <header class="kettering-header">
+    <div>
+      <p class="kettering-eyebrow">Kettering</p>
+      <h1>Edit insurance record</h1>
+      <p>Update the selected payor plan and pricing data.</p>
+    </div>
+    <%= link_to "Back to record", @kettering_insurance, class: "kettering-button kettering-button--muted" %>
+  </header>
+  <section class="kettering-upload-card">
+    <%= render "form" %>
+  </section>
+</div>
+
+<style>
+  .kettering-page--narrow { max-width: 900px; }
+  .kettering-upload-card { background: #fff; border: 1px solid #dbe4ea; border-radius: 8px; padding: 1.5rem; }
+  .kettering-fields { display: grid; gap: .45rem 1rem; grid-template-columns: 1fr 2fr; }
+  .kettering-fields label { align-self: center; font-weight: 700; }
+  .kettering-fields input { border: 1px solid #c9d5dc; border-radius: 4px; padding: .65rem; width: 100%; }
+  .kettering-form-actions { display: flex; gap: .75rem; margin-top: 1.25rem; }
+  .kettering-button { border: 0; border-radius: 6px; display: inline-block; font-weight: 700; padding: .7rem 1rem; text-decoration: none; }
+  .kettering-button--primary { background: #168aad; color: #fff; }
+  .kettering-button--muted { background: #e9eef2; color: #243447; }
+  .kettering-errors { background: #fff1e6; border-left: 4px solid #d1495b; margin-bottom: 1rem; padding: .75rem 1rem; }
+</style>
