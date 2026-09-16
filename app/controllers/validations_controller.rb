@@ -20,12 +20,12 @@ class ValidationsController < ApplicationController
         file = params[:file]
         spreadsheet = Roo::Spreadsheet.open(file.path)
         headers = spreadsheet.row(1).map(&:to_s).map(&:strip)
-        team_id = %w[198 209].include?(params[:team_id].to_s.strip) ? params[:team_id].to_s.strip : "209"
+        team_id = %w[198 209 147].include?(params[:team_id].to_s.strip) ? params[:team_id].to_s.strip : "209"
 
         required_columns = [
-          "ORDER_NAME", "NDC CODE", "CHARGE CLASS", "FINANCIAL CLASS",
+          "ORDER_NAME", "NDC CODE", "HCPCS CODE", "CHARGE CLASS", "FINANCIAL CLASS",
           "PRIMARY PAYOR NAME","BENEFIT PLAN NAME", "GROUP", "BRAND NAME", "QUARTER", "PRODUCT COST PER UNIT",
-          "TOTAL UNITS", "TOTAL PRODUCT COST", "TOTAL INSURANCE PAYMENT",
+          "TOTAL UNITS","CMS TOTAL UNITS", "TOTAL PRODUCT COST", "TOTAL INSURANCE PAYMENT",
           "TOTAL MARGIN", "PERCENT MARGIN", "CONVERSION PRODUCT",
           "CONVERSION PERCENTAGE", "CONVERSION PRODUCT COST PER UNIT",
           "CONVERSION TOTAL PRODUCT COST", "CONVERSION PRODUCT TOTAL INSURANCE PAYMENT",
@@ -66,7 +66,7 @@ class ValidationsController < ApplicationController
                     end
           ndc_code = ndc_code.rjust(11, '0') if ndc_code.length < 11
         primary_payor_name = text.call(extracted["PRIMARY PAYOR NAME"])
-        
+        hcpcs_code = text.call(extracted["HCPCS CODE"])
         benefit_plan_name = text.call(extracted["BENEFIT PLAN NAME"])
         quarter =text.call(extracted["QUARTER"])
         group = text.call(extracted["GROUP"])
@@ -75,7 +75,9 @@ class ValidationsController < ApplicationController
         financial_class = text.call(extracted["FINANCIAL CLASS"])
         charge_class = text.call(extracted["CHARGE CLASS"])
         total_units = clean.call(extracted["TOTAL UNITS"])
-
+        cms_total_units = clean.call(extracted["CMS TOTAL UNITS"])
+    
+        extracted_conversion_product = text.call(extracted["CONVERSION PRODUCT"])
         conversion_percentage = clean.call(extracted["CONVERSION PERCENTAGE"]).to_i
         ppu = clean.call(extracted["PRODUCT COST PER UNIT"])
         total_product_cost = clean.call(extracted["TOTAL PRODUCT COST"])
@@ -186,21 +188,48 @@ class ValidationsController < ApplicationController
           else
             # known_payors = ["aetna", "cigna", "united", "anthem", "sentara"]
             # known_payors = ["pacificsource medicare advantage","pacificsource navigator smart group","bcbs preferred provider","bcbs schs","providence health plan pebb oebb","bcbs federal employee","providence health medicare","aetna 14079","united healthcare","providence health plan","uhc choice plus","eastern oregon cco ohp","moda affinity","cigna ppo","pscs bridge healthier oregon","pacificsource employees navigator","moda oebb pebb","umr uhc","bcbs valueppo","health plan options uhc","pacificsource navigator smart individual","united healthcare medicare advtg","providence health plan individual","national association of letter carriers","geha uhc","aetna medicare","bcbs med adv 1st or pref choice","cigna","moda synergy","moda connexus ccn ohsu","harrison trust cigna","regence group administrators","generic aetna","surest uhc","aarp medicare advantage plan 2","gravie administrative svs"]
-            known_payors = InsuranceFactor.pluck(:benefit_plan_name).compact.uniq.map(&:downcase)
+            known_payors = InsuranceFactor.where(team_id: team_id).pluck(:benefit_plan_name).compact.uniq.map(&:downcase)
             # matched_payor = known_payors.find { |p| benefit_plan_down.include?(p) }
             matched_payor = known_payors.find { |p| p == benefit_plan_down } || known_payors.find { |p| benefit_plan_down.include?(p) }
             # payment_factor = PaymentFactor.where(payor: matched_payor).pluck(:factor).first.to_f rescue 1.0
             payment_factor = InsuranceFactor.where(benefit_plan_name: matched_payor.upcase, team_id: team_id).pluck(:insurance_factor).first.to_f rescue 1.0
             payment_factor = 1.0 if payment_factor.zero?
           end
-          calc_total_ins_payment = total_units * reimbursement_per_billing_unit * billing_unit_per_package_size * payment_factor
-          calc_conv_total_ins_payment = total_units * cms_reimbursement_per_package * payment_factor
+          if team_id == "147"
+            util_check_insurance = KetteringInsurance.where(generic_name_group: group.capitalize, hcpcs_code: hcpcs_code, primary_payor_name: primary_payor_name.upcase, benefit_plan_name: benefit_plan_name.upcase).first rescue nil
+            if util_check_insurance.present?
+              con_hcpcs_code = NewBiosimilarPrice.where(generic_name: extracted_conversion_product).pluck(:hcpcs_code).first rescue nil
+              con_check_insurance = KetteringInsurance.where(generic_name_group: group.capitalize, hcpcs_code: con_hcpcs_code, primary_payor_name: primary_payor_name.upcase, benefit_plan_name: benefit_plan_name.upcase).first rescue nil
+              pay_rate = (util_check_insurance.pay_rate.to_f) / 100
+              if pay_rate.nil? || pay_rate.zero?
+                calc_total_ins_payment = total_units * reimbursement_per_billing_unit * billing_unit_per_package_size * payment_factor
+                calc_conv_total_ins_payment = total_units * cms_reimbursement_per_package * payment_factor
+              else
+                if util_check_insurance&.price.nil? || util_check_insurance&.price.zero?
+                  calc_total_ins_payment = total_units * pay_rate * reimbursement_per_billing_unit * billing_unit_per_package_size * payment_factor
+                  calc_conv_total_ins_payment = total_units * pay_rate * cms_reimbursement_per_package * payment_factor
+                else
+                  calc_total_ins_payment = cms_total_units * util_check_insurance&.price.to_f * pay_rate
+                  if hcpcs_code != con_hcpcs_code
+                    calc_conv_total_ins_payment = cms_total_units * con_check_insurance&.price.to_f * pay_rate
+                  else
+                    calc_conv_total_ins_payment = cms_total_units * util_check_insurance&.price.to_f * pay_rate
+                  end
+                end
+              end
+            else
+              calc_total_ins_payment = total_units * reimbursement_per_billing_unit * billing_unit_per_package_size * payment_factor
+              calc_conv_total_ins_payment = total_units * cms_reimbursement_per_package * payment_factor
+            end
+          else
+            calc_total_ins_payment = total_units * reimbursement_per_billing_unit * billing_unit_per_package_size * payment_factor
+            calc_conv_total_ins_payment = total_units * cms_reimbursement_per_package * payment_factor
+          end
         end
         # Insurances list fetching based on payor preference
         # Known payors list
         # known_payors = ["aetna", "cigna", "united", "anthem", "humana"]
-        # debugger
-        known_payors = InsuranceFactor.pluck(:benefit_plan_name).compact.uniq.map(&:downcase)
+        known_payors = InsuranceFactor.where(team_id: team_id).pluck(:benefit_plan_name).compact.uniq.map(&:downcase)
         benefit_plan_down = benefit_plan_name.downcase
         # matched_payor = known_payors.find { |p| benefit_plan_down.include?(p) }
         # matched_payor = known_payors.select { |p| benefit_plan_down.include?(p) }.max_by(&:length)
@@ -209,12 +238,13 @@ class ValidationsController < ApplicationController
         # Fetch insurances list from PayorPreference
         # debugger
         ins_raw = PayorPreference.where(
+          team_id: team_id,
           generic_name_group: group.upcase,
           accounting_period_id: accounting_period_id,
           payor: final_payor
         ).pluck(:insurances).first
         # Parse JSON list or fallback to []
-        insurance_list = ins_raw.present? ? JSON.parse(ins_raw) : []
+        payor_insurance_list = ins_raw.present? ? JSON.parse(ins_raw) : []
 
         
         #product cost per unit and conversion product calculation
@@ -223,52 +253,47 @@ class ValidationsController < ApplicationController
         package_size = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, alternate_ndc_code: ndc_code).pluck(:billing_unit_per_package_size) rescue 0.0 if package_size.blank? || package_size.first.to_f.zero?
         package_size = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id).where("other_ndc_codes LIKE ?", "%#{ndc_code}%").pluck(:billing_unit_per_package_size).first.to_f rescue 0.0 if package_size.blank? || package_size.first.to_f.zero?
         # all_payors = ["aetna", "cigna", "humana", "united", "anthem"]
-        all_payors = InsuranceFactor.pluck(:benefit_plan_name).compact.uniq.map(&:downcase)
+        all_payors = InsuranceFactor.where(team_id: team_id).pluck(:benefit_plan_name).compact.uniq.map(&:downcase)
         insurances_list = []
+        blockers = ["SPD", "PHS"]
+        if brand_name.include?(blockers[0]) || brand_name.include?(blockers[1])
+          brand_name = brand_name.split(" ").first
+        end
+        brand_down = brand_name.downcase
         if charge_class.to_s.strip.casecmp("Inpatient").zero?
-          # db_cost_per_unit = Og.where(accounting_period_id: accounting_period_id, ndc_code: ndc_code).pluck(:gpo_cost).first.to_f rescue 0.0
-          # insurances_list =  Og.where(accounting_period_id: accounting_period_id, generic_name_group: group.upcase).pluck(:brand).uniq
           db_cost_per_unit = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, ndc_code: ndc_code).pluck(:gpo_cost).first.to_f rescue 0.0
           db_cost_per_unit = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, alternate_ndc_code: ndc_code).pluck(:gpo_cost).first.to_f rescue 0.0 if db_cost_per_unit.zero?
           # db_cost_per_unit = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, other_ndc_codes: ndc_code).pluck(:gpo_cost).first.to_f rescue 0.0 if db_cost_per_unit.zero?
           db_cost_per_unit = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id).where("other_ndc_codes LIKE ?", "%#{ndc_code}%").pluck(:gpo_cost).first.to_f rescue 0.0 if db_cost_per_unit.zero?
-            insurances_list =  NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, generic_name_group: group.upcase).pluck(:extracted_brand_name).uniq
+          insurances_list =  NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, generic_name_group: group.upcase).pluck(:extracted_brand_name).uniq
         else
           # db_cost_per_unit = Og.where(accounting_period_id: accounting_period_id, ndc_code: ndc_code).pluck(:cost_three_forty_b).first.to_f rescue 0.0
           db_cost_per_unit = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, ndc_code: ndc_code).pluck(:cost_three_forty_b).first.to_f rescue 0.0
           db_cost_per_unit = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, alternate_ndc_code: ndc_code).pluck(:cost_three_forty_b).first.to_f rescue 0.0 if db_cost_per_unit.zero?
           # db_cost_per_unit = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, other_ndc_codes: ndc_code).pluck(:cost_three_forty_b).first.to_f rescue 0.0 if db_cost_per_unit.zero?
           db_cost_per_unit = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id).where("other_ndc_codes LIKE ?", "%#{ndc_code}%").pluck(:cost_three_forty_b).first.to_f rescue 0.0 if db_cost_per_unit.zero?
-          #correct_insurance  = all_payors.find { |p| primary_down.include?(p) }
           correct_insurance = if benefit_plan_down.empty?
             all_payors
           else
             # all_payors.find { |p| benefit_plan_down.include?(p) }
             all_payors.find { |p| p == benefit_plan_down } || all_payors.find { |p| benefit_plan_down.include?(p) }
           end
-          # if benefit_plan_down.include?('medicaid') || benefit_plan_down.include?('medicare ') || all_payors.none? { |p| benefit_plan_down.include?(p) } 
-          #   # insurances_list = Og.where(accounting_period_id: accounting_period_id, generic_name_group: group.upcase).pluck(:brand).uniq
-          #   insurances_list = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, generic_name_group: group.upcase).pluck(:extracted_brand_name).uniq
-          # else
           if benefit_plan_down.empty?
             payor_id = nil
           else
-            payor_id = Payor.where(generic_name: group.downcase, name: correct_insurance).pluck(:id).first rescue nil
+            payor_id = Payor.where(team_id: team_id, generic_name: group.downcase, name: correct_insurance).pluck(:id).first rescue nil
           end
           if payor_id == nil
             insurances_list = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, generic_name_group: group.upcase).pluck(:extracted_brand_name).uniq
           else
             insurances_list = Insurance.where(payor_id: payor_id).pluck(:name)
           end
-          # end
-          #insurances_list.map!(&:downcase)
-          insurances_list = insurances_list.compact.map(&:downcase)
-          # Ensure brand is in list
-          brand_down = brand_name.downcase
-          original_brand_available = insurances_list.include?(brand_down)
-          insurances_list << brand_down unless insurances_list.include?(brand_down)
         end
-        # debugger
+        # end
+        #insurances_list.map!(&:downcase)
+        insurances_list = insurances_list.compact.map(&:downcase)
+        original_brand_available = insurances_list.include?(brand_down)
+        insurances_list << brand_down unless insurances_list.include?(brand_down)
         if (group.upcase == "PEGFILGRASTIM" && (insurances_list.include?("UDENYCA") || insurances_list.include?("udenyca")))
           insurances_list << "udenyca onbody"
         end
@@ -287,11 +312,12 @@ class ValidationsController < ApplicationController
             if charge_class.to_s.strip.casecmp("Inpatient").zero?
               value = query.pluck(:gpo_cost).first.to_f rescue 0.0
             elsif financial_class.to_s.strip.casecmp("Self-Pay").zero?
-              if conversion_criteria == "low_cost" || conversion_criteria == "highest_margin"
-                value = query.pluck(:cost_three_forty_b).first.to_f rescue 0.0
-              elsif conversion_criteria == "percent_margin"
-                value = query.pluck(:cms_percent_margin).first.to_f rescue 0.0
-              end
+              value = query.pluck(:cost_three_forty_b).first.to_f rescue 0.0
+              # if conversion_criteria == "low_cost" || conversion_criteria == "highest_margin"
+              #   value = query.pluck(:cost_three_forty_b).first.to_f rescue 0.0
+              # elsif conversion_criteria == "percent_margin"
+              #   value = query.pluck(:blended_cms_percent_margin).first.to_f rescue 0.0
+              # end
             else
               if conversion_criteria == "highest_margin"
                 #value = query.pluck(:cms_margin_three_forty_b_cost).first.to_f rescue 0.0
@@ -316,11 +342,12 @@ class ValidationsController < ApplicationController
             top_pair = cms_cost_hash.min_by { |_, v| v } || [nil, 0]
           else
             if financial_class.to_s.strip.casecmp("Self-Pay").zero?
-              if conversion_criteria == "percent_margin"
-                top_pair = cms_cost_hash.max_by { |_, v| v } || [nil, 0]
-              else 
-                top_pair = cms_cost_hash.min_by { |_, v| v } || [nil, 0]
-              end 
+              top_pair = cms_cost_hash.min_by { |_, v| v } || [nil, 0]
+              # if conversion_criteria == "percent_margin"
+              #   top_pair = cms_cost_hash.max_by { |_, v| v } || [nil, 0]
+              # else 
+              #   top_pair = cms_cost_hash.min_by { |_, v| v } || [nil, 0]
+              # end 
             else
               if conversion_criteria == "highest_margin" || conversion_criteria == "percent_margin"
                 top_pair = cms_cost_hash.max_by { |_, v| v } || [nil, 0]
@@ -329,12 +356,10 @@ class ValidationsController < ApplicationController
               end 
             end
           end
-          # debugger
           if original_brand_available && top_pair[0] && !top_pair[0].nil?
             brand = top_pair[0]
             corresponding_value = top_pair[1] # highest cms_margin_340b or lowest gpo/340b_cost
             # Fetch conversion product from Og
-            # debugger
             if charge_class.to_s.strip.casecmp("Inpatient").zero?
               # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand, billing_unit_per_package_size: billing_unit_per_package_size, gpo_cost: corresponding_value)
               #                         .pluck(:generic_name).first.to_s rescue ""
@@ -350,7 +375,7 @@ class ValidationsController < ApplicationController
               else
                 # calc_conversion_product = Og.where(accounting_period_id: accounting_period_id, brand: brand.capitalize, billing_unit_per_package_size: billing_unit_per_package_size, cms_percent_margin: corresponding_value)
                 #                         .pluck(:generic_name).first.to_s rescue ""
-                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, blended_cms_percent_margin: corresponding_value)
+                calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, cost_three_forty_b: corresponding_value)
                                                         .pluck(:generic_name).first.to_s rescue ""
               end
             else
@@ -406,7 +431,6 @@ class ValidationsController < ApplicationController
           extracted_conversion_product = text.call(extracted["CONVERSION PRODUCT"])
           #Building Alternatives for the extracted conversion product
           alternatives = []
-          # debugger
           cms_cost_hash.each do |other_brand, value|
       
             #next if other_brand == brand   # skip the selected top brand
@@ -485,9 +509,9 @@ class ValidationsController < ApplicationController
           calc_conversion_product = extracted_conversion_product
           alternatives = []
         end
-        if group.upcase == "FILGRASTIM" && (extracted_conversion_product.to_s.downcase.include?("0.8ml") || extracted_conversion_product.to_s.downcase.include?("1.6ml"))
-          calc_conversion_product = extracted_conversion_product
-        end
+        # if group.upcase == "FILGRASTIM" && (extracted_conversion_product.to_s.downcase.include?("0.8ml") || extracted_conversion_product.to_s.downcase.include?("1.6ml"))
+        #   calc_conversion_product = extracted_conversion_product
+        # end
         if accounting_period_id == 6 && group.upcase == "INFLIXIMAB" && calc_conversion_product.downcase == "infliximab (in-fliximab) injection 100mg vial"   
           calc_conversion_product = extracted_conversion_product
         end
@@ -566,17 +590,13 @@ class ValidationsController < ApplicationController
           
           #if key == "PRIMARY PAYOR NAME"
           if key == "BENEFIT PLAN NAME"
-            ordered_row["PAYOR INSURANCES"] = insurance_list
+            ordered_row["PAYOR INSURANCES"] = payor_insurance_list
           elsif key == "CONVERSION PRODUCT"
             ordered_row["ALTERNATIVES"] = alternatives
           end
         end
 
         validated_row = ordered_row
-
-        #validated_row["PAYOR INSURANCES"] = insurance_list
-
-
         @validated_data << validated_row
         ValidationRecord.create!(data: validated_row, user_id: current_user.id, user_email: current_user.email)
       end

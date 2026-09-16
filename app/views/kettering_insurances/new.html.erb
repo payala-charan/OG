@@ -1,0 +1,41 @@
+<div class="kettering-page kettering-page--narrow">
+  <header class="kettering-header">
+    <div>
+      <p class="kettering-eyebrow">Kettering</p>
+      <h1>Add or upload insurance data</h1>
+      <p>Use the manual form for one row, or upload an Excel workbook for a batch.</p>
+    </div>
+    <%= link_to "Back to list", kettering_insurances_path, class: "kettering-button kettering-button--muted" %>
+  </header>
+
+  <% if flash[:alert] %><div class="kettering-flash kettering-flash--alert"><%= flash[:alert] %></div><% end %>
+
+  <section class="kettering-upload-card">
+    <h2>Upload Excel workbook</h2>
+    <p>Headers must be: Generic Name Group, Brand Name, Primary Payor Name, Benefit Plan Name, Hcpcs Code, PAY RATE, Price.</p>
+    <%= form_with url: kettering_insurances_path, local: true, multipart: true do |form| %>
+      <%= form.file_field :file, accept: ".xlsx,.xls", required: true %>
+      <%= form.submit "Import workbook", class: "kettering-button kettering-button--primary" %>
+    <% end %>
+  </section>
+
+  <section class="kettering-upload-card">
+    <h2>Add one row manually</h2>
+    <%= render "form" %>
+  </section>
+</div>
+
+<style>
+  .kettering-page--narrow { max-width: 900px; }
+  .kettering-upload-card { background: #fff; border: 1px solid #dbe4ea; border-radius: 8px; margin-bottom: 1.25rem; padding: 1.5rem; }
+  .kettering-upload-card h2 { margin-top: 0; }
+  .kettering-upload-card p { color: #607080; }
+  .kettering-upload-card form { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
+  .kettering-form { display: block !important; }
+  .kettering-fields { display: grid; gap: .45rem 1rem; grid-template-columns: 1fr 2fr; }
+  .kettering-fields label { align-self: center; font-weight: 700; }
+  .kettering-fields input { border: 1px solid #c9d5dc; border-radius: 4px; padding: .65rem; width: 100%; }
+  .kettering-form-actions { display: flex; gap: .75rem; margin-top: 1.25rem; }
+  .kettering-errors { background: #fff1e6; border-left: 4px solid #d1495b; margin-bottom: 1rem; padding: .75rem 1rem; }
+  .kettering-errors ul { margin-bottom: 0; }
+</style>
