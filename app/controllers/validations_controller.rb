@@ -198,8 +198,9 @@ class ValidationsController < ApplicationController
           if team_id == "147"
             util_check_insurance = KetteringInsurance.where(generic_name_group: group.capitalize, hcpcs_code: hcpcs_code, primary_payor_name: primary_payor_name.upcase, benefit_plan_name: benefit_plan_name.upcase).first rescue nil
             if util_check_insurance.present?
-              con_hcpcs_code = NewBiosimilarPrice.where(generic_name: extracted_conversion_product).pluck(:hcpcs_code).first rescue nil
-              con_check_insurance = KetteringInsurance.where(generic_name_group: group.capitalize, hcpcs_code: con_hcpcs_code, primary_payor_name: primary_payor_name.upcase, benefit_plan_name: benefit_plan_name.upcase).first rescue nil
+              con_hcpcs_code = NewBiosimilarPrice.where(team_id: team_id, generic_name: extracted_conversion_product).pluck(:hcpcs_code).first rescue nil
+              # con_check_insurance = KetteringInsurance.where(generic_name_group: group.capitalize, hcpcs_code: con_hcpcs_code, primary_payor_name: primary_payor_name.upcase, benefit_plan_name: benefit_plan_name.upcase).first rescue nil
+              con_check_insurance = KetteringInsurance.where(generic_name_group: group.capitalize, hcpcs_code: con_hcpcs_code, primary_payor_name: primary_payor_name.upcase).first rescue nil
               pay_rate = (util_check_insurance.pay_rate.to_f) / 100
               if pay_rate.nil? || pay_rate.zero?
                 calc_total_ins_payment = total_units * reimbursement_per_billing_unit * billing_unit_per_package_size * payment_factor
@@ -210,10 +211,25 @@ class ValidationsController < ApplicationController
                   calc_conv_total_ins_payment = total_units * pay_rate * cms_reimbursement_per_package * payment_factor
                 else
                   calc_total_ins_payment = cms_total_units * util_check_insurance&.price.to_f * pay_rate
-                  if hcpcs_code != con_hcpcs_code
-                    calc_conv_total_ins_payment = cms_total_units * con_check_insurance&.price.to_f * pay_rate
+                  if con_check_insurance.nil? || con_check_insurance&.price.nil? || con_check_insurance&.price.zero?
+                    record = NewBiosimilarPrice
+                      .where(team_id: team_id, generic_name: extracted_conversion_product)
+                      .find do |price_record|
+                        price_record.insurances_payments.any? do |_payment, insurances|
+                          insurances.include?(benefit_plan_name.upcase)
+                        end
+                      end
+
+                    con_ins_price = record&.insurances_payments&.find do |_payment, insurances|
+                      insurances.include?(benefit_plan_name.upcase)
+                    end&.first&.to_f
+                    calc_conv_total_ins_payment = total_units * con_ins_price.to_f
                   else
-                    calc_conv_total_ins_payment = cms_total_units * util_check_insurance&.price.to_f * pay_rate
+                    if hcpcs_code != con_hcpcs_code
+                      calc_conv_total_ins_payment = cms_total_units * con_check_insurance&.price.to_f * pay_rate
+                    else
+                      calc_conv_total_ins_payment = cms_total_units * util_check_insurance&.price.to_f * pay_rate
+                    end
                   end
                 end
               end
@@ -530,17 +546,8 @@ class ValidationsController < ApplicationController
         # ----------------------------------------
         # STEP 5: Final Comparison + Data Packaging
         # ----------------------------------------
-        compare = ->(actual, calc) { (actual.to_f - calc.to_f).abs <= 1.001 }
-        get_status = lambda do |actual, calc|
-          diff = (actual.to_f - calc.to_f).abs
-          if diff < 0.01
-            "exact"
-          elsif diff <= 1.001
-            "close"
-          else
-            "error"
-          end
-        end
+        compare = ->(actual, calc, col) { ValidationComparison.match?(actual, calc, col) }
+        get_status = ->(actual, calc, col) { ValidationComparison.status(actual, calc, col) }
 
         validated_row = extracted.transform_values(&:to_s)
 
@@ -567,8 +574,8 @@ class ValidationsController < ApplicationController
           validated_row[col] = {
             actual: extracted[col],
             calc: safe_calc_value.round(2),
-            match: compare.call(actual_val, safe_calc_value),
-            status: get_status.call(actual_val, safe_calc_value)
+            match: compare.call(actual_val, safe_calc_value, col),
+            status: get_status.call(actual_val, safe_calc_value, col)
           }
         end
         
