@@ -289,7 +289,8 @@ class ValidationProcessor
         val_conv_cost_per_unit = (NewBiosimilarPrice.where(team_id: @team_id, accounting_period_id: accounting_period_id, generic_name: extracted_conversion_product).pluck(:cost_three_forty_b).first || 0).to_f
       end
 
-      compare = ->(actual, calc) { (actual - calc).abs < 0.01 }
+      compare = ->(actual, calc, col) { ValidationComparison.match?(actual, calc, col) }
+      get_status = ->(actual, calc, col) { ValidationComparison.status(actual, calc, col) }
 
       validated_row = extracted.transform_values(&:to_s)
 
@@ -315,7 +316,8 @@ class ValidationProcessor
         validated_row[col] = {
           actual: extracted[col],
           calc: calc_value.to_f.round(2),
-          match: compare.call(actual_val, calc_value.to_f)
+          match: compare.call(actual_val, calc_value.to_f, col),
+          status: get_status.call(actual_val, calc_value.to_f, col)
         }
       end
 

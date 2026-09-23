@@ -1,8 +1,61 @@
 class NewBiosimilarPrice < ApplicationRecord
+    INSURANCE_PAYMENT_PAIRS = [
+      [ "aetna_inusurances", "aetna" ],
+      [ "anthem_insurances", "anthem" ],
+      [ "cigna_insurances", "cigna" ],
+      [ "uhc_insurances", "uhc" ]
+    ].freeze
+
+    def self.build_insurances_payments(row)
+      payments = {}
+      normalized_row = normalize_insurances_payments_row(row)
+
+      INSURANCE_PAYMENT_PAIRS.each do |insurances_header, payment_header|
+        names = split_insurance_names(normalized_row[insurances_header])
+        payment = format_insurance_payment_key(normalized_row[payment_header])
+        next if names.empty? || payment.blank?
+
+        payments[payment] ||= []
+        payments[payment].concat(names)
+        payments[payment].uniq!
+      end
+
+      payments
+    end
+
+    def self.normalize_insurances_payments_row(row)
+      (row || {}).each_with_object({}) do |(header, value), memo|
+        key = header.to_s.strip.downcase.gsub(/\s+/, "_")
+        next if key.blank?
+
+        memo[key] = value
+      end
+    end
+
+    def self.split_insurance_names(value)
+      cleaned = ActionController::Base.helpers.strip_tags(value.to_s)
+      return [] if cleaned.blank?
+
+      cleaned.split(",").map(&:strip).reject(&:blank?).uniq
+    end
+
+    def self.format_insurance_payment_key(value)
+      return if value.nil?
+
+      raw = ActionController::Base.helpers.strip_tags(value.to_s)
+      raw = raw.gsub(/[$,]/, "").strip
+      return if raw.blank?
+
+      format("%.2f", BigDecimal(raw))
+    rescue ArgumentError, TypeError
+      nil
+    end
+    private_class_method :normalize_insurances_payments_row, :split_insurance_names, :format_insurance_payment_key
+
     def self.extract_brand_and_strength_debug
         target_groups = [ "BEVACIZUMAB", "TRASTUZUMAB", "HYALURONATE SODIUM", "DENOSUMAB", "PEGFILGRASTIM", "FILGRASTIM", "INFLIXIMAB", "RITUXIMAB", "TOCILIZUMAB", "BENDAMUSTINE", "LEUPROLIDE ACETATE" ]
 
-        NewBiosimilarPrice.where(team_id: "209", accounting_period_id: 7, status: nil).find_each do |record|
+        NewBiosimilarPrice.where(team_id: "147", accounting_period_id: 7, status: nil).find_each do |record|
             next unless target_groups.map(&:upcase).include?(record.generic_name_group.to_s.upcase)
             puts "\n=============================="
             puts "🔍 RECORD ID: #{record.id}"
@@ -112,7 +165,7 @@ class NewBiosimilarPrice < ApplicationRecord
         update_column(:extracted_insurances, cleaned)
     end
     # ✅ CLASS METHOD (runs for records matching team_id and accounting_period_id)
-    def self.extract_all_insurances(team_id = "209", accounting_period_id = 7)
+    def self.extract_all_insurances(team_id = "147", accounting_period_id = 7)
         where(team_id: team_id, accounting_period_id: accounting_period_id)
           .where.not(insurances: [ nil, "" ]).find_each do |record|
             record.extract_and_store_insurances
@@ -122,11 +175,11 @@ class NewBiosimilarPrice < ApplicationRecord
     def self.build_payor_insurance_mapping
         # Step 1: Get all groups
         groups = NewBiosimilarPrice.pluck(:generic_name_group).compact.uniq
-        team_id = "209"
+        team_id = "147"
         accounting_period_id = 7
         # Step 2: Get all payors
         # payors = InsuranceFactor.pluck(:benefit_plan_name).compact.uniq
-        payors = NewBiosimilarPrice.where(team_id: "209", accounting_period_id: 7).pluck(:extracted_insurances).flatten.compact.reject(&:blank?).uniq.sort
+        payors = NewBiosimilarPrice.where(team_id: "147", accounting_period_id: 7).pluck(:extracted_insurances).flatten.compact.reject(&:blank?).uniq.sort
         groups.each do |group|
             payors.each do |payor|
                 matching_brands = []

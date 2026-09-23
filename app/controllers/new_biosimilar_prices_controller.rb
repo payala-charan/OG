@@ -87,7 +87,8 @@ class NewBiosimilarPricesController < ApplicationController
       :gpo_percent_margin, :blended_cost_three_forty_b,
       :blended_gpo_cost, :blended_cms_margin_three_forty_b_cost,
       :blended_cms_percent_margin, :blended_cms_margin_gpo_cost,
-      :blended_gpo_percent_margin, :ranked_by, :match, :team_id
+      :blended_gpo_percent_margin, :ranked_by, :match, :team_id,
+      insurances_payments: {}
     )
   end
   def import_file(file)
@@ -99,7 +100,8 @@ class NewBiosimilarPricesController < ApplicationController
         "blended_percent_margin" => "blended_cms_percent_margin",
         "blended_gpo_margin" => "blended_cms_margin_gpo_cost",
         "blended_gpo_percent_margin" => "blended_gpo_percent_margin",
-        "cms_margin_340b_cost" => "cms_margin_three_forty_b_cost"
+        "cms_margin_340b_cost" => "cms_margin_three_forty_b_cost",
+        "aetna_insurances" => "aetna_inusurances"
       }
 
       xlsx = Roo::Spreadsheet.open(file.path)
@@ -117,28 +119,13 @@ class NewBiosimilarPricesController < ApplicationController
           next if row.compact.blank?
 
           normalized_row = {}
-
-          # headers.each_with_index do |header, index|
-          #   next if header.blank?
-
-          #   value = row[index]
-
-          #   # ✅ Remove HTML tags
-          #   clean_value = ActionController::Base.helpers.strip_tags(value.to_s)
-
-          #   if valid_columns.include?(header)
-          #       if ["best_margin", "utilization_best_margin"].include?(header)
-          #       normalized_row[header] = ActiveModel::Type::Boolean.new.cast(clean_value)
-          #       else
-          #       normalized_row[header] = clean_value.presence
-          #       end
-          #   end
-          # end
+          row_by_header = {}
 
           headers.each_with_index do |header, index|
             next if header.blank?
 
             value = row[index]
+            row_by_header[header] = value
             clean_value = ActionController::Base.helpers.strip_tags(value.to_s).presence
 
             case header
@@ -165,6 +152,7 @@ class NewBiosimilarPricesController < ApplicationController
             end
           end
 
+          normalized_row["insurances_payments"] = NewBiosimilarPrice.build_insurances_payments(row_by_header)
           NewBiosimilarPrice.create!(normalized_row)
       end
   end
@@ -207,7 +195,9 @@ class NewBiosimilarPricesController < ApplicationController
       "quarter 2 2025" => 3,
       "quarter 3 2025" => 4,
       "quarter 4 2025" => 5,
-      "quarter 1 2026" => 6
+      "quarter 1 2026" => 6,
+      "quarter 2 2026" => 7,
+      "quarter 3 2026" => 8
     }
     # debugger
     mapped_period_id = quarter_mapping[data["quarter"]&.to_s&.strip&.downcase]

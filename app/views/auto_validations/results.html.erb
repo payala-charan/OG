@@ -583,6 +583,18 @@
       background: rgba(247, 37, 133, 0.12);
     }
 
+    .cell-nearest {
+      background: rgba(255, 158, 0, 0.12);
+      color: #c27000;
+      border-left: 3px solid var(--warning);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .cell-nearest:hover {
+      background: rgba(255, 158, 0, 0.18);
+    }
+
     .cell-normal {
       color: var(--dark);
     }
@@ -920,8 +932,14 @@
                       <% actual = cell["actual"] || cell[:actual] %>
                       <% calc   = cell["calc"]   || cell[:calc] %>
                       <% match  = cell["match"]  || cell[:match] %>
+                      <% status = cell["status"] || cell[:status] || (match ? "exact" : "error") %>
 
-                      <% if match %>
+                      <% if status == "nearest" %>
+                        <td class="cell-nearest" data-row="<%= row_index %>" data-column="<%= header %>">
+                          <div class="cell-value"><%= actual.presence || 'N/A' %></div>
+                          <div class="cell-details">Expected: <%= number_with_precision(calc, precision: 2) %> (Nearest Value)</div>
+                        </td>
+                      <% elsif match %>
                         <td class="cell-valid">
                           <div class="cell-value"><%= actual.presence || 'N/A' %></div>
                           <div class="cell-details">Calc: <%= number_with_precision(calc, precision: 2) %></div>
@@ -983,7 +1001,7 @@
       <% if @validation_records.present? && @validation_records.first.present? %>
         const headers = <%= raw @validation_records.first.keys.to_json %>;
         const errorCards = document.querySelectorAll('.error-card');
-        const errorCells = document.querySelectorAll('.cell-error');
+        const errorCells = document.querySelectorAll('.cell-error, .cell-nearest');
 
         // Error card click - jump to cell
         errorCards.forEach(card => {

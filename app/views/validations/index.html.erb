@@ -661,6 +661,18 @@
       background: rgba(114, 9, 183, 0.12);
     }
 
+    .cell-nearest {
+      background: rgba(255, 158, 0, 0.12);
+      color: #c27000;
+      border-left: 3px solid var(--warning);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .cell-nearest:hover {
+      background: rgba(255, 158, 0, 0.18);
+    }
+
     .cell-normal {
       color: var(--dark);
       width: 1000px;
@@ -1005,7 +1017,7 @@
           <h3>
             <i class="fas fa-exclamation-circle"></i>
             Validation Errors
-            <% total_errors = @validated_data.sum { |row| row.values.count { |cell| cell.is_a?(Hash) && !(cell["match"] || cell[:match]) } } %>
+            <% total_errors = @validated_data.sum { |row| row.count { |header, cell| cell.is_a?(Hash) && !ValidationComparison.cell_match?(header, cell) } } %>
             <span class="errors-count" id="errorsSummaryCount"><%= total_errors %></span>
           </h3>
           <div class="error-hint">Click any error to jump to the cell</div>
@@ -1017,7 +1029,7 @@
               <% row.each do |header, cell| %>
                 <% next unless cell.is_a?(Hash) %>
 
-                <% match  = cell["match"]  || cell[:match] %>
+                <% match  = ValidationComparison.cell_match?(header, cell) %>
                 <% actual = cell["actual"] || cell[:actual] %>
                 <% calc   = cell["calc"]   || cell[:calc] %>
 
@@ -1091,7 +1103,7 @@
 
               <tbody id="validatedBody">
                 <% @validated_data.each_with_index do |row, row_index| %>
-                  <% row_has_error = row.any? { |_k, v| v.is_a?(Hash) && !v["match"] && !v[:match] } %>
+                  <% row_has_error = row.any? { |header, v| v.is_a?(Hash) && !ValidationComparison.cell_match?(header, v) } %>
                   <% conversion_product = row["CONVERSION PRODUCT"] %>
                   <% conversion_product_fallback = conversion_product.is_a?(Hash) && (conversion_product["no_conversion_product"] || conversion_product[:no_conversion_product]) %>
 
@@ -1104,8 +1116,7 @@
 
                         <% actual = cell["actual"] || cell[:actual] %>
                         <% calc   = cell["calc"]   || cell[:calc] %>
-                        <% match  = cell["match"]  || cell[:match] %>
-                        <% status = cell["status"] || cell[:status] || (match ? "exact" : "error") %>
+                        <% status = ValidationComparison.cell_status(header, cell) %>
 
                         <% if status == "exact" %>
                           <td class="cell-valid">
@@ -1116,6 +1127,11 @@
                           <td class="cell-close" data-row="<%= row_index %>" data-column="<%= header %>">
                             <div class="cell-value"><%= actual.presence || 'N/A' %></div>
                             <div class="cell-details">Expected: <%= number_with_precision(calc, precision: 2) %> (Close Match)</div>
+                          </td>
+                        <% elsif status == "nearest" %>
+                          <td class="cell-nearest" data-row="<%= row_index %>" data-column="<%= header %>">
+                            <div class="cell-value"><%= actual.presence || 'N/A' %></div>
+                            <div class="cell-details">Expected: <%= number_with_precision(calc, precision: 2) %> (Nearest Value)</div>
                           </td>
                         <% else %>
                           <td class="cell-error" data-row="<%= row_index %>" data-column="<%= header %>">
@@ -1254,7 +1270,7 @@
       <% if @extracted_headers.present? && @validated_data.present? %>
         const headers = <%= raw @extracted_headers.reject { |h| ['created_at', 'updated_at'].include?(h.downcase) }.to_json %>;
         const errorCards = document.querySelectorAll('.error-card');
-        const errorCells = document.querySelectorAll('.cell-error, .cell-close');
+        const errorCells = document.querySelectorAll('.cell-error, .cell-close, .cell-nearest');
 
         // Error card click - jump to cell
         errorCards.forEach(card => {

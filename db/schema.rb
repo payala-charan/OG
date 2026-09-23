@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_25_143000) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_22_072500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -347,6 +347,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_143000) do
     t.index ["payor_id"], name: "index_insurances_on_payor_id"
   end
 
+  create_table "kettering_insurances", force: :cascade do |t|
+    t.string "generic_name_group"
+    t.string "brand_name"
+    t.string "primary_payor_name"
+    t.string "benefit_plan_name"
+    t.string "hcpcs_code"
+    t.string "pay_rate"
+    t.decimal "price", precision: 15, scale: 4
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "name_matches", force: :cascade do |t|
     t.string "name"
     t.integer "corresponding_value"
@@ -411,6 +423,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_25_143000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "extracted_insurances", default: [], array: true
+    t.jsonb "insurances_payments", default: {}
   end
 
   create_table "ogs", force: :cascade do |t|
