@@ -237,3 +237,104 @@
     max-width: 100% !important;
   }
 }
+
+/* ------------------------------------------------------------------
+ * OG theme overrides (active when <html data-theme="og">)
+ * ------------------------------------------------------------------ */
+
+html[data-theme="og"] .music-toggle-btn {
+  background: radial-gradient(circle at 30% 30%, #2a2222, #0b0a0a 70%);
+  color: var(--og-amber);
+  border: 1px solid rgba(224, 20, 30, 0.55);
+}
+
+html[data-theme="og"] .music-card {
+  background: var(--og-glass);
+  color: var(--og-text);
+  border: 1px solid var(--og-line-strong);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--og-shadow);
+}
+
+html[data-theme="og"] .screen-analyses-page {
+  font-family: var(--og-font-body);
+  color: var(--og-text);
+}
+
+html[data-theme="og"] .screen-analyses-header h1 {
+  color: var(--og-text);
+  font-family: var(--og-font-display);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+html[data-theme="og"] .screen-analyses-header p {
+  color: var(--og-text-soft);
+}
+
+html[data-theme="og"] .card {
+  background: var(--og-surface);
+  color: var(--og-text);
+  border: 1px solid var(--og-line);
+  box-shadow: var(--og-shadow-sm);
+}
+
+html[data-theme="og"] .screen-analyses-form input[type="text"],
+html[data-theme="og"] .screen-analyses-form textarea,
+html[data-theme="og"] .screen-analyses-form input[type="file"],
+html[data-theme="og"] .form-control {
+  border: 1px solid var(--og-line-strong);
+  background: var(--og-bg-alt);
+  color: var(--og-text);
+}
+
+html[data-theme="og"] .screen-analyses-form input[type="text"]:focus,
+html[data-theme="og"] .screen-analyses-form textarea:focus,
+html[data-theme="og"] .form-control:focus {
+  outline: none;
+  border-color: var(--og-red);
+  box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2);
+}
+
+html[data-theme="og"] .btn-primary {
+  background: var(--og-grad-blood);
+}
+
+html[data-theme="og"] .btn-secondary {
+  background: transparent;
+  border: 1px solid var(--og-line-strong);
+  color: var(--og-text);
+}
+
+html[data-theme="og"] .btn-danger {
+  background: var(--og-red-dark);
+  border: 1px solid rgba(255, 59, 71, 0.5);
+}
+
+html[data-theme="og"] .btn-copy {
+  background: rgba(61, 220, 132, 0.16);
+  border: 1px solid rgba(61, 220, 132, 0.45);
+  color: var(--og-success);
+}
+
+html[data-theme="og"] .btn-primary:hover,
+html[data-theme="og"] .btn-danger:hover {
+  box-shadow: var(--og-glow-red);
+}
+
+html[data-theme="og"] .btn-secondary:hover {
+  border-color: var(--og-amber);
+}
+
+html[data-theme="og"] .show-layout .text-pane {
+  border: 1px solid var(--og-line);
+  background: var(--og-surface-2);
+  color: var(--og-text);
+}
+
+html[data-theme="og"] .text-pane {
+  background: var(--og-surface-2);
+  color: var(--og-text);
+  border: 1px solid var(--og-line);
+}
+

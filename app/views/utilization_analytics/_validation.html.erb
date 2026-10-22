@@ -1,0 +1,8 @@
+<div class="ua-validation" id="ua-validation">
+  <button type="button" id="ua-validate-btn" class="ua-orange-btn" data-url="<%= validate_utilization_analytics_path %>">
+    Verification / Validation
+  </button>
+  <p class="ua-validation-note">Checks the displayed values against the database. Displayed analytics stay on the endpoint values.</p>
+  <div id="ua-validation-result" hidden aria-live="polite"></div>
+</div>
+<script type="application/json" id="ua-analytics-payload"><%= raw json_escape(@payload.to_json) %></script>

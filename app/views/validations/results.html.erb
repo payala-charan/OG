@@ -1,5 +1,14 @@
-<h2>Validation Results</h2>
-<table border="1">
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .og-results-title { font-family: var(--og-font-display); font-weight: 400; letter-spacing: .05em; font-size: 2.2rem; color: var(--og-text); margin: 0 0 .25rem; }
+  .og-results-table { border-collapse: collapse; width: 100%; background: var(--og-surface); border: 1px solid var(--og-line) !important; border-radius: var(--og-radius-sm); box-shadow: var(--og-shadow-sm); color: var(--og-text); font-size: .9rem; }
+  .og-results-table th { background: linear-gradient(180deg, #221a1a, #170f10); color: var(--og-amber); text-transform: uppercase; font-size: .75rem; letter-spacing: .06em; font-weight: 600; text-align: left; padding: .65rem .8rem; border: 1px solid var(--og-line); }
+  .og-results-table td { padding: .55rem .8rem; border: 1px solid var(--og-line); color: var(--og-text-soft); }
+  .og-results-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .og-results-table tr:hover td { background: rgba(224,20,30,.07); }
+</style>
+<h2 class="og-results-title">Validation Results</h2>
+<span class="og-slash" aria-hidden="true"></span>
+<table border="1" class="og-results-table">
   <tr>
     <% @data.first.keys.each do |col| %>
       <th><%= col %></th>

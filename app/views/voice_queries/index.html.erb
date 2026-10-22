@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <meta name="csrf-token" content="<%= form_authenticity_token %>">
 
-  <style>
+  <style data-theme-style="classic" media="<%= theme_media(:classic) %>">
     :root {
       --primary: #4361ee;
       --primary-light: #6c8aff;
@@ -395,6 +395,453 @@
       animation: pulse 2s infinite;
     }
   </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .og-grad-text { background: var(--og-grad-sunset) !important; -webkit-background-clip: text !important; background-clip: text !important; -webkit-text-fill-color: transparent; }
+    :root {
+      --primary: var(--og-red);
+      --primary-light: var(--og-red-bright);
+      --primary-dark: var(--og-red-dark);
+      --secondary: var(--og-ember);
+      --accent: var(--og-amber);
+      --danger: var(--og-danger);
+      --warning: var(--og-warning);
+      --success: var(--og-success);
+      --light: var(--og-surface-2);
+      --dark: var(--og-text);
+      --gray: var(--og-muted);
+      --border-radius: 16px;
+      --shadow: var(--og-shadow-sm);
+      --transition: all 0.4s ease;
+    }
+
+    /* Theme variables (both modes stay within the OG noir palette) */
+    body.light {
+      --bg-primary: var(--og-bg-alt);
+      --bg-secondary: var(--og-surface);
+      --bg-card: var(--og-surface-2);
+      --text-primary: var(--og-text);
+      --text-secondary: var(--og-text-soft);
+      --border-color: var(--og-line-strong);
+    }
+
+    body.dark  {
+      --bg-primary: var(--og-bg);
+      --bg-secondary: var(--og-bg-alt);
+      --bg-card: var(--og-surface);
+      --text-primary: var(--og-text);
+      --text-secondary: var(--og-muted);
+      --border-color: var(--og-line);
+    }
+
+    body {
+      background: transparent;
+      color: var(--text-primary, var(--og-text));
+      font-family: var(--og-font-body);
+      transition: var(--transition);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* Header Styles */
+    .header {
+      background: var(--og-glass);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--og-shadow);
+      border: 1px solid var(--og-line);
+      border-left: 3px solid var(--og-red);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .header-text h1 {
+      font-family: var(--og-font-display);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+      color: var(--og-text);
+    }
+
+    .header-text h1 .fa-robot {
+      color: var(--og-red);
+    }
+
+    .header-text p {
+      color: var(--og-muted);
+      font-size: 1.1rem;
+    }
+
+    .header .text-gray-400,
+    #chatArea .text-gray-400,
+    .card .text-gray-400 {
+      color: var(--og-muted);
+    }
+
+    /* Back to Dashboard Button */
+    .back-btn {
+      background: var(--og-grad-blood);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--og-glow-red);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* Chat bubbles */
+    .assistant-bubble {
+      background: var(--og-grad-blood);
+      color: #fff;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    .user-bubble {
+      background: var(--og-surface-2);
+      color: var(--og-text);
+      border: 1px solid var(--og-line-strong);
+      border-left: 3px solid var(--og-amber);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* Visualizer */
+    .vis-bar {
+      width: 4px;
+      background: linear-gradient(to top, var(--og-red), var(--og-amber));
+      margin: 0 2px;
+      border-radius: 2px;
+      display:inline-block;
+      transition: height 0.1s ease;
+    }
+
+    .vis-bar-muted {
+      background: var(--og-muted);
+      opacity: 0.3;
+    }
+
+    /* Cards and containers */
+    .card {
+      background: var(--bg-card, var(--og-surface));
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color, var(--og-line));
+      transition: var(--transition);
+      color: var(--og-text);
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(224, 20, 30, 0.45);
+      box-shadow: var(--og-glow-red);
+    }
+
+    .card h3 {
+      font-family: var(--og-font-display);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 1.6rem;
+      color: var(--og-text);
+    }
+
+    .card h3 .fa-comments {
+      color: var(--og-red);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: var(--og-grad-blood);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--og-glow-red);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #3ddc84 0%, #1f9d58 100%);
+      color: #06140c;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(61, 220, 132, 0.25);
+      cursor: pointer;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(61, 220, 132, 0.35);
+    }
+
+    .btn-danger {
+      background: var(--og-grad-blood);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+      cursor: pointer;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: var(--og-glow-red);
+    }
+
+    .btn-success:disabled,
+    .btn-danger:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--og-text);
+      border: 1px solid var(--og-line-strong);
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      transition: var(--transition);
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 164, 27, 0.06);
+      border-color: var(--og-amber);
+      transform: translateY(-2px);
+    }
+
+    /* Form elements */
+    .input-field {
+      background: var(--og-bg-alt);
+      border: 1px solid var(--og-line-strong);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      color: var(--og-text);
+      width: 100%;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--og-red);
+      box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2);
+    }
+
+    .select-field {
+      background: var(--og-bg-alt);
+      border: 1px solid var(--og-line-strong);
+      border-radius: var(--border-radius);
+      padding: 0.8rem;
+      color: var(--og-text);
+      width: 100%;
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+    }
+
+    .select-field:focus {
+      outline: none;
+      border-color: var(--og-red);
+      box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2);
+    }
+
+    select option {
+      background: #141213;
+      color: var(--og-text);
+    }
+
+    /* Slider */
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--og-surface-3);
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--og-grad-blood);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(224, 20, 30, 0.5);
+    }
+
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--og-grad-blood);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 10px rgba(224, 20, 30, 0.5);
+    }
+
+    /* Status and labels */
+    .status-indicator {
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--og-surface-2);
+      border: 1px solid var(--og-line-strong);
+      color: var(--og-text);
+    }
+
+    .label {
+      font-weight: 600;
+      color: var(--og-text-soft);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .label .fas {
+      color: var(--og-amber);
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: var(--og-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: slideIn 0.3s ease;
+    }
+
+    /* Visualizer container */
+    .visualizer-container {
+      background: var(--og-bg-alt);
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      border: 1px solid var(--og-line);
+    }
+
+    /* Chat area */
+    #chatArea {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--og-line);
+    }
+
+    /* Voice Logs Link */
+    .voice-logs-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: rgba(255, 164, 27, 0.08);
+      color: var(--og-amber);
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+      border: 1px solid rgba(255, 164, 27, 0.35);
+    }
+
+    .voice-logs-link:hover {
+      background: rgba(255, 164, 27, 0.16);
+      transform: translateY(-2px);
+      text-decoration: none;
+      color: var(--og-amber);
+    }
+
+    /* Quick Action Buttons */
+    .quick-action-btn {
+      background: var(--og-surface-2);
+      border: 1px solid var(--og-line-strong);
+      border-radius: 12px;
+      padding: 0.8rem;
+      color: var(--og-text);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quick-action-btn:hover {
+      background: rgba(224, 20, 30, 0.08);
+      border-color: rgba(224, 20, 30, 0.45);
+      transform: translateY(-2px);
+    }
+
+    /* Status icon colors (Tailwind classes toggled by JS) */
+    #statusIcon.text-green-400 { color: var(--og-success); }
+    #statusIcon.text-red-400,
+    #statusIcon.text-red-500,
+    #silenceTimer.text-red-400 { color: var(--og-danger); }
+    #statusIcon.text-yellow-400 { color: var(--og-amber); }
+    #statusIcon.text-orange-400 { color: var(--og-ember); }
+
+    /* Hidden utility */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Pulse animation for recording */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+  </style>
 </head>
 <body class="dark min-h-screen flex items-center justify-center p-6">
 
@@ -406,10 +853,11 @@
         <div class="header-text">
           <h1 class="text-3xl font-bold mb-2">
             <i class="fas fa-robot mr-3"></i>
-            <span style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            <span class="og-grad-text" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
               AI Voice Assistant
             </span>
           </h1>
+          <span class="og-slash" aria-hidden="true"></span>
           <p class="text-gray-400">Advanced voice recognition and response system</p>
         </div>
 

@@ -12,7 +12,7 @@
   </section>
 </div>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   .kettering-page--narrow { max-width: 900px; }
   .kettering-upload-card { background: #fff; border: 1px solid #dbe4ea; border-radius: 8px; padding: 1.5rem; }
   .kettering-fields { display: grid; gap: .45rem 1rem; grid-template-columns: 1fr 2fr; }
@@ -23,4 +23,19 @@
   .kettering-button--primary { background: #168aad; color: #fff; }
   .kettering-button--muted { background: #e9eef2; color: #243447; }
   .kettering-errors { background: #fff1e6; border-left: 4px solid #d1495b; margin-bottom: 1rem; padding: .75rem 1rem; }
+</style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .kettering-page--narrow { max-width: 900px; }
+  .kettering-upload-card { background: var(--og-surface); border: 1px solid var(--og-line); border-radius: 8px; padding: 1.5rem; }
+  .kettering-fields { display: grid; gap: .45rem 1rem; grid-template-columns: 1fr 2fr; }
+  .kettering-fields label { align-self: center; font-weight: 700; }
+  .kettering-fields input { border: 1px solid var(--og-line-strong); background: var(--og-bg-alt); color: var(--og-text); border-radius: 4px; padding: .65rem; width: 100%; }
+  .kettering-fields input:focus { outline: none; border-color: var(--og-red); box-shadow: 0 0 0 3px rgba(224, 20, 30, .2); }
+  .kettering-form-actions { display: flex; gap: .75rem; margin-top: 1.25rem; }
+  .kettering-button { border: 0; border-radius: 6px; display: inline-block; font-weight: 700; padding: .7rem 1rem; text-decoration: none; }
+  .kettering-button--primary { background: var(--og-grad-blood); color: #fff; }
+  .kettering-button--primary:hover { box-shadow: var(--og-glow-red); }
+  .kettering-button--muted { background: transparent; color: var(--og-text); border: 1px solid var(--og-line-strong); }
+  .kettering-button--muted:hover { border-color: var(--og-amber); }
+  .kettering-errors { background: rgba(255, 59, 71, .14); color: var(--og-danger); border-left: 4px solid var(--og-danger); margin-bottom: 1rem; padding: .75rem 1rem; }
 </style>

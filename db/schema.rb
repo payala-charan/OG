@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_22_072500) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -130,45 +130,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_22_072500) do
     t.string "schedule_type", default: "utilization"
   end
 
-  create_table "biosimilar_prices", force: :cascade do |t|
-    t.string "generic_name"
-    t.string "hcpcs_code"
-    t.string "billing_unit"
-    t.float "reimbursement_per_billing_unit"
-    t.float "billing_unit_per_package_size"
-    t.float "gpo_cost"
-    t.float "cost_three_forty_b"
-    t.string "extracted_brand_name"
-    t.float "cms_reimbursement_per_package"
-    t.float "cms_margin_gpo_cost"
-    t.float "cms_margin_three_forty_b_cost"
-    t.string "generic_name_group"
-    t.string "extracted_strength"
-    t.float "best_margin"
-    t.string "insurances"
-    t.float "utilization_best_margin"
-    t.string "reimbursement"
-    t.string "ndc_code"
-    t.string "status"
-    t.string "alternate_ndc_code"
-    t.string "other_ndc_codes"
-    t.integer "reimbursement_id"
-    t.integer "accounting_period_id"
-    t.float "cost_per_unit_three_forty_b"
-    t.float "cms_percent_margin"
-    t.float "gpo_percent_margin"
-    t.float "blended_cost_three_forty_b"
-    t.float "blended_gpo_cost"
-    t.float "blended_cms_margin_three_forty_b_cost"
-    t.float "blended_cms_percent_margin"
-    t.float "blended_cms_margin_gpo_cost"
-    t.float "blended_gpo_percent_margin"
-    t.string "ranked_by"
-    t.string "match"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "brand_insurance_mappings", force: :cascade do |t|
     t.json "mappings", default: {}
     t.integer "user_id"
@@ -176,6 +137,26 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_22_072500) do
     t.string "file_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "database_transfer_runs", force: :cascade do |t|
+    t.bigint "user_id"
+    t.integer "status", default: 0, null: false
+    t.boolean "rehearsal", default: false, null: false
+    t.string "source_database", null: false
+    t.string "target_database", null: false
+    t.jsonb "selected_tables", default: [], null: false
+    t.jsonb "planned_tables", default: [], null: false
+    t.string "plan_fingerprint", null: false
+    t.string "progress_message"
+    t.text "error_message"
+    t.jsonb "summary", default: {}, null: false
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_database_transfer_runs_on_status"
+    t.index ["user_id"], name: "index_database_transfer_runs_on_user_id"
   end
 
   create_table "excel_records", force: :cascade do |t|
@@ -367,14 +348,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_22_072500) do
     t.index ["name"], name: "index_name_matches_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
-  create_table "ndc_codes", force: :cascade do |t|
-    t.string "code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "file_name"
-    t.index ["file_name", "code"], name: "index_ndc_codes_on_file_name_and_code"
-  end
-
   create_table "ndc_results", force: :cascade do |t|
     t.string "ndc_code"
     t.float "result_value"
@@ -387,8 +360,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_22_072500) do
   create_table "new_biosimilar_prices", force: :cascade do |t|
     t.string "generic_name"
     t.string "hcpcs_code"
-    t.float "billing_unit"
-    t.float "reimbursement_per_billing_unit"
+    t.string "billing_unit"
+    t.float "cms_reimbursement_per_billing_unit"
     t.integer "billing_unit_per_package_size"
     t.float "gpo_cost"
     t.float "cost_three_forty_b"
@@ -422,8 +395,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_22_072500) do
     t.string "team_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "extracted_insurances", default: [], array: true
     t.jsonb "insurances_payments", default: {}
+    t.float "payrate_reimbursement_per_billing_unit"
+    t.float "payrate_reimbursement_per_package"
+    t.string "category"
+    t.float "cms_margin_per_unit_three_forty_b_cost"
+    t.float "cost_per_unit_gpo"
+    t.float "cms_margin_per_unit_gpo"
+    t.string "extracted_insurances", default: [], array: true
   end
 
   create_table "ogs", force: :cascade do |t|

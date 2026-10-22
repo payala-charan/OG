@@ -1,0 +1,150 @@
+<% content_for :title, "Database Transfer ##{@run.id}" %>
+
+<div class="dbt-page" <%= tag.attributes(data: { dbt_run_active: !@run.finished? }) %>>
+  <header class="dbt-header">
+    <div>
+      <p class="dbt-kicker"><%= @run.rehearsal? ? "Rehearsal" : "Transfer" %> #<%= @run.id %></p>
+      <h1><%= @run.source_database %> → <%= @run.target_database %></h1>
+      <p class="dbt-lead">
+        <% if @run.rehearsal? %>
+          A rehearsal runs the whole transfer and verification, then rolls it back.
+        <% else %>
+          Creates the planned tables in OG and copies their rows in one transaction.
+        <% end %>
+      </p>
+    </div>
+    <%= link_to database_transfers_path, class: "dbt-back" do %>
+      <i class="fas fa-arrow-left"></i> Back to FAT Database Transfer
+    <% end %>
+  </header>
+
+  <% if flash[:alert] || flash[:notice] %>
+    <div class="dbt-flashes">
+      <% if flash[:alert] %>
+        <div class="dbt-flash dbt-flash--alert" role="alert"><%= flash[:alert] %></div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="dbt-flash dbt-flash--notice" role="status"><%= flash[:notice] %></div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <section class="dbt-source-card">
+    <div>
+      <span class="dbt-source-label">Status</span>
+      <strong id="run-status"><span class="dbt-state dbt-state--<%= @run.status %>"><%= @run.outcome_label %></span></strong>
+    </div>
+    <div>
+      <span class="dbt-source-label">Tables</span>
+      <strong><%= @run.planned_tables.size %></strong>
+    </div>
+    <div>
+      <span class="dbt-source-label">Started by</span>
+      <strong><%= @run.user&.email || "—" %></strong>
+    </div>
+    <div>
+      <span class="dbt-source-label"><%= @run.finished? ? "Finished" : "Created" %></span>
+      <strong><%= l(@run.finished_at || @run.created_at, format: :short) %></strong>
+    </div>
+  </section>
+
+  <section class="dbt-panel">
+    <h2>Progress</h2>
+    <p id="run-progress"><%= @run.progress_message.presence || "Waiting to start" %></p>
+    <% unless @run.finished? %>
+      <p class="dbt-meta">This page refreshes every few seconds until the run finishes.</p>
+    <% end %>
+    <% if @run.error_message.present? %>
+      <h3>Error</h3>
+      <p class="dbt-error" id="run-error"><%= @run.error_message %></p>
+    <% end %>
+  </section>
+
+  <section class="dbt-panel">
+    <h2>Tables</h2>
+    <% summaries = @run.table_summaries.index_by { |table| table["name"] } %>
+    <div class="dbt-table-wrap">
+      <table class="dbt-plan-table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Table</th>
+            <th scope="col" class="dbt-num">FAT rows</th>
+            <th scope="col" class="dbt-num">OG rows</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @run.planned_tables.each_with_index do |name, index| %>
+            <% summary = summaries[name] %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td>
+                <strong><%= name %></strong>
+                <% if (model = database_transfer_console_model(name)) && @run.succeeded? && !@run.rehearsal? %>
+                  <span class="dbt-meta"><code><%= model %></code></span>
+                <% end %>
+                <% if @run.selected_tables.include?(name) %>
+                  <span class="dbt-tag"><%= database_transfer_status_label(:selected) %></span>
+                <% else %>
+                  <span class="dbt-tag"><%= database_transfer_status_label(:required) %></span>
+                <% end %>
+              </td>
+              <td class="dbt-num"><%= summary ? number_with_delimiter(summary["fat_rows"]) : "—" %></td>
+              <td class="dbt-num"><%= summary ? number_with_delimiter(summary["og_rows"]) : "—" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <% if @run.succeeded? && @run.rehearsal? %>
+      <p>Nothing was kept. Start a real transfer from the dashboard when you are ready.</p>
+    <% elsif @run.rolled_back? %>
+      <p>These tables were dropped from <%= @run.target_database %>. In a console that is already open, run <code>reload!</code> so the models are removed.</p>
+    <% end %>
+  </section>
+
+  <% if @run.succeeded? && !@run.rehearsal? %>
+    <section class="dbt-panel" id="console-models">
+      <h2>Rails console</h2>
+      <p>
+        These models read the transferred tables. Open a new <code>bin/rails console</code>,
+        or run <code>reload!</code> if a console was already open.
+      </p>
+      <ul class="dbt-reasons">
+        <% @run.planned_tables.each do |name| %>
+          <% model = database_transfer_console_model(name) %>
+          <% next unless model %>
+          <li><code><%= model %>.all</code> <span class="dbt-meta">reads <%= name %></span></li>
+        <% end %>
+      </ul>
+    </section>
+
+    <section class="dbt-panel" id="rollback">
+      <h2>Roll back</h2>
+      <p>
+        This drops every table this transfer created in <strong><%= @run.target_database %></strong>
+        and deletes their rows. FAT is not changed. If a later transfer references these tables,
+        roll that one back first.
+      </p>
+      <%= form_with url: rollback_database_transfer_run_path(@run), method: :post, class: "dbt-action", data: { turbo: false } do %>
+        <label for="rollback_confirm_database">
+          Type <code><%= @run.target_database %></code> to drop these <%= @run.planned_tables.size %> table(s).
+        </label>
+        <%= text_field_tag :confirm_database, nil, id: "rollback_confirm_database", autocomplete: "off", required: true,
+              spellcheck: false, placeholder: @run.target_database %>
+        <%= button_tag type: "submit", class: "dbt-btn dbt-btn--danger" do %>
+          <i class="fas fa-undo"></i> Roll back tables
+        <% end %>
+      <% end %>
+    </section>
+  <% end %>
+</div>
+
+<%= render "database_transfers/styles" %>
+
+<script>
+  (function () {
+    const page = document.querySelector("[data-dbt-run-active='true']");
+    if (page) setTimeout(function () { window.location.reload(); }, 3000);
+  })();
+</script>

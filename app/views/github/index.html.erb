@@ -1,7 +1,8 @@
 <div class="gh-portal-container">
   <header class="gh-header-clean">
     <div class="gh-title-row">
-      <h1><i class="fab fa-github"></i> GitHub Analytics Gateway</h1>
+      <h1 class="og-title"><i class="fab fa-github"></i> GitHub Analytics Gateway</h1>
+      <span class="og-slash" aria-hidden="true"></span>
       <p>Connect your account to synchronize repository metadata, PR stats, and track developer contributions in real-time.</p>
     </div>
     <div class="gh-actions">
@@ -40,7 +41,7 @@
   </div>
 </div>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   .gh-portal-container {
     max-width: 900px;
     margin: 0 auto;
@@ -157,3 +158,142 @@
     color: white;
   }
 </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .gh-portal-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: var(--og-font-body);
+    color: var(--og-text);
+  }
+  .gh-header-clean {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--og-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--og-line);
+    border-left: 3px solid var(--og-red);
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    box-shadow: var(--og-shadow);
+    margin-bottom: 3rem;
+  }
+  .gh-title-row h1 {
+    margin: 0 0 0.5rem;
+    font-family: var(--og-font-display);
+    font-size: 2.4rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    line-height: 1.05;
+    color: var(--og-text);
+  }
+  .gh-title-row h1 i { color: var(--og-red-bright); }
+  .gh-title-row p { margin: 0; color: var(--og-text-soft); font-size: 0.95rem; }
+
+  .gh-btn-outline {
+    background: transparent;
+    color: var(--og-text);
+    text-decoration: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid var(--og-line-strong);
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+  .gh-btn-outline:hover { border-color: var(--og-amber); color: var(--og-amber); transform: translateY(-2px); }
+
+  .gh-card-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+  }
+  .gh-auth-box {
+    background: var(--og-surface);
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: var(--og-shadow);
+    border: 1px solid var(--og-line);
+    border-top: 3px solid var(--og-red);
+    transition: all 0.3s ease;
+  }
+  .gh-auth-box.success {
+    border-top-color: var(--og-success);
+  }
+  .gh-auth-box:hover {
+    transform: translateY(-5px);
+    border-color: rgba(224, 20, 30, 0.45);
+    box-shadow: var(--og-glow-red);
+  }
+  .gh-logo-wrapper {
+    width: 80px;
+    height: 80px;
+    background: var(--og-surface-2);
+    border: 1px solid var(--og-line-strong);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    color: var(--og-text);
+    box-shadow: 0 0 24px rgba(224, 20, 30, 0.2);
+  }
+  .gh-logo-wrapper.connected {
+    color: var(--og-success);
+    background: rgba(61, 220, 132, 0.12);
+    border-color: rgba(61, 220, 132, 0.35);
+    box-shadow: 0 0 24px rgba(61, 220, 132, 0.2);
+  }
+  .gh-auth-box h2 {
+    font-size: 1.5rem;
+    color: var(--og-text);
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+  }
+  .gh-auth-box p {
+    color: var(--og-text-soft);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+  .gh-btn-primary {
+    background: var(--og-grad-blood);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    text-decoration: none;
+    box-shadow: var(--og-shadow-sm);
+  }
+  .gh-btn-primary.connected-btn {
+    background: var(--og-grad-blood);
+  }
+  .gh-btn-primary.connected-btn:hover {
+    box-shadow: var(--og-glow-red);
+  }
+  .gh-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--og-glow-red);
+    color: #fff;
+  }
+  </style>

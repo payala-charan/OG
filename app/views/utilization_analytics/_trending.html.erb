@@ -1,0 +1,11 @@
+<% charts = ua_trending_charts %>
+<% if charts.any? %>
+  <section class="ua-trending" id="ua-trending">
+    <% if ua_trending["grain"].present? %>
+      <p class="ua-grain"><%= ua_trending["grain"] %></p>
+    <% end %>
+    <% charts.each_with_index do |chart, index| %>
+      <%= render "chart", chart: chart, dom_id: "ua-trend-#{index}" %>
+    <% end %>
+  </section>
+<% end %>

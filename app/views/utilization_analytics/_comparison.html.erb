@@ -1,0 +1,29 @@
+<% if ua_render_comparison? %>
+  <% if ua_show_tables? %>
+    <%= render "validation" %>
+  <% end %>
+  <% baseline = ua_period_text(ua_comparison.dig("periods", "baseline")) %>
+  <% comparator = ua_period_text(ua_comparison.dig("periods", "comparator")) %>
+  <% if baseline.present? || comparator.present? %>
+    <p class="ua-periods">
+      <% if baseline.present? %>
+        <span>Baseline <strong><%= baseline %></strong></span>
+      <% end %>
+      <% if comparator.present? %>
+        <span>Comparator <strong><%= comparator %></strong></span>
+      <% end %>
+    </p>
+  <% end %>
+
+  <% UtilizationAnalyticsHelper::SECTION_KEYS.each do |key| %>
+    <% section = ua_comparison[key] %>
+    <% next unless section.is_a?(Hash) %>
+    <%= render "section", key: key, section: section %>
+  <% end %>
+
+  <% UtilizationAnalyticsHelper::CHART_KEYS.each do |key| %>
+    <% chart = ua_comparison[key] %>
+    <% next unless ua_chart_visible?(chart) %>
+    <%= render "chart", chart: chart, dom_id: "ua-chart-#{key}" %>
+  <% end %>
+<% end %>

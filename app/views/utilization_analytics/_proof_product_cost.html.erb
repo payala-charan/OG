@@ -1,0 +1,63 @@
+<div class="ua-proof">
+  <div class="ua-proof-banner">
+    <h3>Calculation proof — Total Product Cost</h3>
+    <p>
+      <strong>Total Product Cost</strong> =
+      <code>round(CMS Total Units) × round(Product Cost Per Unit)</code>
+      then rounded to whole dollars (same as the table above).
+      CMS units are Σ <code>cms_total_units</code> on utilization (category nil, Outpatient + Emergency).
+    </p>
+  </div>
+
+  <div class="ua-table-wrap">
+    <table class="ua-proof-table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="ua-proof-brand" scope="col">Brand</th>
+          <th colspan="4" class="ua-proof-period" scope="colgroup"><%= period_1 %></th>
+          <th colspan="4" class="ua-proof-period" scope="colgroup"><%= period_2 %></th>
+        </tr>
+        <tr>
+          <% 2.times do %>
+            <th class="ua-proof-split" scope="col">CMS units (rounded)</th>
+            <th class="ua-proof-split" scope="col">Cost / unit</th>
+            <th class="ua-proof-split" scope="col">Units × CPU</th>
+            <th class="ua-proof-split ua-proof-highlight" scope="col">Total cost (in table)</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.each do |brand, data| %>
+          <tr>
+            <td class="ua-proof-brand"><%= brand %></td>
+            <% %w[q1 q2].each do |period| %>
+              <% metrics = ua_proof_period(data, period) %>
+              <td class="ua-proof-split"><%= ua_proof_number(metrics["cms_total_units_rounded"]) %></td>
+              <td class="ua-proof-split"><%= ua_proof_money(metrics["product_cost_per_unit_rounded"]) %></td>
+              <td class="ua-proof-split"><%= ua_proof_money(metrics["total_product_cost_computed"]) %></td>
+              <td class="ua-proof-split ua-proof-highlight">
+                <%= ua_proof_money(metrics["total_product_cost_in_table"]) %>
+                <span class="ua-proof-hint">
+                  = <%= ua_proof_number(metrics["cms_total_units_rounded"]) %> × <%= ua_proof_money(metrics["product_cost_per_unit_rounded"]) %>
+                </span>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+        <tr class="ua-proof-grand">
+          <td class="ua-proof-brand">Grand Total <span class="ua-proof-match">(matches table above)</span></td>
+          <% %w[q1 q2].each do |period| %>
+            <% grand = ua_proof_grand(proof, period) %>
+            <td class="ua-proof-split"><%= ua_proof_number(grand["cms_units"]) %></td>
+            <td class="ua-proof-split"><%= ua_proof_money(grand["product_cost_per_unit"]) %></td>
+            <td class="ua-proof-split"><%= ua_proof_money(grand["product_cost"]) %></td>
+            <td class="ua-proof-split ua-proof-highlight">
+              <%= ua_proof_money(grand["product_cost"]) %>
+              <span class="ua-proof-hint">Σ brand product cost</span>
+            </td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

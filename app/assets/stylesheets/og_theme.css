@@ -1,0 +1,429 @@
+/*
+ * OG Noir — application-wide theme ("They Call Him OG").
+ * Black surfaces, blood red primary, ember/amber accents, warm off-white text.
+ * Views use these --og-* tokens; image tokens (--og-img-*) are set in the layout
+ * because they need digested asset paths.
+ *
+ * The theme is switchable: the layout sets <html data-theme="og|classic">. Tokens are
+ * always defined (harmless), but every rule that paints something is scoped to
+ * html[data-theme="og"] so the classic theme renders exactly as before.
+ */
+
+:root {
+  /* Surfaces */
+  --og-bg: #070707;
+  --og-bg-alt: #0e0d0d;
+  --og-surface: #141213;
+  --og-surface-2: #1c1919;
+  --og-surface-3: #262121;
+  --og-glass: rgba(20, 18, 19, 0.82);
+  --og-line: rgba(255, 255, 255, 0.08);
+  --og-line-strong: rgba(255, 255, 255, 0.16);
+
+  /* Brand */
+  --og-red: #e0141e;
+  --og-red-bright: #ff2d36;
+  --og-red-dark: #8c0a10;
+  --og-blood: #5a0609;
+  --og-ember: #ff5a1f;
+  --og-amber: #ffa41b;
+  --og-gold: #e6b450;
+  --og-moon: #7fc8ff;
+
+  /* Text */
+  --og-text: #f3ece4;
+  --og-text-soft: #cfc5ba;
+  --og-muted: #9a9089;
+  --og-faint: #6b625d;
+
+  /* Status */
+  --og-success: #3ddc84;
+  --og-warning: #ffb020;
+  --og-danger: #ff3b47;
+  --og-info: #7fc8ff;
+
+  /* Gradients */
+  --og-grad-blood: linear-gradient(135deg, #ff2d36 0%, #e0141e 45%, #8c0a10 100%);
+  --og-grad-sunset: linear-gradient(135deg, #ffa41b 0%, #ff5a1f 45%, #e0141e 100%);
+  --og-grad-steel: linear-gradient(160deg, #1c1919 0%, #0e0d0d 100%);
+
+  /* Effects */
+  --og-glow-red: 0 0 0 1px rgba(224, 20, 30, 0.35), 0 10px 30px rgba(224, 20, 30, 0.25);
+  --og-glow-amber: 0 0 24px rgba(255, 164, 27, 0.35);
+  --og-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  --og-shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.45);
+  --og-radius: 14px;
+  --og-radius-sm: 8px;
+
+  /* Type */
+  --og-font-display: "Bebas Neue", "Oswald", Impact, sans-serif;
+  --og-font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --og-font-mono: "Special Elite", "Courier New", monospace;
+
+}
+
+html[data-theme="og"] {
+  color-scheme: dark;
+}
+
+html[data-theme="og"] body {
+  background:
+    radial-gradient(1200px 600px at 85% -10%, rgba(224, 20, 30, 0.16), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(255, 90, 31, 0.08), transparent 60%),
+    var(--og-bg);
+  background-attachment: fixed;
+  color: var(--og-text);
+  font-family: var(--og-font-body);
+}
+
+html[data-theme="og"] ::selection {
+  background: rgba(224, 20, 30, 0.55);
+  color: #fff;
+}
+
+html[data-theme="og"] a {
+  color: var(--og-amber);
+}
+
+/* Scrollbars */
+html[data-theme="og"] * {
+  scrollbar-color: var(--og-red-dark) var(--og-bg-alt);
+  scrollbar-width: thin;
+}
+
+html[data-theme="og"] ::-webkit-scrollbar { width: 10px; height: 10px; }
+html[data-theme="og"] ::-webkit-scrollbar-track { background: var(--og-bg-alt); }
+html[data-theme="og"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--og-red), var(--og-red-dark));
+  border-radius: 10px;
+  border: 2px solid var(--og-bg-alt);
+}
+html[data-theme="og"] ::-webkit-scrollbar-thumb:hover { background: var(--og-red-bright); }
+
+html[data-theme="og"] :focus-visible {
+  outline: 2px solid var(--og-amber);
+  outline-offset: 2px;
+}
+
+html[data-theme="og"] input::placeholder,
+html[data-theme="og"] textarea::placeholder {
+  color: var(--og-faint);
+}
+
+/* Theme-specific markup: decorative OG elements vanish in classic, and vice versa */
+html:not([data-theme="og"]) .og-only,
+html:not([data-theme="og"]) .og-slash,
+html:not([data-theme="og"]) .og-backdrop,
+html:not([data-theme="og"]) .og-grain {
+  display: none !important;
+}
+
+html[data-theme="og"] .classic-only {
+  display: none !important;
+}
+
+/* Smooth cross-fade while the theme is being switched */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease !important;
+}
+
+/* Cinematic backdrop: faint sunset silhouette + film grain behind every page */
+.og-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -100; /* below any page-level background imagery */
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(7, 7, 7, 0.92) 0%, rgba(7, 7, 7, 0.97) 100%),
+    var(--og-img-sunset, none) center 30% / cover no-repeat;
+}
+
+.og-grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 10500;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: og-grain 1.2s steps(6) infinite;
+}
+
+@keyframes og-grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Reusable OG pieces views can opt into */
+html[data-theme="og"] .og-title {
+  font-family: var(--og-font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--og-text);
+}
+
+html[data-theme="og"] .og-title .og-accent,
+html[data-theme="og"] .og-accent-text {
+  background: var(--og-grad-sunset);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html[data-theme="og"] .og-tagline {
+  font-family: var(--og-font-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--og-muted);
+}
+
+.og-slash {
+  display: block;
+  height: 3px;
+  width: 72px;
+  margin: 0.6rem 0;
+  background: var(--og-grad-blood);
+  transform: skewX(-30deg);
+  box-shadow: 0 0 12px rgba(224, 20, 30, 0.6);
+}
+
+/* ------------------------------------------------------------------
+ * Quick settings button (layout): one floating trigger on every page
+ * that opens a menu with Music + OG Theme. Classic styles first,
+ * OG overrides after.
+ * ------------------------------------------------------------------ */
+.app-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 12000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+
+.app-fab-trigger {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  color: #4361ee;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  position: relative;
+}
+
+.app-fab-trigger:hover { transform: scale(1.06); }
+.app-fab-trigger[aria-expanded="true"] { transform: rotate(-12deg) scale(1.04); }
+
+/* Small pulsing dot on the trigger while music plays */
+.app-fab-trigger::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #06d6a0;
+  border: 2px solid #fff;
+  transform: scale(0);
+  transition: transform 0.2s ease;
+}
+
+.app-fab.is-playing .app-fab-trigger::after {
+  transform: scale(1);
+  animation: app-fab-ping 1.6s ease-out infinite;
+}
+
+@keyframes app-fab-ping {
+  0% { box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.6); }
+  80%, 100% { box-shadow: 0 0 0 8px rgba(6, 214, 160, 0); }
+}
+
+.app-fab-menu {
+  width: 280px;
+  padding: 10px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  transform-origin: bottom right;
+  animation: app-fab-menu-in 0.2s ease-out;
+}
+
+.app-fab-menu[hidden] { display: none; }
+
+@keyframes app-fab-menu-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+.app-fab-menu-title {
+  padding: 6px 10px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8d99ae;
+}
+
+.app-fab-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #2b2d42;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  transition: background 0.2s ease;
+}
+
+.app-fab-option:hover { background: #f1f4ff; }
+
+.app-fab-option-icon {
+  flex: 0 0 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, #4361ee, #7209b7);
+}
+
+.app-fab-option-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.app-fab-option-text strong { font-size: 14px; font-weight: 700; }
+.app-fab-option-text small { font-size: 12px; color: #8d99ae; }
+
+/* Music equalizer bars (animate only while playing) */
+.app-fab-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+}
+
+.app-fab-eq i {
+  display: block;
+  width: 3px;
+  height: 5px;
+  border-radius: 2px;
+  background: #c3cae0;
+}
+
+.app-fab.is-playing .app-fab-eq i {
+  background: #06d6a0;
+  animation: app-fab-eq 0.9s ease-in-out infinite;
+}
+
+.app-fab.is-playing .app-fab-eq i:nth-child(2) { animation-delay: 0.15s; }
+.app-fab.is-playing .app-fab-eq i:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes app-fab-eq {
+  0%, 100% { height: 5px; }
+  50% { height: 18px; }
+}
+
+/* Toggle switch */
+.app-switch {
+  flex: 0 0 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: #cbd5e1;
+  position: relative;
+  transition: background 0.25s ease;
+}
+
+.app-switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease;
+}
+
+.app-fab-option[aria-checked="true"] .app-switch { background: #4361ee; }
+.app-fab-option[aria-checked="true"] .app-switch::after { transform: translateX(18px); }
+
+/* OG look for the quick settings */
+html[data-theme="og"] .app-fab-trigger {
+  color: var(--og-amber);
+  background: radial-gradient(circle at 30% 30%, #2a2222, #0b0a0a 70%);
+  border: 1px solid rgba(224, 20, 30, 0.55);
+  box-shadow: 0 0 0 4px rgba(224, 20, 30, 0.12), 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+html[data-theme="og"] .app-fab-trigger:hover {
+  box-shadow: 0 0 0 6px rgba(224, 20, 30, 0.22), 0 0 30px rgba(224, 20, 30, 0.45);
+}
+
+html[data-theme="og"] .app-fab-trigger::after {
+  background: var(--og-success);
+  border-color: #0b0a0a;
+}
+
+html[data-theme="og"] .app-fab-menu {
+  background: rgba(20, 18, 19, 0.96);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--og-line-strong);
+  border-top: 2px solid var(--og-red);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(224, 20, 30, 0.15);
+}
+
+html[data-theme="og"] .app-fab-menu-title {
+  font-family: var(--og-font-mono);
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: var(--og-amber);
+}
+
+html[data-theme="og"] .app-fab-option { color: var(--og-text); }
+html[data-theme="og"] .app-fab-option:hover { background: rgba(224, 20, 30, 0.1); }
+html[data-theme="og"] .app-fab-option-icon { background: var(--og-grad-blood); }
+html[data-theme="og"] .app-fab-option-text small { color: var(--og-muted); }
+html[data-theme="og"] .app-fab-eq i { background: var(--og-faint); }
+html[data-theme="og"] .app-fab.is-playing .app-fab-eq i { background: var(--og-amber); }
+html[data-theme="og"] .app-switch { background: var(--og-surface-3); }
+html[data-theme="og"] .app-fab-option[aria-checked="true"] .app-switch {
+  background: var(--og-grad-blood);
+  box-shadow: 0 0 12px rgba(224, 20, 30, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .og-grain,
+  .app-fab-menu,
+  .app-fab.is-playing .app-fab-trigger::after,
+  .app-fab.is-playing .app-fab-eq i { animation: none; }
+}

@@ -1,0 +1,305 @@
+<% content_for :title, "FAT Database Transfer" %>
+
+<div class="dbt-page">
+  <header class="dbt-header">
+    <div>
+      <p class="dbt-kicker">Database transfer</p>
+      <h1>FAT Database Transfer</h1>
+      <p class="dbt-lead">
+        Read public tables from the FAT database, map the foreign keys PostgreSQL has declared,
+        and copy the tables you choose into OG. Related tables are copied only when you include them.
+        Analysis never writes; a transfer only creates new OG tables.
+      </p>
+    </div>
+    <%= link_to features_path, class: "dbt-back" do %>
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    <% end %>
+  </header>
+
+  <% if flash[:alert] || flash[:notice] %>
+    <div class="dbt-flashes">
+      <% if flash[:alert] %>
+        <div class="dbt-flash dbt-flash--alert" role="alert"><%= flash[:alert] %></div>
+      <% end %>
+      <% if flash[:notice] %>
+        <div class="dbt-flash dbt-flash--notice" role="status"><%= flash[:notice] %></div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <section class="dbt-source-card">
+    <div>
+      <span class="dbt-source-label">Source Database</span>
+      <strong id="source-database"><%= @source_database.presence || "unavailable" %></strong>
+    </div>
+    <div>
+      <span class="dbt-source-label">Tables</span>
+      <strong><%= number_with_delimiter(@tables.size) %></strong>
+    </div>
+    <div>
+      <span class="dbt-source-label">Records</span>
+      <strong><%= number_with_delimiter(@tables.sum { |table| table[:count] }) %></strong>
+    </div>
+    <%= link_to database_transfers_path(refresh: 1), class: "dbt-text-btn" do %>
+      <i class="fas fa-sync-alt"></i> Refresh counts
+    <% end %>
+  </section>
+
+  <% if @analysis %>
+    <section class="dbt-analysis" id="dependency-analysis">
+      <div class="dbt-analysis-head">
+        <h2>Dependency analysis</h2>
+        <p>
+          Selected tables: <strong><%= @analysis.selected_tables.size %></strong>.
+          Required parents: <strong><%= @analysis.required_tables.size %></strong>.
+          Related tables: <strong><%= @analysis.referencing_tables.size %></strong>.
+          Included related tables: <strong><%= @included_related.size %></strong>.
+        </p>
+      </div>
+
+      <section class="dbt-panel">
+        <h2>Selected Tables</h2>
+        <ul class="dbt-selected">
+          <% @analysis.selected_tables.each do |name| %>
+            <li>
+              <span class="dbt-tick" aria-hidden="true">☑</span>
+              <strong><%= name %></strong>
+              <span class="dbt-tag">User Selected</span>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+
+      <%= render "related_tables",
+            title: "Required Dependencies",
+            description: "These tables are referenced by a foreign key from your selection. They are always copied with it, so the transfer can load.",
+            tables: @analysis.required_tables,
+            badge: "Automatically Required",
+            empty_message: "No additional tables are required. The selection does not declare a foreign key to another table." %>
+
+      <%= render "related_tables",
+            title: "Related tables",
+            description: "These tables point at your selection. Check the ones to copy with this transfer, then update the plan. Unchecked tables are not migrated. A checked table also brings the tables it depends on.",
+            tables: @analysis.referencing_tables,
+            badge: "Optional",
+            includable: true,
+            included: @included_related,
+            forced: @forced_related,
+            selected_tables: @selected_tables,
+            empty_message: "No other public tables declare a foreign key to this selection." %>
+
+      <section class="dbt-panel">
+        <h2>Why these tables were added</h2>
+        <% @analysis.selected_tables.each do |name| %>
+          <details class="dbt-details" <%= "open" if @analysis.selected_tables.size <= 3 %>>
+            <summary><%= name %></summary>
+            <h3>References</h3>
+            <% outgoing = @analysis.tree_for(name) %>
+            <% if outgoing.empty? %>
+              <p class="dbt-empty">No outgoing foreign keys.</p>
+            <% else %>
+              <ul class="dbt-tree">
+                <% outgoing.each do |node| %>
+                  <%= render "dependency_node", node: node %>
+                <% end %>
+              </ul>
+            <% end %>
+            <h3>Referenced by</h3>
+            <% incoming = @analysis.referencing_tree_for(name) %>
+            <% if incoming.empty? %>
+              <p class="dbt-empty">No other public tables reference this table.</p>
+            <% else %>
+              <ul class="dbt-tree">
+                <% incoming.each do |node| %>
+                  <%= render "dependency_node", node: node %>
+                <% end %>
+              </ul>
+            <% end %>
+          </details>
+        <% end %>
+      </section>
+
+      <% order_analysis = @plan_analysis || @analysis %>
+      <section class="dbt-panel">
+        <h2>Dependency order</h2>
+        <p>This is the order that will be copied. Parents are listed before the tables that reference them.</p>
+        <% if order_analysis.cyclic? %>
+          <p class="dbt-flash dbt-flash--alert">A circular foreign key exists among these tables.</p>
+        <% end %>
+        <ol class="dbt-order">
+          <% order_analysis.dependency_order.each do |name| %>
+            <li>
+              <strong><%= name %></strong>
+              <% status = order_analysis.status_for(name) %>
+              <% if @included_related.include?(name) %>
+                <span class="dbt-tag">Included related table</span>
+              <% elsif @forced_related.include?(name) %>
+                <span class="dbt-tag">Included with a related table</span>
+              <% elsif status %>
+                <span class="dbt-tag"><%= database_transfer_status_label(status) %></span>
+              <% end %>
+            </li>
+          <% end %>
+        </ol>
+      </section>
+
+      <% if order_analysis.external_dependencies.any? %>
+        <section class="dbt-panel">
+          <h2>Foreign keys outside the public table list</h2>
+          <ul class="dbt-reasons">
+            <% order_analysis.external_dependencies.each do |edge| %>
+              <li><code><%= edge.summary %></code></li>
+            <% end %>
+          </ul>
+        </section>
+      <% end %>
+
+      <% if @plan %>
+        <%= render "transfer_plan", plan: @plan, selected_tables: @selected_tables, included_related: @included_related %>
+      <% end %>
+    </section>
+  <% end %>
+
+  <% if @recent_runs.present? %>
+    <section class="dbt-panel dbt-recent-runs" id="recent-transfers">
+      <h2>Recent transfers</h2>
+      <p class="dbt-meta">Open a committed transfer and roll it back to drop the tables it created in OG.</p>
+      <%= render "database_transfer_runs/table", runs: @recent_runs %>
+      <p><%= link_to "All transfers", database_transfer_runs_path %></p>
+    </section>
+  <% end %>
+
+  <% if @tables.any? %>
+    <%= form_with url: analyze_database_transfers_path, method: :post, class: "dbt-form", data: { dbt_form: true } do %>
+      <div class="dbt-toolbar">
+        <p>Selected Tables: <strong data-dbt-count><%= @selected_tables.size %></strong></p>
+        <label class="dbt-filter">
+          <span>Filter</span>
+          <input type="search" data-dbt-filter placeholder="Filter tables" aria-label="Filter tables" autocomplete="off">
+        </label>
+        <p class="dbt-visible" data-dbt-visible>Showing <%= number_with_delimiter(@tables.size) %></p>
+        <% @included_related.each do |name| %>
+          <%= hidden_field_tag "include_related[]", name, id: nil %>
+        <% end %>
+        <%= button_tag type: "submit", class: "dbt-btn" do %>
+          <i class="fas fa-project-diagram"></i> Analyze Dependencies
+        <% end %>
+      </div>
+
+      <div class="dbt-table-wrap">
+        <table class="dbt-table">
+          <caption>Public tables in <%= @source_database %></caption>
+          <thead>
+            <tr>
+              <th scope="col">Table Name</th>
+              <th scope="col" class="dbt-num">Records</th>
+              <th scope="col" class="dbt-select">Select</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @tables.each do |table| %>
+              <% status = @analysis&.status_for(table[:name]) %>
+              <tr data-dbt-row="<%= table[:name] %>" class="<%= status ? "is-#{status}" : "" %>">
+                <td>
+                  <label for="table_<%= table[:name] %>"><%= table[:name] %></label>
+                  <% if status %>
+                    <span class="dbt-tag"><%= database_transfer_status_label(status) %></span>
+                  <% end %>
+                  <% if @included_related.include?(table[:name]) %>
+                    <span class="dbt-tag">Included</span>
+                  <% elsif @forced_related.include?(table[:name]) %>
+                    <span class="dbt-tag">Included with a related table</span>
+                  <% end %>
+                  <% if large_database_table?(table[:count]) %>
+                    <span class="dbt-tag dbt-tag--large">Large</span>
+                  <% end %>
+                </td>
+                <td class="dbt-num"><%= number_with_delimiter(table[:count]) %></td>
+                <td class="dbt-select">
+                  <%= check_box_tag "tables[]",
+                        table[:name],
+                        @selected_tables.include?(table[:name]),
+                        id: "table_#{table[:name]}",
+                        data: { dbt_table: true },
+                        aria: { label: "Select #{table[:name]}" } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  <% elsif !@connection_error %>
+    <section class="dbt-panel">
+      <p class="dbt-empty">No public tables were found in <%= @source_database %>.</p>
+    </section>
+  <% end %>
+</div>
+
+<%= render "database_transfers/styles" %>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("[data-dbt-form]");
+    if (!form) return;
+
+    const countEl = form.querySelector("[data-dbt-count]");
+    const visibleEl = form.querySelector("[data-dbt-visible]");
+    const filter = form.querySelector("[data-dbt-filter]");
+    const rows = function () { return form.querySelectorAll("[data-dbt-row]"); };
+
+    const update = function () {
+      const checked = form.querySelectorAll("[data-dbt-table]:checked").length;
+      if (countEl) countEl.textContent = checked;
+      const visible = Array.from(rows()).filter(function (row) { return !row.hidden; }).length;
+      if (visibleEl) visibleEl.textContent = "Showing " + visible.toLocaleString();
+    };
+
+    form.addEventListener("change", function (event) {
+      if (event.target.matches("[data-dbt-table]")) update();
+    });
+
+    rows().forEach(function (row) {
+      row.addEventListener("click", function (event) {
+        if (event.target.closest("input, label, a, button")) return;
+        const box = row.querySelector("[data-dbt-table]");
+        if (!box) return;
+        box.checked = !box.checked;
+        update();
+      });
+    });
+
+    if (filter) {
+      filter.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") event.preventDefault();
+      });
+      filter.addEventListener("input", function () {
+        const query = filter.value.trim().toLowerCase();
+        rows().forEach(function (row) {
+          const name = (row.dataset.dbtRow || "").toLowerCase();
+          row.hidden = query.length > 0 && !name.includes(query);
+        });
+        update();
+      });
+    }
+
+    update();
+  });
+
+  const bindRelatedInclude = function () {
+    const form = document.querySelector("[data-dbt-related-form]");
+    if (!form || form.dataset.bound === "true") return;
+    form.dataset.bound = "true";
+    const all = form.querySelector("[data-dbt-include-all]");
+    if (!all) return;
+    all.addEventListener("change", function () {
+      form.querySelectorAll("[data-dbt-include-related]").forEach(function (box) {
+        box.checked = all.checked;
+      });
+    });
+  };
+  document.addEventListener("DOMContentLoaded", bindRelatedInclude);
+  document.addEventListener("turbo:load", bindRelatedInclude);
+  bindRelatedInclude();
+</script>

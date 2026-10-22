@@ -1,8 +1,60 @@
 <% content_for :title, "Gmail — Sent mail import" %>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  /* OG theme: dark overrides for Bootstrap on this page */
+  :root, [data-bs-theme=light] {
+    --bs-body-bg: #141213;
+    --bs-body-bg-rgb: 20, 18, 19;
+    --bs-body-color: #f3ece4;
+    --bs-body-color-rgb: 243, 236, 228;
+    --bs-emphasis-color: #f3ece4;
+    --bs-emphasis-color-rgb: 243, 236, 228;
+    --bs-heading-color: #f3ece4;
+    --bs-secondary-color: #9a9089;
+    --bs-secondary-rgb: 154, 144, 137;
+    --bs-secondary-bg: #1c1919;
+    --bs-tertiary-bg: #1c1919;
+    --bs-border-color: rgba(255, 255, 255, 0.12);
+    --bs-border-color-translucent: rgba(255, 255, 255, 0.1);
+    --bs-link-color: #ffa41b;
+    --bs-link-color-rgb: 255, 164, 27;
+    --bs-link-hover-color: #ffc25c;
+    --bs-link-hover-color-rgb: 255, 194, 92;
+    --bs-code-color: #e6b450;
+    --bs-primary: #e0141e;
+    --bs-primary-rgb: 224, 20, 30;
+    --bs-success-rgb: 31, 138, 82;
+    --bs-danger-rgb: 179, 16, 26;
+    --bs-success-text-emphasis: #3ddc84;
+    --bs-success-bg-subtle: rgba(61, 220, 132, 0.12);
+    --bs-success-border-subtle: rgba(61, 220, 132, 0.35);
+    --bs-danger-text-emphasis: #ff3b47;
+    --bs-danger-bg-subtle: rgba(255, 59, 71, 0.14);
+    --bs-danger-border-subtle: rgba(255, 59, 71, 0.35);
+    --bs-warning-text-emphasis: #ffb020;
+    --bs-warning-bg-subtle: rgba(255, 176, 32, 0.14);
+    --bs-warning-border-subtle: rgba(255, 176, 32, 0.35);
+    --bs-info-text-emphasis: #7fc8ff;
+    --bs-info-bg-subtle: rgba(127, 200, 255, 0.12);
+    --bs-info-border-subtle: rgba(127, 200, 255, 0.35);
+  }
+  body { background-color: var(--og-bg); color: var(--og-text); font-family: var(--og-font-body); }
+  .gx-page h1 { font-family: var(--og-font-display); font-weight: 400; letter-spacing: 0.05em; font-size: 2.4rem; }
+  .gx-page .card { background: var(--og-surface); border: 1px solid var(--og-line); box-shadow: var(--og-shadow-sm); color: var(--og-text); }
+  .gx-page .form-control { background: var(--og-bg-alt); color: var(--og-text); border-color: var(--og-line-strong); }
+  .gx-page .form-control:focus { border-color: var(--og-red); box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2); }
+  .gx-page .btn-primary { --bs-btn-bg: #e0141e; --bs-btn-border-color: #e0141e; --bs-btn-hover-bg: #ff2d36; --bs-btn-hover-border-color: #ff2d36; --bs-btn-active-bg: #8c0a10; --bs-btn-active-border-color: #8c0a10; --bs-btn-disabled-bg: #8c0a10; --bs-btn-disabled-border-color: #8c0a10; background: var(--og-grad-blood); color: #fff; border: 0; }
+  .gx-page .btn-primary:hover { box-shadow: var(--og-glow-red); }
+  .gx-page .btn-success { --bs-btn-bg: #1f8a52; --bs-btn-border-color: #1f8a52; --bs-btn-hover-bg: #23a05f; --bs-btn-hover-border-color: #23a05f; --bs-btn-disabled-bg: #1f5c3a; --bs-btn-disabled-border-color: #1f5c3a; }
+  .gx-page .btn-outline-primary, .gx-page .btn-outline-secondary { --bs-btn-color: #f3ece4; --bs-btn-border-color: rgba(255, 255, 255, 0.16); --bs-btn-hover-color: #f3ece4; --bs-btn-hover-bg: transparent; --bs-btn-hover-border-color: #ffa41b; --bs-btn-active-bg: rgba(224, 20, 30, 0.2); --bs-btn-active-border-color: #ffa41b; }
+  .gx-page .table { --bs-table-bg: transparent; --bs-table-color: var(--og-text); --bs-table-border-color: rgba(255, 255, 255, 0.08); --bs-table-hover-bg: rgba(224, 20, 30, 0.07); }
+  .gx-page .table thead th { background: var(--og-surface-2); color: var(--og-amber); text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.04em; }
+  .gx-page .badge.bg-info { background-color: rgba(127, 200, 255, 0.18) !important; color: var(--og-info); }
+  .gx-page .badge.bg-secondary { background-color: var(--og-surface-3) !important; color: var(--og-text-soft); }
+</style>
 
-<div class="container py-4" style="max-width: 900px;">
+<div class="container py-4 gx-page" style="max-width: 900px;">
   <h1 class="h3 mb-1">Gmail — sent messages</h1>
   <p class="text-secondary mb-4">Connect with Google (OAuth 2.0), then import messages you sent to a recipient over a date range. Processing runs in the background (Sidekiq + Redis).</p>
 

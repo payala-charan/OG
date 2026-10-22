@@ -1,0 +1,70 @@
+<% charge_classes = ua_proof_charge_classes(proof) %>
+<% show_rows = ua_proof_inpatient_rows?(proof) %>
+<% period_cols = charge_classes.size + 1 + (show_rows ? 1 : 0) %>
+
+<div class="ua-proof">
+  <div class="ua-proof-banner">
+    <h3>Calculation proof — CMS Total Units</h3>
+    <p>
+      Sum of <code>cms_total_units</code> by charge class.
+      <code>category: nil</code> only.
+      The table above includes <strong>Outpatient + Emergency</strong> only.
+      <strong>Inpatient</strong> CMS units and line counts are proof-only (not in the table above).
+    </p>
+  </div>
+
+  <div class="ua-table-wrap">
+    <table class="ua-proof-table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="ua-proof-brand" scope="col">Brand</th>
+          <th colspan="<%= period_cols %>" class="ua-proof-period" scope="colgroup"><%= period_1 %></th>
+          <th colspan="<%= period_cols %>" class="ua-proof-period" scope="colgroup"><%= period_2 %></th>
+        </tr>
+        <tr>
+          <% [ period_1, period_2 ].each do %>
+            <% charge_classes.each do |charge_class| %>
+              <th class="ua-proof-split" scope="col"><%= charge_class %></th>
+            <% end %>
+            <% if show_rows %>
+              <th class="ua-proof-split" scope="col">Inpatient (rows)</th>
+            <% end %>
+            <th class="ua-proof-split ua-proof-highlight" scope="col">OP+EM (in table)</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.each do |brand, data| %>
+          <tr>
+            <td class="ua-proof-brand"><%= brand %></td>
+            <% %w[q1 q2].each do |period| %>
+              <% metrics = ua_proof_period(data, period) %>
+              <% charge_classes.each do |charge_class| %>
+                <td class="ua-proof-split"><%= ua_proof_number(metrics[charge_class]) %></td>
+              <% end %>
+              <% if show_rows %>
+                <td class="ua-proof-split"><%= data["#{period}_inpatient_row_count"].to_i %></td>
+              <% end %>
+              <td class="ua-proof-split ua-proof-highlight"><%= ua_proof_number(data["#{period}_table_total"]) %></td>
+            <% end %>
+          </tr>
+        <% end %>
+        <tr class="ua-proof-grand">
+          <td class="ua-proof-brand">Grand Total <span class="ua-proof-match">(matches table above)</span></td>
+          <% %w[q1 q2].each do |period| %>
+            <% charge_classes.each do |charge_class| %>
+              <td class="ua-proof-split"><%= ua_proof_number(ua_proof_class_total(rows, period, charge_class)) %></td>
+            <% end %>
+            <% if show_rows %>
+              <td class="ua-proof-split"><%= ua_proof_count_total(rows, "#{period}_inpatient_row_count") %></td>
+            <% end %>
+            <td class="ua-proof-split ua-proof-highlight">
+              <%= ua_proof_number(ua_proof_grand(proof, period)["cms_units"]) %>
+              <span class="ua-proof-hint">Σ brand CMS units (OP+EM)</span>
+            </td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

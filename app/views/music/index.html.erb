@@ -1,9 +1,49 @@
-<h1 class="text-2xl font-bold mb-4">Music Player</h1>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .og-music-title { font-family: var(--og-font-display); font-weight: 400; letter-spacing: 0.05em; font-size: 2.6rem; color: var(--og-text); margin-bottom: 0.25rem; }
+  .og-music-page { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .og-music-panel {
+    background: var(--og-surface) !important;
+    border: 1px solid var(--og-line);
+    border-radius: var(--og-radius) !important;
+    box-shadow: var(--og-shadow-sm) !important;
+    color: var(--og-text);
+    padding: 1.25rem !important;
+  }
+  .og-music-list { flex: 1 1 260px; }
+  .og-music-player { flex: 2 1 380px; border-top: 3px solid var(--og-red); }
+  .og-music-panel h2 { font-family: var(--og-font-display); font-weight: 400; letter-spacing: 0.06em; font-size: 1.5rem; color: var(--og-amber); }
+  .og-music-list ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+  .og-music-list .song {
+    background: var(--og-surface-2) !important;
+    border: 1px solid var(--og-line);
+    border-radius: var(--og-radius-sm) !important;
+    color: var(--og-text-soft);
+    padding: 0.6rem 0.8rem !important;
+    transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .og-music-list .song:hover { border-color: rgba(224, 20, 30, 0.45); color: var(--og-text); box-shadow: var(--og-glow-red); }
+  .og-music-player button {
+    background: var(--og-surface-2);
+    border: 1px solid var(--og-line-strong);
+    border-radius: 50%;
+    width: 52px; height: 52px;
+    font-size: 1.3rem;
+    color: var(--og-text);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .og-music-player button:hover { border-color: var(--og-red); box-shadow: var(--og-glow-red); }
+  .og-music-player .flex { display: flex; gap: 0.75rem; align-items: center; }
+  #currentSongName { color: var(--og-amber); font-family: var(--og-font-mono); letter-spacing: 0.08em; margin-top: 1rem; }
+</style>
 
-<div class="flex gap-4">
+<h1 class="text-2xl font-bold mb-4 og-music-title">Music Player</h1>
+<span class="og-slash" aria-hidden="true"></span>
+
+<div class="flex gap-4 og-music-page">
 
   <!-- Song List -->
-  <div class="w-1/3 bg-gray-100 p-4 rounded-lg shadow">
+  <div class="w-1/3 bg-gray-100 p-4 rounded-lg shadow og-music-panel og-music-list">
     <h2 class="font-semibold mb-2">Songs</h2>
     <ul id="songList" class="space-y-2">
       <li class="song cursor-pointer p-2 bg-white rounded" data-src="<%= asset_path('song1.mp3') %>">Song 1</li>
@@ -13,7 +53,7 @@
   </div>
 
   <!-- Music Player -->
-  <div class="w-2/3 bg-white p-4 rounded-lg shadow">
+  <div class="w-2/3 bg-white p-4 rounded-lg shadow og-music-panel og-music-player">
     <audio id="audioPlayer"></audio>
 
     <div class="flex items-center gap-4 mt-4">

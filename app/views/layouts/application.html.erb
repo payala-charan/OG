@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="<%= 'has-explorer' if show_feature_explorer? %>">
+<html class="<%= 'has-explorer' if show_feature_explorer? %>" data-theme="<%= current_theme %>">
   <head>
     <title><%= content_for(:title) || "They Call Him" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -17,7 +17,23 @@
     
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&family=Special+Elite&display=swap" rel="stylesheet">
     <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "og_theme", "data-turbo-track": "reload" %>
+    <style>
+      :root {
+        --og-img-sunset: url('<%= asset_path "og10.jpeg" %>');
+        --og-img-moon: url('<%= asset_path "og9.jpeg" %>');
+        --og-img-logo: url('<%= asset_path "og1.jpeg" %>');
+      }
+    </style>
+    <script>
+      // Theme helpers for page scripts that pick colors in JS (charts, graphs).
+      window.appTheme = function () { return document.documentElement.dataset.theme; };
+      window.themeColor = function (classic, og) { return window.appTheme() === "og" ? og : classic; };
+    </script>
     <%= stylesheet_link_tag "feature_explorer", "data-turbo-track": "reload" if show_feature_explorer? %>
     <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" %>
     <%= javascript_include_tag "application", type: "module", "data-turbo-track": "reload" %>
@@ -25,55 +41,116 @@
   </head>
 
   <body class="<%= 'has-explorer-body' if show_feature_explorer? %>">
+    <div class="og-backdrop" aria-hidden="true"></div>
+    <div class="og-grain" aria-hidden="true"></div>
     <%= render "shared/feature_explorer" if show_feature_explorer? %>
     <main class="<%= show_feature_explorer? ? 'app-shell' : '' %>" style="<%= 'margin-top: 10px;' unless show_feature_explorer? %>">
       <%= yield %>
     </main>
-    <% unless controller_name == "home" && action_name == "index" %>
-      <div id="musicFloatingButton"
-          style="
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-          ">
-        <a href="javascript:void(0)" 
-          id="musicToggle"
-          style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            font-size: 28px;
-            cursor: pointer;
-          ">
-          <i class="fas fa-bolt" id="musicIcon"></i>
-        </a>
+    <div id="musicFloatingButton" class="app-fab" data-app-fab>
+      <div class="app-fab-menu" id="appFabMenu" role="menu" aria-label="Quick settings" hidden>
+        <div class="app-fab-menu-title">Quick settings</div>
+
+        <button type="button" class="app-fab-option" id="musicToggle" role="menuitemcheckbox" aria-checked="false">
+          <span class="app-fab-option-icon"><i class="fas fa-music" id="musicIcon"></i></span>
+          <span class="app-fab-option-text">
+            <strong>Music</strong>
+            <small id="musicStatus">Fire Storm &middot; Paused</small>
+          </span>
+          <span class="app-fab-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+        </button>
+
+        <button type="button" class="app-fab-option" id="themeToggle" role="menuitemcheckbox" aria-checked="<%= og_theme? %>">
+          <span class="app-fab-option-icon"><i class="fas fa-fire"></i></span>
+          <span class="app-fab-option-text">
+            <strong>OG Theme</strong>
+            <small id="themeStatus"><%= og_theme? ? "On · They Call Him OG" : "Off · Classic theme" %></small>
+          </span>
+          <span class="app-switch" aria-hidden="true"></span>
+        </button>
       </div>
 
-      <audio id="homeMusic" src="<%= asset_path('fire_storm.mp3') %>" hidden></audio>
-    <% end %>
+      <button type="button" class="app-fab-trigger" id="appFabTrigger" aria-haspopup="true" aria-expanded="false" aria-controls="appFabMenu" title="Quick settings">
+        <i class="fas fa-bolt"></i>
+      </button>
+    </div>
+
+    <audio id="homeMusic" src="<%= asset_path('fire_storm.mp3') %>" loop hidden></audio>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        const fab         = document.querySelector("[data-app-fab]");
+        const trigger     = document.getElementById("appFabTrigger");
+        const menu        = document.getElementById("appFabMenu");
         const musicToggle = document.getElementById("musicToggle");
-        const musicIcon   = document.getElementById("musicIcon");
+        const musicStatus = document.getElementById("musicStatus");
         const homeMusic   = document.getElementById("homeMusic");
+        const themeToggle = document.getElementById("themeToggle");
+        const themeStatus = document.getElementById("themeStatus");
 
-        if (!musicToggle || !homeMusic) return;
+        if (!fab || !trigger || !menu) return;
 
-        musicToggle.addEventListener("click", () => {
-          if (homeMusic.paused) {
-            #homeMusic.play();
-            musicIcon.style.color = "red";   // Turn bolt RED when playing
-          } else {
-            homeMusic.pause();
-            musicIcon.style.color = "";      // Reset to default color
+        const setMenuOpen = (open) => {
+          menu.hidden = !open;
+          trigger.setAttribute("aria-expanded", String(open));
+        };
+
+        trigger.addEventListener("click", (e) => {
+          e.stopPropagation();
+          setMenuOpen(menu.hidden);
+        });
+        document.addEventListener("click", (e) => {
+          if (!menu.hidden && !fab.contains(e.target)) setMenuOpen(false);
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && !menu.hidden) {
+            setMenuOpen(false);
+            trigger.focus();
           }
+        });
+
+        // Music
+        const syncMusic = () => {
+          const playing = homeMusic && !homeMusic.paused;
+          fab.classList.toggle("is-playing", playing);
+          musicToggle.setAttribute("aria-checked", String(playing));
+          musicStatus.textContent = playing ? "Fire Storm · Playing" : "Fire Storm · Paused";
+        };
+
+        if (homeMusic) {
+          musicToggle.addEventListener("click", () => {
+            if (homeMusic.paused) {
+              homeMusic.play().catch(() => {});
+            } else {
+              homeMusic.pause();
+            }
+          });
+          homeMusic.addEventListener("play", syncMusic);
+          homeMusic.addEventListener("pause", syncMusic);
+        }
+
+        // Theme: swap which <style data-theme-style> blocks are active and remember the choice.
+        const applyTheme = (theme) => {
+          const root = document.documentElement;
+          root.classList.add("theme-switching");
+          root.dataset.theme = theme;
+          document.querySelectorAll("style[data-theme-style]").forEach((style) => {
+            style.media = style.dataset.themeStyle === theme ? "all" : "not all";
+          });
+          document.cookie = "og_theme=" + (theme === "og" ? "1" : "0") + "; path=/; max-age=31536000; SameSite=Lax";
+
+          const og = theme === "og";
+          themeToggle.setAttribute("aria-checked", String(og));
+          themeStatus.textContent = og ? "On · They Call Him OG" : "Off · Classic theme";
+          setTimeout(() => root.classList.remove("theme-switching"), 400);
+
+          // Charts and graphs bake their colors in when drawn, so redraw those pages.
+          const hasCharts = (window.Chart && Object.keys(window.Chart.instances || {}).length > 0) || window.vis;
+          if (hasCharts) window.location.reload();
+        };
+
+        themeToggle.addEventListener("click", () => {
+          applyTheme(window.appTheme() === "og" ? "classic" : "og");
         });
       });
     </script>

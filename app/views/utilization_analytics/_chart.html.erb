@@ -1,0 +1,14 @@
+<% chart = ua_chart_node(local_assigns[:chart] || local_assigns[:node]) %>
+<% if chart.present? %>
+  <article class="ua-chart-card" id="<%= local_assigns[:dom_id] %>">
+    <% if chart["title"].present? %>
+      <h3><%= chart["title"] %></h3>
+    <% end %>
+    <div class="ua-chart-frame">
+      <%= tag.canvas class: "ua-chart",
+            role: "img",
+            aria: { label: chart["title"].presence || "Chart" },
+            data: { ua_chart: ua_chart_for_js(chart) } %>
+    </div>
+  </article>
+<% end %>

@@ -696,7 +696,8 @@ html.has-explorer.explorer-collapsed {
 
   .fx-explorer {
     transform: translateX(-105%);
-    width: min(86vw, 300px);
+    width: 86vw;
+    max-width: 300px;
     box-shadow: 16px 0 40px rgba(0, 0, 0, 0.35);
   }
 
@@ -705,7 +706,8 @@ html.has-explorer.explorer-collapsed {
   }
 
   .fx-explorer.is-collapsed {
-    width: min(86vw, 300px);
+    width: 86vw;
+    max-width: 300px;
   }
 
   .fx-open-tab {
@@ -739,3 +741,108 @@ html.has-explorer.explorer-collapsed {
     transition: none !important;
   }
 }
+
+
+/* ------------------------------------------------------------------
+ * OG theme overrides (active when <html data-theme="og">)
+ * ------------------------------------------------------------------ */
+
+html[data-theme="og"] {
+  --fx-bg: #0b0a0a;
+  --fx-bg-elevated: #161313;
+  --fx-bg-active: rgba(224, 20, 30, 0.2);
+  --fx-border: #2a1d1d;
+  --fx-text: #e9e1d8;
+  --fx-muted: #9a8f88;
+  --fx-accent: #ff5a1f;
+  --fx-cyan: #ffa41b;
+  --fx-success: #3ddc84;
+  --fx-warning: #ffb020;
+  --fx-danger: #ff3b47;
+  --fx-shadow: 8px 0 32px rgba(0, 0, 0, 0.6);
+}
+
+html[data-theme="og"] .fx-explorer {
+  background: radial-gradient(420px 260px at 0% 0%, rgba(224, 20, 30, 0.18), transparent 70%), linear-gradient(180deg, var(--fx-bg-elevated) 0%, var(--fx-bg) 40%);
+  font-family: var(--og-font-body, "Inter", "Segoe UI", system-ui, sans-serif);
+}
+
+html[data-theme="og"] .fx-logo {
+  background: linear-gradient(145deg, #ff2d36, #8c0a10);
+}
+
+html[data-theme="og"] .fx-logo-orbit {
+  border: 1.5px solid rgba(255, 164, 27, 0.5);
+}
+
+html[data-theme="og"] .fx-brand-copy strong {
+  font-family: var(--og-font-display, inherit);
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.12em;
+}
+
+html[data-theme="og"] .fx-search-wrap input::placeholder {
+  color: #7d726c;
+}
+
+html[data-theme="og"] .fx-search-wrap input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.2);
+}
+
+html[data-theme="og"] .fx-tree::-webkit-scrollbar-thumb {
+  background: #3a2a2a;
+}
+
+html[data-theme="og"] .fx-folder-toggle {
+  color: #c2b6ad;
+}
+
+html[data-theme="og"] .fx-footer {
+  background: #080707;
+}
+
+html[data-theme="og"] .fx-avatar {
+  background: linear-gradient(145deg, #e0141e, #ffa41b);
+}
+
+html[data-theme="og"] .fx-logout:hover {
+  background: rgba(255, 59, 71, 0.12);
+}
+
+html[data-theme="og"] .fx-shortcut {
+  color: #786d67;
+}
+
+html[data-theme="og"] .fx-shortcut kbd {
+  background: #1f1919;
+  border: 1px solid #3a2a2a;
+  color: #d6cbc2;
+}
+
+html[data-theme="og"] .fx-motion--spin i {
+  color: #ff7a59;
+}
+
+html[data-theme="og"] .fx-kind--task {
+  box-shadow: 0 0 0 0 rgba(61, 220, 132, 0.55);
+}
+
+html[data-theme="og"] .fx-explorer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, rgba(224, 20, 30, 0.7) 30%, rgba(255, 164, 27, 0.4) 70%, transparent);
+  pointer-events: none;
+}
+
+@media (max-width: 860px) {
+  html[data-theme="og"] .fx-backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+

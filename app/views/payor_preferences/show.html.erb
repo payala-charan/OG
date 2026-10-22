@@ -4,6 +4,7 @@
     <div class="header-content">
       <div class="header-text">
         <h1>Payor Preference Details</h1>
+        <span class="og-slash" aria-hidden="true"></span>
         <p>Detailed view of payor preference record and analysis</p>
       </div>
       <%= link_to payor_preferences_path, class: "back-btn" do %>
@@ -224,7 +225,7 @@
   </section>
 </div>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   :root {
     --primary: #4361ee;
     --primary-light: #6c8aff;
@@ -670,6 +671,529 @@
 
     .header-text h1 {
       font-size: 2rem;
+    }
+
+    .details-card {
+      padding: 1.5rem;
+    }
+
+    .detail-group {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+
+    .values-grid {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .result-display {
+      max-width: none;
+    }
+
+    .summary-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .summary-value {
+      text-align: left;
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .value-card {
+      padding: 0.8rem;
+    }
+
+    .result-display {
+      flex-direction: column;
+      text-align: center;
+      gap: 0.8rem;
+    }
+
+    .back-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  :root {
+    --primary: var(--og-red);
+    --primary-light: var(--og-red-bright);
+    --primary-dark: var(--og-red-dark);
+    --secondary: var(--og-ember);
+    --accent: var(--og-amber);
+    --danger: var(--og-danger);
+    --warning: var(--og-warning);
+    --success: var(--og-success);
+    --light: var(--og-surface-2);
+    --dark: var(--og-text);
+    --gray: var(--og-muted);
+    --border-radius: 16px;
+    --shadow: var(--og-shadow);
+    --transition: all 0.4s ease;
+  }
+
+  .payor-preference-details {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    color: var(--og-text);
+    font-family: var(--og-font-body);
+  }
+
+  /* Header Styles */
+  .header {
+    background: var(--og-glass);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--og-shadow);
+    border: 1px solid var(--og-line);
+    border-left: 3px solid var(--og-red);
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .header-text h1 {
+    font-family: var(--og-font-display);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-size: 3rem;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    background: var(--og-grad-sunset);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-text p {
+    color: var(--og-text-soft);
+    font-size: 1.1rem;
+  }
+
+  .back-btn {
+    background: transparent;
+    color: var(--og-text);
+    border: 1px solid var(--og-line-strong);
+    border-radius: 50px;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .back-btn:hover {
+    transform: translateY(-3px);
+    border-color: var(--og-amber);
+    color: var(--og-amber);
+    text-decoration: none;
+  }
+
+  /* Details Card */
+  .details-card {
+    background: var(--og-surface);
+    border: 1px solid var(--og-line);
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--og-shadow-sm);
+    transition: var(--transition);
+    border-top: 4px solid var(--og-red);
+  }
+
+  .details-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(224, 20, 30, 0.45);
+    border-top-color: var(--og-red);
+    box-shadow: var(--og-glow-red);
+  }
+
+  .card-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--og-line);
+  }
+
+  .card-header h2 {
+    font-family: var(--og-font-display);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-size: 2rem;
+    color: var(--og-text);
+    margin-bottom: 0.5rem;
+  }
+
+  .card-header p {
+    color: var(--og-text-soft);
+  }
+
+  .card-header p strong {
+    color: var(--og-amber);
+  }
+
+  .details-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .detail-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--og-surface-2);
+    border: 1px solid var(--og-line);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--og-red);
+  }
+
+  .detail-group.full-width {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .detail-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--og-text-soft);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .detail-label i {
+    color: var(--og-amber);
+    width: 16px;
+  }
+
+  .detail-value {
+    margin-left: 1.5rem;
+  }
+
+  /* Value Styles */
+  .value-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .value-badge.primary {
+    background: rgba(224, 20, 30, 0.14);
+    color: var(--og-red-bright);
+    border: 1px solid rgba(224, 20, 30, 0.35);
+  }
+
+  .value-badge.secondary {
+    background: rgba(255, 90, 31, 0.14);
+    color: var(--og-ember);
+    border: 1px solid rgba(255, 90, 31, 0.35);
+  }
+
+  .value-badge.accent {
+    background: rgba(255, 164, 27, 0.14);
+    color: var(--og-amber);
+    border: 1px solid rgba(255, 164, 27, 0.35);
+  }
+
+  .value-text {
+    font-weight: 500;
+    color: var(--og-text);
+    font-size: 0.95rem;
+  }
+
+  /* Payor Badge */
+  .payor-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #fff;
+    background: var(--og-surface-3);
+  }
+
+  .payor-medicare { background: #e0141e; }
+  .payor-medicaid { background: #3ddc84; color: #0b0a0a; }
+  .payor-private { background: var(--og-ember); }
+  .payor-anthem { background: var(--og-red-dark); }
+  .payor-united { background: var(--og-amber); color: #0b0a0a; }
+  .payor-cigna { background: var(--og-moon); color: #0b0a0a; }
+  .payor-aetna { background: var(--og-gold); color: #0b0a0a; }
+  .payor-humana { background: #ff8a5c; color: #0b0a0a; }
+  .payor-bluecross { background: var(--og-text-soft); color: #0b0a0a; }
+
+  /* Insurance Tags */
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .insurance-tag {
+    display: inline-block;
+    background: var(--og-bg-alt);
+    border: 1px solid var(--og-line-strong);
+    border-radius: 12px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--og-text-soft);
+    transition: var(--transition);
+  }
+
+  .insurance-tag:hover {
+    background: rgba(224, 20, 30, 0.14);
+    border-color: rgba(224, 20, 30, 0.5);
+    color: var(--og-text);
+    transform: translateY(-1px);
+  }
+
+  /* Factor Badge */
+  .factor-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .factor-badge.max {
+    background: rgba(61, 220, 132, 0.14);
+    color: var(--og-success);
+    border: 1px solid rgba(61, 220, 132, 0.35);
+  }
+
+  .factor-badge.min {
+    background: rgba(255, 59, 71, 0.16);
+    color: var(--og-danger);
+    border: 1px solid rgba(255, 59, 71, 0.35);
+  }
+
+  /* Values Grid */
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .value-card {
+    background: var(--og-surface);
+    border: 1px solid var(--og-line-strong);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    text-align: center;
+    transition: var(--transition);
+  }
+
+  .value-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--og-glow-red);
+    border-color: rgba(224, 20, 30, 0.45);
+  }
+
+  .value-brand {
+    font-weight: 600;
+    color: var(--og-text-soft);
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .value-number {
+    font-family: var(--og-font-display);
+    font-size: 1.7rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--og-amber);
+  }
+
+  /* Result Display */
+  .result-display {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    max-width: 300px;
+  }
+
+  .result-display:hover {
+    transform: translateX(5px);
+  }
+
+  .result-display.result-max {
+    background: rgba(61, 220, 132, 0.12);
+    border: 1px solid rgba(61, 220, 132, 0.35);
+  }
+
+  .result-display.result-min {
+    background: rgba(255, 59, 71, 0.14);
+    border: 1px solid rgba(255, 59, 71, 0.35);
+  }
+
+  .result-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--og-bg-alt);
+  }
+
+  .result-max .result-icon {
+    color: var(--og-success);
+    border: 2px solid var(--og-success);
+  }
+
+  .result-min .result-icon {
+    color: var(--og-danger);
+    border: 2px solid var(--og-danger);
+  }
+
+  .result-content {
+    flex: 1;
+  }
+
+  .result-label {
+    font-size: 0.8rem;
+    color: var(--og-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .result-value {
+    font-family: var(--og-font-display);
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+
+  .result-max .result-value {
+    color: var(--og-success);
+  }
+
+  .result-min .result-value {
+    color: var(--og-danger);
+  }
+
+  /* Summary Card */
+  .summary-card {
+    background: var(--og-surface);
+    border: 1px solid var(--og-line);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--og-shadow-sm);
+    border-top: 4px solid var(--og-amber);
+  }
+
+  .summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--og-line);
+  }
+
+  .summary-header h3 {
+    font-family: var(--og-font-display);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--og-text);
+    font-size: 1.8rem;
+  }
+
+  .summary-header i {
+    font-size: 1.5rem;
+    color: var(--og-amber);
+  }
+
+  .summary-content {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--og-surface-2);
+    border: 1px solid var(--og-line);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+  }
+
+  .summary-item:hover {
+    transform: translateX(5px);
+    background: rgba(224, 20, 30, 0.07);
+    border-color: rgba(224, 20, 30, 0.35);
+  }
+
+  .summary-label {
+    font-weight: 600;
+    color: var(--og-text);
+    font-size: 0.9rem;
+  }
+
+  .summary-value {
+    color: var(--og-text-soft);
+    text-align: right;
+    flex: 1;
+    margin-left: 1rem;
+  }
+
+  .summary-value strong {
+    color: var(--og-amber);
+  }
+
+  /* No Data State */
+  .no-data {
+    color: var(--og-muted);
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .payor-preference-details {
+      padding: 1rem;
+    }
+
+    .header-content {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .header-text h1 {
+      font-size: 2.4rem;
     }
 
     .details-card {

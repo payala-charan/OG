@@ -1,0 +1,103 @@
+<div class="ua-block">
+  <div class="ua-block-head">
+    <h2>Comparison</h2>
+    <p>Compare drug group performance across two periods</p>
+  </div>
+
+  <div id="quarter-form" class="<%= "ua-hidden" unless ua_toggle_period == "quarter" %>">
+    <%= form_with url: utilization_analytics_path, method: :get, id: "quarterly-form", class: "ua-form-grid" do %>
+      <%= hidden_field_tag :analytics_request, "1" %>
+      <%= hidden_field_tag :team_id, ua_team_id, id: nil %>
+      <%= hidden_field_tag :period_kind, "quarter" %>
+      <%= hidden_field_tag :charge_class, ua_selected_charge_class, id: nil %>
+      <% ua_values("hospital_names").each do |name| %>
+        <%= hidden_field_tag "hospital_names[]", name, id: nil %>
+      <% end %>
+      <% ua_values("payor_names").each do |name| %>
+        <%= hidden_field_tag "payor_names[]", name, id: nil %>
+      <% end %>
+      <div class="ua-field">
+        <%= label_tag :group, "Select Generic Group" %>
+        <%= select_tag :group, options_for_select(ua_group_options, ua_value("group")), include_blank: "Choose Group" %>
+      </div>
+      <div class="ua-field">
+        <%= label_tag :quarter_name1, "Select Baseline" %>
+        <%= select_tag :quarter_name1, options_for_select(ua_quarter_options, ua_quarter_value("quarter_name1")), include_blank: "Choose Quarter" %>
+      </div>
+      <div class="ua-field">
+        <%= label_tag :quarter_name2, "Select Comparator" %>
+        <%= select_tag :quarter_name2, options_for_select(ua_quarter_options, ua_quarter_value("quarter_name2")), include_blank: "Choose Quarter" %>
+      </div>
+      <div class="ua-field ua-field--action">
+        <%= submit_tag "Compare", id: "quarter-compare-btn", class: "ua-orange-btn", disabled: true %>
+      </div>
+    <% end %>
+  </div>
+
+  <div id="month-form" class="<%= "ua-hidden" unless ua_toggle_period == "month" %>">
+    <%= form_with url: utilization_analytics_path, method: :get, id: "monthly-form", class: "ua-form-grid" do %>
+      <%= hidden_field_tag :analytics_request, "1" %>
+      <%= hidden_field_tag :team_id, ua_team_id, id: nil %>
+      <%= hidden_field_tag :period_kind, "month" %>
+      <%= hidden_field_tag :charge_class, ua_selected_charge_class, id: nil %>
+      <% ua_values("hospital_names").each do |name| %>
+        <%= hidden_field_tag "hospital_names[]", name, id: nil %>
+      <% end %>
+      <% ua_values("payor_names").each do |name| %>
+        <%= hidden_field_tag "payor_names[]", name, id: nil %>
+      <% end %>
+      <div class="ua-field">
+        <%= label_tag "monthGroup", "Select Generic Group" %>
+        <%= select_tag :group, options_for_select(ua_group_options, ua_value("group")), include_blank: "Choose Group", id: "monthGroup" %>
+      </div>
+      <div class="ua-field">
+        <%= label_tag :data_month1, "Select Baseline" %>
+        <%= select_tag :data_month1, options_for_select(ua_month_options, ua_value("data_month1")), include_blank: "Choose Month" %>
+      </div>
+      <div class="ua-field">
+        <%= label_tag :data_month2, "Select Comparator" %>
+        <%= select_tag :data_month2, options_for_select(ua_month_options, ua_value("data_month2")), include_blank: "Choose Month" %>
+      </div>
+      <div class="ua-field ua-field--action">
+        <%= submit_tag "Compare", id: "month-compare-btn", class: "ua-orange-btn", disabled: true %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<hr class="ua-divider">
+
+<div class="ua-block">
+  <div class="ua-block-head">
+    <h2>Trending</h2>
+    <p>Analyse drug group trends over a custom date range</p>
+  </div>
+  <%= form_with url: utilization_analytics_path, method: :get, id: "trending-form", class: "ua-form-grid" do %>
+    <%= hidden_field_tag :analytics_request, "1" %>
+    <%= hidden_field_tag :team_id, ua_team_id, id: nil %>
+    <%= hidden_field_tag :period_kind, "date_range" %>
+    <%= hidden_field_tag :trend_grain, ua_toggle_period, id: "timePeriodField" %>
+    <%= hidden_field_tag :charge_class, ua_selected_charge_class, id: nil %>
+    <% ua_values("hospital_names").each do |name| %>
+      <%= hidden_field_tag "hospital_names[]", name, id: nil %>
+    <% end %>
+    <% ua_values("payor_names").each do |name| %>
+      <%= hidden_field_tag "payor_names[]", name, id: nil %>
+    <% end %>
+    <div class="ua-field">
+      <%= label_tag :groupSelect, "Select Generic Group" %>
+      <%= select_tag :group, options_for_select(ua_group_options, ua_value("group")), include_blank: "Choose Group", id: "groupSelect" %>
+    </div>
+    <div class="ua-field">
+      <%= label_tag "startDate", "Start Date" %>
+      <%= date_field_tag :start_date, ua_value("start_date"), id: "startDate" %>
+    </div>
+    <div class="ua-field">
+      <%= label_tag "endDate", "End Date" %>
+      <%= date_field_tag :end_date, ua_value("end_date"), id: "endDate" %>
+    </div>
+    <div class="ua-field ua-field--action">
+      <%= submit_tag "Trend", id: "trendBtn", class: "ua-orange-btn", disabled: true %>
+    </div>
+  <% end %>
+</div>

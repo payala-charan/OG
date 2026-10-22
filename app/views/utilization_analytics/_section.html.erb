@@ -1,0 +1,48 @@
+<% show_table = ua_show_table?(section) %>
+<% show_chart = ua_chart_visible?(section) %>
+<% if show_table || show_chart %>
+  <section class="ua-section" id="ua-section-<%= key %>">
+    <% if show_table %>
+      <h2 id="ua-title-<%= key %>"><%= section["title"] %></h2>
+      <div class="ua-table-wrap">
+        <table class="ua-table" aria-labelledby="ua-title-<%= key %>">
+          <thead>
+            <tr>
+              <% Array(section["columns"]).each do |column| %>
+                <th scope="col"><%= column %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% fields = ua_display_fields(section["columns"]) %>
+            <% ua_section_rows(section).each do |row| %>
+              <tr>
+                <% fields.each do |field| %>
+                  <td class="<%= "ua-diff" if field == "difference_display" %>"><%= row[field] %></td>
+                <% end %>
+              </tr>
+            <% end %>
+            <% if section["grand_total"].is_a?(Hash) %>
+              <tr class="ua-grand">
+                <% fields.each do |field| %>
+                  <td class="<%= "ua-diff" if field == "difference_display" %>"><%= section["grand_total"][field] %></td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <%= render "proof",
+            proof: section["proof"],
+            section_key: key,
+            period_1: Array(section["columns"])[1],
+            period_2: Array(section["columns"])[2] %>
+    <% elsif section["title"].present? && !ua_chart_node(section)["title"].present? %>
+      <h2><%= section["title"] %></h2>
+    <% end %>
+
+    <% if show_chart %>
+      <%= render "chart", chart: section, dom_id: "ua-chart-#{key}" %>
+    <% end %>
+  </section>
+<% end %>

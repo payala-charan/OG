@@ -1,5 +1,5 @@
 <div class="ip-wrap">
-  <style>
+  <style data-theme-style="classic" media="<%= theme_media(:classic) %>">
     .ip-wrap { --primary:#4361ee; --danger:#f72585; --success:#06d6a0; --warning:#ff9e00; --dark:#2b2d42; --gray:#8d99ae; --card:#fff; font-family: Inter, "Segoe UI", sans-serif; color: var(--dark); }
     .ip-wrap { max-width: 1180px; margin: 0 auto; padding: 1.5rem; }
     .ip-hero { background: #fff; border-radius: 16px; padding: 1.75rem 2rem; box-shadow: 0 10px 30px rgba(0,0,0,.06); margin-bottom: 1.5rem; }
@@ -23,6 +23,38 @@
     .ip-chip-review { background:#fef3c7; color:#92400e; }
     .ip-chip-neutral { background:#e5e7eb; color:#374151; }
     @media (max-width: 800px) { .ip-grid { grid-template-columns:1fr; } }
+  </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+    .ip-wrap { --primary:var(--og-red); --danger:var(--og-danger); --success:var(--og-success); --warning:var(--og-warning); --dark:var(--og-text); --gray:var(--og-muted); --card:var(--og-surface); font-family: var(--og-font-body); color: var(--dark); }
+    .ip-wrap { max-width: 1180px; margin: 0 auto; padding: 1.5rem; }
+    .ip-hero { background: var(--og-glass); backdrop-filter: blur(10px); border: 1px solid var(--og-line); border-left: 3px solid var(--og-red); border-radius: 16px; padding: 1.75rem 2rem; box-shadow: var(--og-shadow-sm); margin-bottom: 1.5rem; }
+    .ip-hero h1 { margin: 0 0 .4rem; font-family: var(--og-font-display); font-weight: 400; letter-spacing: .05em; font-size: 2.6rem; background: var(--og-grad-sunset); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .ip-hero p { color: var(--gray); margin: 0; }
+    .ip-card { background:var(--og-surface); border:1px solid var(--og-line); border-radius:16px; padding:1.5rem 2rem; box-shadow:var(--og-shadow-sm); margin-bottom:1.5rem; }
+    .ip-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .ip-field label { display:block; font-weight:700; margin-bottom:.4rem; }
+    .ip-field input[type=file], .ip-field input[type=text] { width:100%; padding:.7rem; border:1px solid var(--og-line-strong); border-radius:10px; background:var(--og-bg-alt); color:var(--og-text); }
+    .ip-check { display:flex; align-items:flex-start; gap:.7rem; margin:1rem 0; padding:1rem; background:var(--og-surface-2); border:1px solid var(--og-line); border-radius:12px; }
+    .ip-btn { display:inline-flex; align-items:center; gap:.5rem; background:var(--og-grad-blood); color:#fff; border:0; border-radius:999px; padding:.75rem 1.3rem; font-weight:700; cursor:pointer; text-decoration:none; }
+    .ip-btn.danger { background:linear-gradient(135deg,#b3101a,#5a0609); border:1px solid rgba(255,59,71,.5); }
+    .ip-alert { padding:1rem 1.2rem; border-radius:12px; margin-bottom:1rem; font-weight:600; }
+    .ip-alert.notice { background:rgba(61,220,132,.12); border:1px solid rgba(61,220,132,.35); color:var(--og-success); }
+    .ip-alert.alert { background:rgba(255,59,71,.14); border:1px solid rgba(255,59,71,.35); color:var(--og-danger); }
+    .ip-table { width:100%; border-collapse:collapse; }
+    .ip-table th, .ip-table td { text-align:left; padding:.7rem .5rem; border-bottom:1px solid var(--og-line); }
+    .ip-table th { color:var(--og-amber); text-transform:uppercase; font-size:.78rem; letter-spacing:.04em; background:var(--og-surface-2); }
+    .ip-table tbody tr:hover { background:rgba(224,20,30,.07); }
+    .ip-btn:hover { box-shadow:var(--og-glow-red); }
+    .ip-chip { display:inline-block; padding:.15rem .55rem; border-radius:999px; font-size:.75rem; font-weight:700; }
+    .ip-chip-pass { background:rgba(61, 220, 132, .14); color:var(--og-success); }
+    .ip-chip-fail { background:rgba(255, 59, 71, .14); color:var(--og-danger); }
+    .ip-chip-review { background:rgba(255, 176, 32, .14); color:var(--og-warning); }
+    .ip-chip-neutral { background:var(--og-surface-3); color:var(--og-text-soft); }
+    @media (max-width: 800px) { .ip-grid { grid-template-columns:1fr; } }
+  /* Restored classic inline styles; OG look via classes */
+  .og-ipv1 { color: var(--og-text-soft) !important; }
+  .og-ipv2 { color: var(--og-muted) !important; }
+  .og-ipv3 { color: var(--og-text-soft) !important; }
   </style>
 
   <div class="ip-hero">
@@ -54,7 +86,7 @@
         <%= check_box_tag :model_validation_enabled, "1", false %>
         <span>
           <strong>Also run model validation</strong><br>
-          <span style="color:#8d99ae;font-weight:400;">Optional LLM cross-check after the deterministic pass. Never replaces code results.</span>
+          <span class="og-ipv1" style="color:#8d99ae;font-weight:400;">Optional LLM cross-check after the deterministic pass. Never replaces code results.</span>
         </span>
       </label>
       <button type="submit" class="ip-btn"><i class="fas fa-play"></i> Run validation</button>
@@ -80,7 +112,7 @@
               <td><%= run.created_at.strftime("%b %d, %Y %l:%M %p") %></td>
               <td>
                 <%= run.master_file_name %><br>
-                <span style="color:#8d99ae;"><%= run.biosimilar_file_name %></span>
+                <span class="og-ipv2" style="color:#8d99ae;"><%= run.biosimilar_file_name %></span>
               </td>
               <td><%= ip_status_chip(run.status.to_s.upcase) %></td>
               <td><%= run.model_validation_enabled? ? "On" : "Off" %></td>
@@ -93,7 +125,7 @@
         </tbody>
       </table>
     <% else %>
-      <p style="color:#8d99ae;">No runs yet. Upload both workbooks to start.</p>
+      <p class="og-ipv3" style="color:#8d99ae;">No runs yet. Upload both workbooks to start.</p>
     <% end %>
   </div>
 </div>

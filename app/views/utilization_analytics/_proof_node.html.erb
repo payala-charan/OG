@@ -1,0 +1,45 @@
+<% if value.is_a?(Hash) %>
+  <dl class="ua-proof-list">
+    <% value.each do |key, item| %>
+      <dt><%= key %></dt>
+      <dd><%= render "proof_node", value: item %></dd>
+    <% end %>
+  </dl>
+<% elsif value.is_a?(Array) && value.all? { |item| item.is_a?(Hash) } && value.any? %>
+  <% keys = value.flat_map { |row| row.keys }.uniq %>
+  <div class="ua-table-wrap">
+    <table class="ua-table ua-proof-table">
+      <thead>
+        <tr>
+          <% keys.each do |key| %>
+            <th scope="col"><%= key %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% value.each do |row| %>
+          <tr>
+            <% keys.each do |key| %>
+              <td>
+                <% cell = row[key] %>
+                <% if cell.is_a?(Hash) || cell.is_a?(Array) %>
+                  <%= render "proof_node", value: cell %>
+                <% else %>
+                  <%= cell %>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% elsif value.is_a?(Array) %>
+  <ul>
+    <% value.each do |item| %>
+      <li><%= render "proof_node", value: item %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <%= value %>
+<% end %>

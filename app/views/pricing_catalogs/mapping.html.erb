@@ -8,7 +8,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <style>
+  <style data-theme-style="classic" media="<%= theme_media(:classic) %>">
     :root {
       --primary: #4361ee;
       --primary-light: #6c8aff;
@@ -37,6 +37,39 @@
     .submit-btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; background: linear-gradient(135deg, var(--success) 0%, #05c291 100%); color: white; border: none; border-radius: 50px; padding: 1rem; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: var(--transition); box-shadow: 0 6px 20px rgba(6, 214, 160, 0.3); margin-top: 1rem; }
     .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(6, 214, 160, 0.4); }
   </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+    :root {
+      --primary: var(--og-red);
+      --primary-light: var(--og-red-bright);
+      --secondary: var(--og-ember);
+      --success: var(--og-success);
+      --light: var(--og-surface-2);
+      --dark: var(--og-text);
+      --gray: var(--og-muted);
+      --border-radius: 16px;
+      --shadow: var(--og-shadow);
+      --transition: all 0.4s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--og-font-body); color: var(--dark); background: transparent; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .header { background: var(--og-glass); backdrop-filter: blur(10px); border: 1px solid var(--og-line); border-left: 3px solid var(--og-red); border-radius: var(--border-radius); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow); }
+    .header h1 { font-family: var(--og-font-display); letter-spacing: 0.05em; font-weight: 400; font-size: 2.8rem; background: var(--og-grad-sunset); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .config-card { background: var(--og-surface); border: 1px solid var(--og-line); border-radius: var(--border-radius); padding: 2.5rem; box-shadow: var(--shadow); }
+    
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: var(--dark); }
+    .form-select { width: 100%; padding: 1rem; background: var(--og-bg-alt); color: var(--og-text); border: 2px solid var(--og-line-strong); border-radius: 10px; font-size: 1rem; transition: var(--transition); }
+    .form-select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2); }
+    .form-select option { background: #141213; color: var(--og-text); }
+    
+    .submit-btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; background: var(--og-grad-blood); color: #fff; border: none; border-radius: 50px; padding: 1rem; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: var(--transition); box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3); margin-top: 1rem; }
+    .submit-btn:hover { transform: translateY(-3px); box-shadow: var(--og-glow-red); }
+  /* Restored classic inline styles; OG look via classes */
+  .og-pcm1 { color: var(--og-amber) !important; }
+  .og-pcm2 { background: rgba(255, 59, 71, 0.14) !important; border: 1px solid rgba(255, 59, 71, 0.35) !important; color: var(--og-danger) !important; }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -44,14 +77,14 @@
       <h1><i class="fa-solid fa-sliders"></i> Configure Data Mapping</h1>
       <p style="color: var(--gray); margin-top: 0.5rem;">Select the columns to perform mathematical operations mapping the designated NDC selector.</p>
       <% if @file_name.present? %>
-        <p style="margin-top: 0.75rem; color: #4361ee;"><strong>Working on:</strong> <%= @file_name %></p>
+        <p class="og-pcm1" style="margin-top: 0.75rem; color: #4361ee;"><strong>Working on:</strong> <%= @file_name %></p>
       <% end %>
     </div>
 
     <%= form_with url: process_mapping_pricing_catalogs_path, method: :post, local: true do |f| %>
       <div class="config-card">
         <% if flash[:alert] %>
-          <div style="background: rgba(247, 37, 133, 0.1); color: #f72585; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+          <div class="og-pcm2" style="background: rgba(247, 37, 133, 0.1); color: #f72585; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
             <%= flash[:alert] %>
           </div>
         <% end %>

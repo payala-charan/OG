@@ -25,7 +25,7 @@
   </section>
 </div>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   .kettering-page--narrow { max-width: 900px; }
   .kettering-upload-card { background: #fff; border: 1px solid #dbe4ea; border-radius: 8px; margin-bottom: 1.25rem; padding: 1.5rem; }
   .kettering-upload-card h2 { margin-top: 0; }
@@ -37,5 +37,20 @@
   .kettering-fields input { border: 1px solid #c9d5dc; border-radius: 4px; padding: .65rem; width: 100%; }
   .kettering-form-actions { display: flex; gap: .75rem; margin-top: 1.25rem; }
   .kettering-errors { background: #fff1e6; border-left: 4px solid #d1495b; margin-bottom: 1rem; padding: .75rem 1rem; }
+  .kettering-errors ul { margin-bottom: 0; }
+</style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .kettering-page--narrow { max-width: 900px; }
+  .kettering-upload-card { background: var(--og-surface); border: 1px solid var(--og-line); border-radius: 8px; margin-bottom: 1.25rem; padding: 1.5rem; }
+  .kettering-upload-card h2 { margin-top: 0; }
+  .kettering-upload-card p { color: var(--og-muted); }
+  .kettering-upload-card form { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
+  .kettering-form { display: block !important; }
+  .kettering-fields { display: grid; gap: .45rem 1rem; grid-template-columns: 1fr 2fr; }
+  .kettering-fields label { align-self: center; font-weight: 700; }
+  .kettering-fields input { border: 1px solid var(--og-line-strong); background: var(--og-bg-alt); color: var(--og-text); border-radius: 4px; padding: .65rem; width: 100%; }
+  .kettering-fields input:focus { outline: none; border-color: var(--og-red); box-shadow: 0 0 0 3px rgba(224, 20, 30, .2); }
+  .kettering-form-actions { display: flex; gap: .75rem; margin-top: 1.25rem; }
+  .kettering-errors { background: rgba(255, 59, 71, .14); color: var(--og-danger); border-left: 4px solid var(--og-danger); margin-bottom: 1rem; padding: .75rem 1rem; }
   .kettering-errors ul { margin-bottom: 0; }
 </style>

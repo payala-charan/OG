@@ -33,6 +33,19 @@ Rails.application.routes.draw do
   end
 
   resources :schema_visualizers, only: [ :index, :create ]
+  resources :database_transfers, only: [:index], path: "db_transfer" do
+    collection do
+      post :analyze
+      post :transfer
+    end
+  end
+  resources :database_transfer_runs, only: [:index, :show], path: "db_transfer/runs" do
+    member do
+      post :rollback
+    end
+  end
+  get "utilization_analytics", to: "utilization_analytics#index", as: :utilization_analytics
+  post "utilization_analytics/validate", to: "utilization_analytics#validate", as: :validate_utilization_analytics
   
   resources :file_conversions, only: [:index] do
     collection do
