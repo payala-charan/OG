@@ -1,0 +1,24 @@
+<% content_for :title, "Database Transfers" %>
+
+<div class="dbt-page">
+  <header class="dbt-header">
+    <div>
+      <p class="dbt-kicker">Database transfer</p>
+      <h1>Transfer history</h1>
+      <p class="dbt-lead">Every transfer and rehearsal from FAT into OG, newest first.</p>
+    </div>
+    <%= link_to database_transfers_path, class: "dbt-back" do %>
+      <i class="fas fa-arrow-left"></i> Back to FAT Database Transfer
+    <% end %>
+  </header>
+
+  <section class="dbt-panel">
+    <% if @runs.any? %>
+      <%= render "table", runs: @runs %>
+    <% else %>
+      <p class="dbt-empty">No transfers have been started yet.</p>
+    <% end %>
+  </section>
+</div>
+
+<%= render "database_transfers/styles" %>

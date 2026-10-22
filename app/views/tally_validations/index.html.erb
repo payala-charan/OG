@@ -8,7 +8,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <style>
+  <style data-theme-style="classic" media="<%= theme_media(:classic) %>">
     :root {
       --primary: #4361ee;
       --primary-light: #6c8aff;
@@ -656,6 +656,733 @@
       }
     }
   </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+    :root {
+      --primary: var(--og-red);
+      --primary-light: var(--og-red-bright);
+      --primary-dark: var(--og-red-dark);
+      --secondary: var(--og-ember);
+      --accent: var(--og-amber);
+      --danger: var(--og-danger);
+      --warning: var(--og-warning);
+      --success: var(--og-success);
+      --light: var(--og-surface-2);
+      --dark: var(--og-text);
+      --gray: var(--og-muted);
+      --border-radius: 16px;
+      --shadow: var(--og-shadow-sm);
+      --transition: all 0.4s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--og-font-body);
+      color: var(--og-text);
+      background: transparent;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header Styles */
+    .header {
+      background: var(--og-glass);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--og-shadow);
+      border: 1px solid var(--og-line);
+      border-left: 3px solid var(--og-red);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-text h1 {
+      font-family: var(--og-font-display);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 2.9rem;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      background: var(--og-grad-sunset);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-text p {
+      color: var(--og-muted);
+      font-size: 1.1rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      background: var(--og-grad-blood);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--og-glow-red);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .clear-btn {
+      background: transparent;
+      color: var(--og-danger);
+      border: 1px solid rgba(255, 59, 71, 0.55);
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .clear-btn:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 59, 71, 0.12);
+      box-shadow: var(--og-glow-red);
+      color: #fff;
+    }
+
+    /* Alert Banner */
+    .alert-banner {
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: var(--shadow);
+    }
+
+    .alert-banner.notice {
+      background-color: rgba(61, 220, 132, 0.12);
+      border-left: 5px solid var(--og-success);
+      color: var(--og-success);
+    }
+
+    .alert-banner.alert {
+      background-color: rgba(255, 59, 71, 0.14);
+      border-left: 5px solid var(--og-danger);
+      color: var(--og-danger);
+    }
+
+    /* Double Uploader Section */
+    .uploader-card {
+      background: var(--og-surface);
+      border: 1px solid var(--og-line);
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .uploader-card h2 {
+      font-family: var(--og-font-display);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 1.8rem;
+      color: var(--og-text);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .uploader-card h2 i {
+      color: var(--og-red);
+    }
+
+    .uploader-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .upload-zone {
+      border: 3px dashed rgba(224, 20, 30, 0.45);
+      border-radius: var(--border-radius);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      background: var(--og-bg-alt);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--og-amber);
+      background: var(--og-bg-alt);
+      box-shadow: 0 0 24px rgba(224, 20, 30, 0.12);
+    }
+
+    .upload-zone.dragover {
+      border-color: var(--og-amber);
+      background: rgba(224, 20, 30, 0.06);
+      box-shadow: 0 0 30px rgba(224, 20, 30, 0.2);
+      transform: scale(1.01);
+    }
+
+    .upload-zone-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--og-grad-blood);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: #fff;
+      font-size: 1.5rem;
+      box-shadow: 0 0 18px rgba(224, 20, 30, 0.35);
+    }
+
+    .upload-zone.grouped .upload-zone-icon {
+      background: var(--og-grad-sunset);
+      box-shadow: var(--og-glow-amber);
+    }
+    .upload-zone.grouped {
+      border-color: rgba(255, 164, 27, 0.45);
+    }
+    .upload-zone.grouped:hover,
+    .upload-zone.grouped.dragover {
+      border-color: var(--og-red);
+    }
+
+    .upload-zone h3 {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: var(--og-text);
+    }
+
+    .upload-zone p {
+      color: var(--og-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-selected-info {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(61, 220, 132, 0.1);
+      border-radius: 10px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      color: var(--og-success);
+      border: 1px solid rgba(61, 220, 132, 0.35);
+    }
+
+    .uploader-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .submit-btn {
+      background: var(--og-grad-blood);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 1rem 3rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--og-glow-red);
+    }
+
+    /* Summary Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--og-surface);
+      border: 1px solid var(--og-line);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border-top: 4px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(224, 20, 30, 0.45);
+      box-shadow: var(--og-glow-red);
+    }
+
+    .stat-card.total { border-top-color: var(--og-red); }
+    .stat-card.rate { border-top-color: var(--og-success); }
+    .stat-card.errors { border-top-color: var(--og-danger); }
+    .stat-card.mismatch-amt { border-top-color: var(--og-amber); }
+
+    .stat-icon-wrapper {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #fff;
+    }
+
+    .stat-icon-wrapper.total { background: var(--og-grad-blood); }
+    .stat-icon-wrapper.rate { background: linear-gradient(135deg, #3ddc84 0%, #1f9d58 100%); color: #06140c; }
+    .stat-icon-wrapper.errors { background: linear-gradient(135deg, #ff3b47 0%, #8c0a10 100%); }
+    .stat-icon-wrapper.mismatch-amt { background: var(--og-grad-sunset); color: #1a0d00; }
+
+    .stat-card-details h3 {
+      font-size: 0.8rem;
+      color: var(--og-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-card-details span {
+      font-family: var(--og-font-display);
+      font-size: 2.2rem;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+    }
+
+    .stat-card.total span { color: var(--og-red-bright); }
+    .stat-card.rate span { color: var(--og-success); }
+    .stat-card.errors span { color: var(--og-danger); }
+    .stat-card.mismatch-amt span { color: var(--og-amber); }
+
+    /* Controls Panel */
+    .controls-panel {
+      background: var(--og-surface);
+      border: 1px solid var(--og-line);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 350px;
+      flex-grow: 1;
+      max-width: 500px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.75rem;
+      background: var(--og-bg-alt);
+      color: var(--og-text);
+      border: 1px solid var(--og-line-strong);
+      border-radius: 50px;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--og-red);
+      box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--og-amber);
+    }
+
+    .filter-options {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--og-line-strong);
+      background: transparent;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--og-text);
+      transition: var(--transition);
+    }
+
+    .filter-btn:hover {
+      border-color: var(--og-amber);
+      color: var(--og-amber);
+    }
+
+    .filter-btn.active {
+      background: var(--og-grad-blood);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(224, 20, 30, 0.3);
+    }
+
+    /* Main Table and Collapse Grid */
+    .table-card {
+      background: var(--og-surface);
+      border: 1px solid var(--og-line);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
+
+    .table-info-bar {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--og-line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--og-surface-2);
+    }
+
+    .table-info-bar h2 {
+      font-family: var(--og-font-display);
+      font-size: 1.6rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--og-text);
+    }
+
+    .table-info-bar p {
+      color: var(--og-muted);
+      font-size: 0.9rem;
+    }
+
+    .table-info-bar p strong {
+      color: var(--og-text-soft);
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .tally-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      color: var(--og-text);
+    }
+
+    .tally-table th {
+      background: linear-gradient(180deg, #221a1a, #170f10);
+      color: var(--og-amber);
+      font-weight: 700;
+      padding: 1rem 1.5rem;
+      border-bottom: 2px solid rgba(224, 20, 30, 0.45);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .tally-table tr {
+      border-bottom: 1px solid var(--og-line);
+      transition: var(--transition);
+    }
+
+    .tally-table tbody tr.summary-row:hover {
+      background-color: rgba(224, 20, 30, 0.07) !important;
+    }
+
+    .tally-table td {
+      padding: 1.2rem 1.5rem;
+      font-size: 0.95rem;
+      vertical-align: middle;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge.match {
+      background: rgba(61, 220, 132, 0.14);
+      color: var(--og-success);
+      border: 1px solid rgba(61, 220, 132, 0.35);
+    }
+
+    .badge.mismatch {
+      background: rgba(255, 59, 71, 0.16);
+      color: var(--og-danger);
+      border: 1px solid rgba(255, 59, 71, 0.35);
+    }
+
+    .badge.partial {
+      background: rgba(255, 90, 31, 0.14);
+      color: var(--og-ember);
+      border: 1px solid rgba(255, 90, 31, 0.35);
+    }
+
+    .badge.type-match {
+      background: rgba(224, 20, 30, 0.16);
+      color: var(--og-red-bright);
+      border: 1px solid rgba(224, 20, 30, 0.35);
+    }
+
+    .badge.type-grouped {
+      background: rgba(255, 176, 32, 0.14);
+      color: var(--og-warning);
+      border: 1px solid rgba(255, 176, 32, 0.35);
+    }
+
+    .badge.type-indiv {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--og-text-soft);
+      border: 1px solid var(--og-line-strong);
+    }
+
+    /* Expanded Details Area */
+    .details-row {
+      background-color: var(--og-bg-alt);
+    }
+
+    .inner-comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--og-surface);
+      color: var(--og-text);
+      border-radius: 12px;
+      box-shadow: var(--og-shadow-sm);
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .inner-comparison-table th {
+      background: var(--og-surface-2);
+      color: var(--og-amber);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid var(--og-line-strong);
+      text-align: left;
+    }
+
+    .inner-comparison-table td {
+      padding: 0.9rem 1.25rem;
+      border-bottom: 1px solid var(--og-line);
+      font-size: 0.9rem;
+    }
+
+    .inner-comparison-table tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .inner-comparison-table tbody tr:hover {
+      background: rgba(224, 20, 30, 0.07);
+    }
+
+    .inner-comparison-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Colors emitted from view-level Ruby (kept as-is) remapped to OG status hues */
+    .details-card-wrapper [style*="color: #04926c"] { color: var(--og-success) !important; }
+    .details-card-wrapper [style*="color: #c51b65"] { color: var(--og-danger) !important; }
+    .details-card-wrapper [style*="color: #b26a00"] { color: var(--og-warning) !important; }
+    .details-card-wrapper [style*="border: 1px solid #cbd5e1"] { border-color: var(--og-line-strong) !important; }
+    .details-card-wrapper [style*="border-top: 1px dashed #cbd5e1"] { border-top-color: var(--og-line-strong) !important; }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .loading-card {
+      background: var(--og-glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--og-line-strong);
+      border-top: 3px solid var(--og-red);
+      color: var(--og-text);
+      padding: 3rem;
+      border-radius: var(--border-radius);
+      text-align: center;
+      box-shadow: var(--og-shadow);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .spinner {
+      font-size: 3.5rem;
+      color: var(--og-red);
+      animation: spin 1s linear infinite;
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 0 10px rgba(224, 20, 30, 0.6));
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-card h3 {
+      font-family: var(--og-font-display);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-card p {
+      color: var(--og-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      padding: 5rem 2rem;
+      text-align: center;
+      color: var(--og-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 5rem;
+      color: var(--og-red);
+      margin-bottom: 1.5rem;
+      opacity: 0.6;
+    }
+
+    .empty-state h3 {
+      font-family: var(--og-font-display);
+      font-size: 1.9rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: var(--og-text);
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .uploader-grid {
+        grid-template-columns: 1fr;
+      }
+      .controls-panel {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-box {
+        min-width: 100%;
+      }
+    }
+  /* Restored classic inline styles; OG look via classes */
+  .og-tv1 { color: var(--og-amber) !important; }
+  .og-tv2 { background: var(--og-bg-alt) !important; }
+  .og-tv3 { background: var(--og-surface-2) !important; border: 1px solid var(--og-line-strong) !important; }
+  .og-tv4 { color: var(--og-amber) !important; border-bottom: 1px solid rgba(224, 20, 30, 0.35) !important; }
+  .og-tv5 { background: var(--og-surface) !important; border: 1px solid var(--og-line) !important; }
+  .og-tv6 { color: var(--og-amber) !important; border-bottom: 1px solid rgba(224, 20, 30, 0.35) !important; }
+  .og-tv7 { color: var(--og-amber) !important; }
+  .og-tv8 { border: 1px solid var(--og-line-strong) !important; background: var(--og-surface) !important; }
+  .og-tv9 { background: var(--og-surface-3) !important; border-bottom: 1px solid var(--og-line-strong) !important; }
+  .og-tv10 { background: rgba(255, 59, 71, 0.1) !important; border: 1px dashed rgba(255, 59, 71, 0.4) !important; color: var(--og-danger) !important; }
+  </style>
 </head>
 <body>
   <%# Validation helper methods and constants are provided by TallyValidationsHelper %>
@@ -666,6 +1393,7 @@
       <div class="header-content">
         <div class="header-text">
           <h1>Excel Tally Validation</h1>
+          <span class="og-slash" aria-hidden="true"></span>
           <p>Reconcile Individual Records against Grouped Sheets side-by-side</p>
         </div>
         <div class="header-actions">
@@ -862,7 +1590,7 @@
                 <!-- Grouped Row (Summary) -->
                 <tr class="summary-row" data-status="<%= status %>" data-type="<%= row_type %>" onclick="toggleDetails(<%= group_index %>)" style="cursor: pointer; background-color: <%= row_bg %>; border-left: 4px solid <%= status_color %>; font-weight: 600;">
                   <td style="text-align: center;">
-                    <a href="javascript:void(0)" style="color: #4361ee; text-decoration: none; font-size: 1.2rem;">
+                    <a href="javascript:void(0)" class="og-tv1" style="color: #4361ee; text-decoration: none; font-size: 1.2rem;">
                       <i class="fas fa-chevron-right" id="chevron-<%= group_index %>" style="transition: transform 0.3s;"></i>
                     </a>
                   </td>
@@ -885,19 +1613,19 @@
                 </tr>
 
                 <!-- Details Row (19 Column Side-by-side & Individual list) -->
-                <tr class="details-row" id="details-<%= group_index %>" style="display: none; background: #fafbfe;">
+                <tr class="details-row og-tv2" id="details-<%= group_index %>" style="display: none; background: #fafbfe;">
                   <td colspan="10" style="padding: 0;">
                     
-                    <div class="details-card-wrapper" style="padding: 1.5rem; background: #fafbfe; border-radius: 12px; border: 1px solid #e0e6ed; margin: 10px;">
+                    <div class="details-card-wrapper og-tv3" style="padding: 1.5rem; background: #fafbfe; border-radius: 12px; border: 1px solid #e0e6ed; margin: 10px;">
 
                       <!-- Section 1: Group Identity Keys -->
                       <div style="margin-bottom: 1.5rem;">
-                        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem; border-bottom: 1px solid #e0e6ed; padding-bottom: 5px; display: flex; align-items: center; gap: 0.5rem;">
+                        <h4 class="og-tv4" style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem; border-bottom: 1px solid #e0e6ed; padding-bottom: 5px; display: flex; align-items: center; gap: 0.5rem;">
                           <i class="fas fa-fingerprint"></i> Grouping Identity Columns
                         </h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
                           <% grouping_columns.each do |key| %>
-                            <div style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                            <div class="og-tv5" style="background: white; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0;">
                               <div style="font-size: 0.75rem; color: var(--gray); font-weight: 700; text-transform: uppercase;"><%= key %></div>
                               <div style="font-size: 0.9rem; font-weight: 600; color: var(--dark); word-break: break-all;"><%= row.dig("keys", key) || "-" %></div>
                             </div>
@@ -907,7 +1635,7 @@
 
                       <!-- Section 2: Validations Grid -->
                       <div style="margin-bottom: 1.5rem;">
-                        <h4 style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem; border-bottom: 1px solid #e0e6ed; padding-bottom: 5px; display: flex; align-items: center; gap: 0.5rem;">
+                        <h4 class="og-tv6" style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem; border-bottom: 1px solid #e0e6ed; padding-bottom: 5px; display: flex; align-items: center; gap: 0.5rem;">
                           <i class="fas fa-check-double"></i> Column Verification Metrics
                         </h4>
                         
@@ -964,7 +1692,7 @@
                               
                               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                                 <div style="font-size: 0.85rem; color: var(--gray);">Expected (Indiv):</div>
-                                <div style="font-weight: 700; font-size: 0.95rem; color: var(--primary-dark);"><%= format_val(col, expected) %></div>
+                                <div class="og-tv7" style="font-weight: 700; font-size: 0.95rem; color: var(--primary-dark);"><%= format_val(col, expected) %></div>
                               </div>
 
                               <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed <%= border_color %>; padding-top: 0.5rem; margin-top: 0.25rem;">
@@ -989,8 +1717,8 @@
                             </button>
                           </div>
 
-                          <div id="indiv-container-<%= group_index %>" style="display: none; margin-top: 1rem; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: white;">
-                            <div style="padding: 0.75rem; background: #f8f9fc; border-bottom: 1px solid #cbd5e1; font-weight: 700; font-size: 0.9rem; color: var(--dark);">
+                          <div id="indiv-container-<%= group_index %>" class="og-tv8" style="display: none; margin-top: 1rem; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: white;">
+                            <div class="og-tv9" style="padding: 0.75rem; background: #f8f9fc; border-bottom: 1px solid #cbd5e1; font-weight: 700; font-size: 0.9rem; color: var(--dark);">
                               <i class="fas fa-list-ol"></i> Matching Individual Records (<%= row["individual_records"].size %> rows)
                             </div>
                             <div style="overflow-x: auto;">
@@ -1027,7 +1755,7 @@
                             </div>
                           </div>
                         <% else %>
-                          <div style="background: rgba(247, 37, 133, 0.05); border: 1px dashed rgba(247, 37, 133, 0.4); padding: 1rem; border-radius: 10px; text-align: center; color: #c51b65; font-weight: 600;">
+                          <div class="og-tv10" style="background: rgba(247, 37, 133, 0.05); border: 1px dashed rgba(247, 37, 133, 0.4); padding: 1rem; border-radius: 10px; text-align: center; color: #c51b65; font-weight: 600;">
                             <i class="fas fa-exclamation-circle"></i> No corresponding individual records found for this grouped key.
                           </div>
                         <% end %>

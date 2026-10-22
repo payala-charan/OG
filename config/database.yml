@@ -1,24 +1,69 @@
 
+# default: &default
+#   adapter: postgresql
+#   encoding: unicode
+#   # For details on connection pooling, see Rails configuration guide
+#   # https://guides.rubyonrails.org/configuring.html#database-pooling
+#   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+#   username: vigneshgorakala
+#   password: 
+#   host: localhost
+#   port: 5432
+
+
+# development:
+#   <<: *default
+#   database: excel_development
+
+# test:
+#   <<: *default
+#   database: excel_test
+
+
+# production:
+#   primary: &primary_production
+#     <<: *default
+#     database: excel_production
+#     username: excel
+#     password: <%= ENV["EXCEL_DATABASE_PASSWORD"] %>
+#   cache:
+#     <<: *primary_production
+#     database: excel_production_cache
+#     migrations_paths: db/cache_migrate
+#   queue:
+#     <<: *primary_production
+#     database: excel_production_queue
+#     migrations_paths: db/queue_migrate
+#   cable:
+#     <<: *primary_production
+#     database: excel_production_cable
+#     migrations_paths: db/cable_migrate
+
+
+
 default: &default
   adapter: postgresql
   encoding: unicode
-  # For details on connection pooling, see Rails configuration guide
-  # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: vigneshgorakala
-  password: 
+  password:
   host: localhost
   port: 5432
 
-
 development:
-  <<: *default
-  database: excel_development
+  primary:
+    <<: *default
+    database: excel_development
+
+  # Read-only source for the database transfer dashboard. Rails must not migrate it.
+  fat:
+    <<: *default
+    database: <%= ENV.fetch("FAT_DATABASE", "oct_5") %>
+    database_tasks: false
 
 test:
   <<: *default
   database: excel_test
-
 
 production:
   primary: &primary_production
@@ -26,14 +71,17 @@ production:
     database: excel_production
     username: excel
     password: <%= ENV["EXCEL_DATABASE_PASSWORD"] %>
+
   cache:
     <<: *primary_production
     database: excel_production_cache
     migrations_paths: db/cache_migrate
+
   queue:
     <<: *primary_production
     database: excel_production_queue
     migrations_paths: db/queue_migrate
+
   cable:
     <<: *primary_production
     database: excel_production_cable

@@ -28,7 +28,7 @@
 
     <div class="nbp-form-field">
       <%= f.label :billing_unit %>
-      <%= f.number_field :billing_unit, step: :any, class: "nbp-form-input" %>
+      <%= f.text_field :billing_unit, class: "nbp-form-input" %>
     </div>
 
     <div class="nbp-form-field">
@@ -67,7 +67,7 @@
   </div>
 <% end %>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   .nbp-form-errors {
     background: rgba(247, 37, 133, 0.08);
     border: 1px solid rgba(247, 37, 133, 0.35);
@@ -154,5 +154,96 @@
   .nbp-form-submit:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(67, 97, 238, 0.35);
+  }
+</style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .nbp-form-errors {
+    background: rgba(255, 59, 71, 0.08);
+    border: 1px solid rgba(255, 59, 71, 0.35);
+    border-left: 4px solid var(--og-danger);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    color: var(--og-danger);
+    font-size: 0.9rem;
+  }
+
+  .nbp-form-errors ul { margin: 0.5rem 0 0 1.1rem; padding: 0; }
+
+  .nbp-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 1.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .nbp-form-grid { grid-template-columns: 1fr; }
+  }
+
+  .nbp-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .nbp-form-field--check {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.6rem;
+    padding-top: 1.5rem;
+  }
+
+  .nbp-form-field label:not(.nbp-form-check-label) {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--og-text);
+  }
+
+  .nbp-form-input {
+    border: 1px solid var(--og-line-strong);
+    background: var(--og-bg-alt);
+    color: var(--og-text);
+    border-radius: 12px;
+    padding: 0.65rem 0.85rem;
+    font-size: 1rem;
+    transition: border 0.2s, box-shadow 0.2s;
+  }
+
+  .nbp-form-input:focus {
+    outline: none;
+    border-color: var(--og-red);
+    box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2);
+  }
+
+  .nbp-form-check {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--og-amber);
+  }
+
+  .nbp-form-check-label { font-weight: 600; font-size: 0.9rem; color: var(--og-text); margin: 0; }
+
+  .nbp-form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .nbp-form-submit {
+    background: var(--og-grad-blood);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.75rem 1.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .nbp-form-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(224, 20, 30, 0.35);
   }
 </style>

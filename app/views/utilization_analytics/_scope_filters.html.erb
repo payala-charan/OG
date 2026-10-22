@@ -1,0 +1,109 @@
+<div class="ua-scope-filters <%= "ua-scope-filters--idle" unless ua_show_scope_filters? %>">
+  <div class="ua-filter">
+    <button id="classFilterBtn" type="button" class="ua-orange-btn ua-filter-btn" aria-expanded="false" aria-controls="classDropdown">
+      <span><%= ua_charge_class_label(ua_selected_charge_class) %></span>
+    </button>
+    <div id="classDropdown" class="ua-filter-panel" hidden>
+      <%= form_with url: utilization_analytics_path, method: :get, id: "classFilterForm" do %>
+        <%= render "context_fields", include_charge_class: false %>
+        <label class="ua-check">
+          <input type="checkbox" name="charge_class" value="Outpatient" class="class-checkbox" <%= "checked" if ua_selected_charge_class != "Inpatient" %>>
+          Outpatient / Emergency
+        </label>
+        <label class="ua-check">
+          <input type="checkbox" name="charge_class" value="Inpatient" class="class-checkbox" <%= "checked" if ua_selected_charge_class == "Inpatient" %>>
+          Inpatient
+        </label>
+        <div class="ua-filter-apply">
+          <button type="submit" id="classApplyBtn" class="ua-orange-btn">Apply</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="ua-filter">
+    <button id="locationFilterBtn" type="button" class="ua-orange-btn ua-filter-btn" aria-expanded="false" aria-controls="locationDropdown">
+      <span><%= ua_values("hospital_names").any? ? "#{ua_values("hospital_names").size} Locations" : "Location" %></span>
+    </button>
+    <div id="locationDropdown" class="ua-filter-panel" hidden>
+      <%= form_with url: utilization_analytics_path, method: :get, id: "locationFilterForm" do %>
+        <%= render "context_fields", include_locations: false %>
+        <label class="ua-check ua-check--all">
+          <input type="checkbox" id="selectAllLocations">
+          Select All
+        </label>
+        <div class="ua-check-list">
+          <% ua_location_options.each do |location| %>
+            <label class="ua-check">
+              <input type="checkbox" name="hospital_names[]" value="<%= location %>" class="location-checkbox" <%= "checked" if ua_values("hospital_names").include?(location) %>>
+              <%= location %>
+            </label>
+          <% end %>
+        </div>
+        <div class="ua-filter-apply">
+          <button type="submit" id="locationApplyBtn" class="ua-orange-btn" <%= "disabled" if ua_values("hospital_names").empty? %>>Apply</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="ua-filter">
+    <button id="payorFilterBtn" type="button" class="ua-orange-btn ua-filter-btn" aria-expanded="false" aria-controls="payorDropdown">
+      <span><%= ua_values("payor_names").any? ? "#{ua_values("payor_names").size} Payors" : "Payor" %></span>
+    </button>
+    <div id="payorDropdown" class="ua-filter-panel" hidden>
+      <%= form_with url: utilization_analytics_path, method: :get, id: "payorFilterForm" do %>
+        <%= render "context_fields", include_payors: false %>
+        <label class="ua-check ua-check--all">
+          <input type="checkbox" id="selectAllPayors">
+          Select All
+        </label>
+        <div class="ua-check-list">
+          <% ua_payor_options.each do |payor| %>
+            <label class="ua-check">
+              <input type="checkbox" name="payor_names[]" value="<%= payor %>" class="payor-checkbox" <%= "checked" if ua_values("payor_names").include?(payor) %>>
+              <%= payor %>
+            </label>
+          <% end %>
+        </div>
+        <div class="ua-filter-apply">
+          <button type="submit" id="payorApplyBtn" class="ua-orange-btn" <%= "disabled" if ua_values("payor_names").empty? %>>Apply</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if ua_values("hospital_names").any? %>
+  <div id="selected-locations-section" class="ua-pills ua-pills--locations">
+    <div class="ua-pills-head">
+      <h3>Active Selected Locations</h3>
+      <%= link_to "Clear Location Filter", utilization_analytics_path(ua_page_params(hospital_names: nil)) %>
+    </div>
+    <div class="ua-pill-row">
+      <% ua_values("hospital_names").each do |location| %>
+        <span class="ua-pill">
+          <%= location %>
+          <%= link_to "×", utilization_analytics_path(ua_page_params(hospital_names: ua_values("hospital_names") - [ location ])), aria: { label: "Remove #{location}" } %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<% if ua_values("payor_names").any? %>
+  <div id="selected-payors-section" class="ua-pills ua-pills--payors">
+    <div class="ua-pills-head">
+      <h3>Active Selected Payors</h3>
+      <%= link_to "Clear Payor Filter", utilization_analytics_path(ua_page_params(payor_names: nil)) %>
+    </div>
+    <div class="ua-pill-row">
+      <% ua_values("payor_names").each do |payor| %>
+        <span class="ua-pill">
+          <%= payor %>
+          <%= link_to "×", utilization_analytics_path(ua_page_params(payor_names: ua_values("payor_names") - [ payor ])), aria: { label: "Remove #{payor}" } %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+<% end %>

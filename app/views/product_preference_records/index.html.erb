@@ -8,7 +8,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <style>
+  <style data-theme-style="classic" media="<%= theme_media(:classic) %>">
     :root {
       --primary: #4361ee;
       --primary-light: #6c8aff;
@@ -259,6 +259,279 @@
       }
     }
   </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+    :root {
+      --primary: var(--og-red);
+      --primary-light: var(--og-red-bright);
+      --primary-dark: var(--og-red-dark);
+      --secondary: var(--og-ember);
+      --accent: var(--og-amber);
+      --danger: var(--og-danger);
+      --warning: var(--og-warning);
+      --success: var(--og-success);
+      --light: var(--og-surface-2);
+      --dark: var(--og-text);
+      --gray: var(--og-muted);
+      --border-radius: var(--og-radius);
+      --shadow: var(--og-shadow);
+      --transition: all 0.4s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--og-font-body);
+      color: var(--og-text);
+      background: transparent;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header Styles */
+    .header {
+      background: var(--og-glass);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--og-line);
+      border-left: 3px solid var(--og-red);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .header-text h1 {
+      font-family: var(--og-font-display);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 3rem;
+      line-height: 1.05;
+      margin-bottom: 0.25rem;
+      background: var(--og-grad-sunset);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-text p {
+      color: var(--og-text-soft);
+      font-size: 1.1rem;
+    }
+
+    .back-btn {
+      background: transparent;
+      color: var(--og-text);
+      border: 1px solid var(--og-line-strong);
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--og-amber);
+      color: var(--og-amber);
+      text-decoration: none;
+    }
+
+    /* Table Section */
+    .table-section {
+      background: var(--og-surface);
+      border: 1px solid var(--og-line);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .table-header {
+      padding: 2rem;
+      border-bottom: 1px solid var(--og-line);
+    }
+
+    .table-header h3 {
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      color: var(--og-text);
+    }
+
+    .table-header p {
+      color: var(--og-muted);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      max-height: 600px;
+    }
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      color: var(--og-text-soft);
+    }
+
+    .records-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #1c1919;
+      border-bottom: 1px solid rgba(224, 20, 30, 0.45);
+    }
+
+    .records-table th {
+      background: linear-gradient(180deg, #221a1a, #170f10);
+      color: var(--og-amber);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      z-index: 21;
+      border-bottom: 1px solid rgba(224, 20, 30, 0.45);
+    }
+
+    .records-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--og-line);
+    }
+
+    .records-table tbody tr {
+      transition: var(--transition);
+    }
+
+    .records-table tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .records-table tbody tr:hover {
+      background: rgba(224, 20, 30, 0.07);
+    }
+
+    .action-btn {
+      background: transparent;
+      color: var(--og-amber);
+      border: 1px solid rgba(255, 164, 27, 0.45);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 164, 27, 0.12);
+      border-color: var(--og-amber);
+      box-shadow: var(--og-glow-amber);
+    }
+
+    /* Upload Card */
+    .upload-card {
+      background: var(--og-surface);
+      border: 1px solid var(--og-line);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-top: 4px solid transparent;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--og-glow-red);
+      border-top: 4px solid var(--og-red);
+    }
+
+    .upload-card h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--og-text);
+      margin-bottom: 1rem;
+    }
+
+    .upload-card p {
+      color: var(--og-text-soft);
+      margin-bottom: 1.25rem;
+    }
+
+    .upload-btn {
+      background: var(--og-grad-blood);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      box-shadow: var(--og-shadow-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-3px);
+      color: #fff;
+      box-shadow: var(--og-glow-red);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .header-text h1 {
+        font-size: 2.4rem;
+      }
+
+      .upload-card, .table-section {
+        padding: 1.5rem;
+      }
+
+      .records-table {
+        font-size: 0.8rem;
+      }
+
+      .records-table th,
+      .records-table td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -266,7 +539,8 @@
     <header class="header">
       <div class="header-content">
         <div class="header-text">
-          <h1>Product Preference Records</h1>
+          <h1 class="og-title">Product Preference Records</h1>
+          <span class="og-slash" aria-hidden="true"></span>
           <p>View and manage uploaded product preference files</p>
         </div>
         <%= link_to features_path, class: "back-btn" do %>

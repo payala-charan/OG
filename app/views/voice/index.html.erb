@@ -5,7 +5,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <style>
+  <style data-theme-style="classic" media="<%= theme_media(:classic) %>">
     :root {
       --primary: #4361ee;
       --primary-light: #6c8aff;
@@ -401,6 +401,430 @@
       }
     }
   </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+    :root {
+      --primary: var(--og-red);
+      --primary-light: var(--og-red-bright);
+      --primary-dark: var(--og-red-dark);
+      --secondary: var(--og-ember);
+      --accent: var(--og-amber);
+      --danger: var(--og-danger);
+      --warning: var(--og-warning);
+      --success: var(--og-success);
+      --light: var(--og-surface-2);
+      --dark: var(--og-text);
+      --gray: var(--og-muted);
+      --border-radius: 16px;
+      --shadow: var(--og-shadow-sm);
+      --transition: all 0.4s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--og-font-body);
+      color: var(--og-text);
+      background: transparent;
+      min-height: 100vh;
+      line-height: 1.6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .voice-recorder-container {
+      max-width: 600px;
+      width: 100%;
+    }
+
+    /* Header Card */
+    .header-card {
+      background: var(--og-glass);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--og-shadow);
+      border: 1px solid var(--og-line);
+      border-top: 3px solid var(--og-red);
+      text-align: center;
+    }
+
+    .header-content h1 {
+      font-family: var(--og-font-display);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 2.7rem;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      background: var(--og-grad-sunset);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-content .og-slash {
+      margin: 0.4rem auto 0.7rem;
+    }
+
+    .header-content p {
+      color: var(--og-muted);
+      font-size: 1.1rem;
+    }
+
+    /* Main Recorder Card */
+    .recorder-card {
+      background: var(--og-surface);
+      border: 1px solid var(--og-line);
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      box-shadow: var(--og-shadow);
+      transition: var(--transition);
+      border-top: 4px solid var(--og-red);
+    }
+
+    .recorder-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(224, 20, 30, 0.45);
+      border-top-color: var(--og-red);
+      box-shadow: var(--og-glow-red);
+    }
+
+    /* Status Indicator */
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: var(--og-surface-2);
+      border: 1px solid var(--og-line);
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--og-amber);
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--og-muted);
+      transition: var(--transition);
+    }
+
+    .status-dot.recording {
+      background: var(--og-red-bright);
+      box-shadow: 0 0 12px rgba(255, 45, 54, 0.8);
+      animation: pulse 2s infinite;
+    }
+
+    .status-text {
+      font-weight: 600;
+      color: var(--og-text);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Controls Section */
+    .controls-section {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .control-btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1rem;
+      box-shadow: var(--og-shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .control-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      transition: var(--transition);
+    }
+
+    .control-btn:hover::before {
+      left: 100%;
+    }
+
+    .control-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .control-btn:disabled:hover::before {
+      left: -100%;
+    }
+
+    .start-btn {
+      background: var(--og-grad-blood);
+      color: #fff;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--og-glow-red);
+    }
+
+    .stop-btn {
+      background: var(--og-surface-3);
+      color: var(--og-text);
+      border: 1px solid var(--og-line-strong);
+    }
+
+    .stop-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--og-amber);
+      box-shadow: var(--og-glow-amber);
+    }
+
+    /* Output Section */
+    .output-section {
+      margin-bottom: 2rem;
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .output-header h2 {
+      font-family: var(--og-font-display);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 1.6rem;
+      color: var(--og-text);
+    }
+
+    .word-count {
+      background: rgba(255, 164, 27, 0.12);
+      color: var(--og-amber);
+      border: 1px solid rgba(255, 164, 27, 0.35);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .output-textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 1.5rem;
+      border: 1px solid var(--og-line-strong);
+      border-radius: var(--border-radius);
+      background: var(--og-bg-alt);
+      color: var(--og-text);
+      font-size: 1rem;
+      line-height: 1.6;
+      resize: vertical;
+      transition: var(--transition);
+      font-family: var(--og-font-body);
+    }
+
+    .output-textarea:focus {
+      outline: none;
+      border-color: var(--og-red);
+      box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2);
+    }
+
+    .output-textarea::placeholder {
+      color: var(--og-faint);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 0.8rem 1.5rem;
+      border: 1px solid;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border-color: var(--og-line-strong);
+      color: var(--og-text);
+    }
+
+    .copy-btn:hover {
+      border-color: var(--og-amber);
+      color: var(--og-amber);
+      background: rgba(255, 164, 27, 0.08);
+    }
+
+    .clear-btn {
+      background: rgba(255, 59, 71, 0.1);
+      border-color: rgba(255, 59, 71, 0.55);
+      color: var(--og-danger);
+    }
+
+    .clear-btn:hover {
+      background: var(--og-grad-blood);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: var(--og-glow-red);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Browser Support Alert */
+    .browser-alert {
+      background: rgba(255, 176, 32, 0.1);
+      border: 1px solid rgba(255, 176, 32, 0.35);
+      border-left: 4px solid var(--og-warning);
+      color: var(--og-text-soft);
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+
+    .browser-alert.hidden {
+      display: none;
+    }
+
+    .alert-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--og-warning);
+    }
+
+    /* Success Message (background set to --success / --danger by JS; dark text keeps contrast on both) */
+    .success-message {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: var(--og-success);
+      color: #0b0a0a;
+      font-weight: 600;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--og-shadow);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transform: translateX(400px);
+      transition: transform 0.4s ease;
+      z-index: 1000;
+    }
+
+    .success-message.show {
+      transform: translateX(0);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .header-card {
+        padding: 1.5rem;
+      }
+
+      .header-content h1 {
+        font-size: 2.2rem;
+      }
+
+      .recorder-card {
+        padding: 2rem;
+      }
+
+      .controls-section {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .control-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .action-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .success-message {
+        top: 1rem;
+        right: 1rem;
+        left: 1rem;
+        transform: translateY(-100px);
+      }
+
+      .success-message.show {
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-content h1 {
+        font-size: 1.9rem;
+      }
+
+      .recorder-card {
+        padding: 1.5rem;
+      }
+
+      .output-textarea {
+        min-height: 150px;
+        padding: 1rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -409,6 +833,7 @@
     <header class="header-card">
       <div class="header-content">
         <h1>Voice to Text Recorder</h1>
+        <span class="og-slash" aria-hidden="true"></span>
         <p>Convert your speech to text using advanced Web Speech API</p>
       </div>
     </header>

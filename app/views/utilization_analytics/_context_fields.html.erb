@@ -1,0 +1,31 @@
+<%= hidden_field_tag :analytics_request, "1", id: nil %>
+<% if local_assigns[:include_team] != false %>
+  <%= hidden_field_tag :team_id, ua_team_id, id: nil %>
+<% end %>
+<%= hidden_field_tag :period_kind, ua_period_kind, id: nil %>
+<%= hidden_field_tag :group, ua_value("group"), id: nil %>
+<% if local_assigns[:include_charge_class] != false %>
+  <%= hidden_field_tag :charge_class, ua_selected_charge_class, id: nil %>
+<% end %>
+<% if local_assigns[:include_locations] != false %>
+  <% ua_values("hospital_names").each do |name| %>
+    <%= hidden_field_tag "hospital_names[]", name, id: nil %>
+  <% end %>
+<% end %>
+<% if local_assigns[:include_payors] != false %>
+  <% ua_values("payor_names").each do |name| %>
+    <%= hidden_field_tag "payor_names[]", name, id: nil %>
+  <% end %>
+<% end %>
+<% case ua_period_kind %>
+<% when "month" %>
+  <%= hidden_field_tag :data_month1, ua_value("data_month1"), id: nil %>
+  <%= hidden_field_tag :data_month2, ua_value("data_month2"), id: nil %>
+<% when "date_range" %>
+  <%= hidden_field_tag :start_date, ua_value("start_date"), id: nil %>
+  <%= hidden_field_tag :end_date, ua_value("end_date"), id: nil %>
+  <%= hidden_field_tag :trend_grain, ua_trend_grain, id: nil %>
+<% else %>
+  <%= hidden_field_tag :quarter_name1, ua_quarter_value("quarter_name1"), id: nil %>
+  <%= hidden_field_tag :quarter_name2, ua_quarter_value("quarter_name2"), id: nil %>
+<% end %>

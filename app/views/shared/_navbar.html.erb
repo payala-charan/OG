@@ -1,5 +1,5 @@
 <% content_for :styles do %>
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   :root {
     --primary: #6366f1;
     --secondary: #8b5cf6;
@@ -99,6 +99,125 @@
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12) !important;
   }
 </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  :root {
+    --primary: var(--og-red);
+    --secondary: var(--og-ember);
+    --dark: var(--og-text);
+    --transition: 0.3s ease;
+  }
+
+  /* =========================== */
+  /* NAVBAR CONTAINER */
+  /* =========================== */
+  .navbar {
+    background: rgba(7, 7, 7, 0.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid var(--og-line);
+    padding: 0.8rem 0;
+    transition: var(--transition);
+    z-index: 10000;
+  }
+
+  .navbar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(224, 20, 30, 0.7), rgba(255, 164, 27, 0.5), transparent);
+    pointer-events: none;
+  }
+
+  /* =========================== */
+  /* BRAND */
+  /* =========================== */
+  .navbar-brand {
+    font-family: var(--og-font-display);
+    font-weight: 400;
+    font-size: 2.1rem;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    color: var(--og-text) !important;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .navbar-brand i {
+    font-size: 1.6rem;
+    color: var(--og-red);
+    filter: drop-shadow(0 0 8px rgba(224, 20, 30, 0.7));
+  }
+
+  /* =========================== */
+  /* NAV LINKS */
+  /* =========================== */
+  .navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    font-weight: 600;
+    color: var(--og-text-soft) !important;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    transition: var(--transition);
+    position: relative;
+  }
+
+  /* Hover effect */
+  .nav-link:hover {
+    color: var(--og-amber) !important;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+    width: 0%;
+    background: var(--og-grad-blood);
+    box-shadow: 0 0 8px rgba(224, 20, 30, 0.6);
+    transition: var(--transition);
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  /* LOGOUT BUTTON */
+  .logout-btn {
+    background: var(--og-grad-blood);
+    border: 1px solid rgba(255, 45, 54, 0.6);
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: var(--transition);
+  }
+
+  .logout-btn:hover {
+    box-shadow: var(--og-glow-red);
+  }
+
+  /* =========================== */
+  /* SCROLL EFFECT */
+  /* =========================== */
+  .navbar-scrolled {
+    background: rgba(7, 7, 7, 0.94) !important;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.65) !important;
+  }
+  </style>
 
 <% end %>
 

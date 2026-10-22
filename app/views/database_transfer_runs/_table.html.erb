@@ -1,0 +1,34 @@
+<div class="dbt-table-wrap">
+  <table class="dbt-runs">
+    <thead>
+      <tr>
+        <th scope="col">Run</th>
+        <th scope="col">Mode</th>
+        <th scope="col">Tables</th>
+        <th scope="col">Status</th>
+        <th scope="col">Started by</th>
+        <th scope="col">Created</th>
+        <th scope="col">Rollback</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% runs.each do |run| %>
+        <tr>
+          <td><%= link_to "##{run.id}", database_transfer_run_path(run) %></td>
+          <td><%= run.rehearsal? ? "Rehearsal" : "Transfer" %></td>
+          <td><%= run.planned_tables.size %></td>
+          <td><span class="dbt-state dbt-state--<%= run.status %>"><%= run.outcome_label %></span></td>
+          <td><%= run.user&.email || "—" %></td>
+          <td><%= l(run.created_at, format: :short) %></td>
+          <td>
+            <% if run.rollbackable? %>
+              <%= link_to "Roll back", database_transfer_run_path(run, anchor: "rollback"), class: "dbt-rollback" %>
+            <% else %>
+              —
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

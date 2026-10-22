@@ -1,0 +1,418 @@
+<% content_for :title, "Utilization Analytics" %>
+<% content_for :head do %>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>if (window.Chart && window.appTheme() === 'og') { Chart.defaults.color = '#cfc5ba'; Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)'; }</script>
+<% end %>
+
+<%= render "styles" %>
+
+<div class="ua-center">
+  <div class="ua-panel">
+    <%= render "toolbar" %>
+
+    <% if @error.present? %>
+      <div class="ua-banner ua-banner--error" role="alert"><%= @error %></div>
+    <% end %>
+
+    <%= render "scope_filters" %>
+
+    <div id="export-area">
+      <%= render "filters" %>
+      <%= render "trending" %>
+      <%= render "comparison" %>
+      <% if ua_mode.blank? || ua_mode == "filters" %>
+        <% ua_messages.each do |message| %>
+          <p class="ua-empty ua-banner--info" role="status"><%= message %></p>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const FONT = "Inter, Segoe UI, system-ui, sans-serif";
+    const COLORS = appTheme() === "og" ? ["#e0141e", "#ff5a1f", "#ffa41b", "#e6b450", "#3ddc84", "#7fc8ff", "#ff2d36", "#cfc5ba"] : ["#4361ee", "#7209b7", "#06d6a0", "#f72585", "#ff9e00", "#4cc9f0", "#3a0ca3", "#80ed99"];
+    const TOTAL_COLOR = themeColor("#1e293b", "#f3ece4");
+
+    function categoryList(axis) {
+      if (!Array.isArray(axis) || axis.length === 0) return null;
+      const plain = axis.every((item) => item == null || typeof item === "string" || typeof item === "number");
+      return plain ? axis : null;
+    }
+
+    function axisTitle(axis) {
+      if (typeof axis === "string") return axis;
+      if (axis && typeof axis === "object" && !Array.isArray(axis) && typeof axis.title === "string") return axis.title;
+      return "";
+    }
+
+    function isColumnSeries(series) {
+      return series.some((item) => item && item.data && typeof item.data === "object" && !Array.isArray(item.data));
+    }
+
+    function lineCategories(series, xAxis) {
+      const listed = categoryList(xAxis);
+      if (listed) return listed;
+      const labels = [];
+      series.forEach((item) => {
+        const data = item && Array.isArray(item.data) ? item.data : [];
+        data.forEach((point) => {
+          if (!Array.isArray(point) || point.length < 2) return;
+          if (!labels.includes(point[0])) labels.push(point[0]);
+        });
+      });
+      return labels;
+    }
+
+    function lineValues(data, categories) {
+      const values = categories.map(() => null);
+      if (!Array.isArray(data)) return values;
+      data.forEach((point) => {
+        if (!Array.isArray(point) || point.length < 2) return;
+        const index = categories.indexOf(point[0]);
+        if (index >= 0) values[index] = point[1];
+      });
+      return values;
+    }
+
+    function columnCategories(series, xAxis) {
+      const listed = categoryList(xAxis);
+      if (listed) return listed;
+      const labels = [];
+      series.forEach((item) => {
+        const data = item && item.data;
+        if (!data || Array.isArray(data) || typeof data !== "object") return;
+        Object.keys(data).forEach((key) => {
+          if (!labels.includes(key)) labels.push(key);
+        });
+      });
+      return labels;
+    }
+
+    function columnValues(data, categories) {
+      return categories.map((category) => {
+        if (!data || Array.isArray(data) || typeof data !== "object") return null;
+        return Object.prototype.hasOwnProperty.call(data, category) ? data[category] : null;
+      });
+    }
+
+    function datasetStyle(name, index, column) {
+      const total = String(name || "").toLowerCase() === "total";
+      const color = total ? TOTAL_COLOR : COLORS[index % COLORS.length];
+      return {
+        label: name || "Series",
+        borderColor: color,
+        backgroundColor: color,
+        pointBackgroundColor: color,
+        borderWidth: total ? 2.5 : 2,
+        borderDash: total && !column ? [5, 5] : undefined,
+        tension: 0,
+        spanGaps: false,
+        fill: false
+      };
+    }
+
+    function renderChart(canvas) {
+      if (typeof Chart === "undefined") return;
+      const existing = Chart.getChart(canvas);
+      if (existing) existing.destroy();
+
+      let spec;
+      try {
+        spec = JSON.parse(canvas.dataset.uaChart);
+      } catch (error) {
+        return;
+      }
+
+      const series = Array.isArray(spec.series) ? spec.series : [];
+      const column = isColumnSeries(series);
+      const categories = column ? columnCategories(series, spec.x_axis) : lineCategories(series, spec.x_axis);
+      const datasets = series.map((item, index) => Object.assign(datasetStyle(item && item.name, index, column), {
+        data: column ? columnValues(item && item.data, categories) : lineValues(item && item.data, categories)
+      }));
+
+      const scaleTitle = (text) => ({
+        display: Boolean(text),
+        text: text,
+        font: { family: FONT, weight: "600" }
+      });
+
+      new Chart(canvas, {
+        type: column ? "bar" : "line",
+        data: { labels: categories, datasets: datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { font: { family: FONT } } },
+            tooltip: { mode: "index", intersect: false }
+          },
+          scales: {
+            x: {
+              title: scaleTitle(axisTitle(spec.x_axis)),
+              ticks: { font: { family: FONT } }
+            },
+            y: {
+              title: scaleTitle(axisTitle(spec.y_axis)),
+              ticks: { font: { family: FONT } }
+            }
+          }
+        }
+      });
+    }
+
+    function togglePanel(button, panel) {
+      if (!button || !panel) return;
+      const open = panel.hasAttribute("hidden");
+      document.querySelectorAll(".ua-menu, .ua-filter-panel").forEach((item) => item.setAttribute("hidden", ""));
+      document.querySelectorAll("[aria-expanded='true']").forEach((item) => item.setAttribute("aria-expanded", "false"));
+      if (open) {
+        panel.removeAttribute("hidden");
+        button.setAttribute("aria-expanded", "true");
+      }
+    }
+
+    function wireToggle(buttonId, panelId) {
+      const button = document.getElementById(buttonId);
+      const panel = document.getElementById(panelId);
+      if (!button || button.dataset.bound === "1") return;
+      button.dataset.bound = "1";
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        togglePanel(button, panel);
+      });
+    }
+
+    function formReady(form, selectors) {
+      return selectors.every((selector) => {
+        const field = form.querySelector(selector);
+        return field && field.value;
+      });
+    }
+
+    function wireSubmit(formId, buttonId, selectors) {
+      const form = document.getElementById(formId);
+      const button = document.getElementById(buttonId);
+      if (!form || !button || form.dataset.bound === "1") return;
+      form.dataset.bound = "1";
+      const sync = () => { button.disabled = !formReady(form, selectors); };
+      form.addEventListener("change", sync);
+      form.addEventListener("input", sync);
+      sync();
+    }
+
+    function wireExclusive(selector) {
+      document.querySelectorAll(selector).forEach((box) => {
+        box.addEventListener("change", () => {
+          if (!box.checked) return;
+          document.querySelectorAll(selector).forEach((other) => {
+            if (other !== box) other.checked = false;
+          });
+        });
+      });
+    }
+
+    function wireSelectAll(selectAllId, boxSelector, applyId) {
+      const selectAll = document.getElementById(selectAllId);
+      const apply = document.getElementById(applyId);
+      if (!selectAll || selectAll.dataset.bound === "1") return;
+      selectAll.dataset.bound = "1";
+      const boxes = () => Array.from(document.querySelectorAll(boxSelector));
+      const sync = () => {
+        const chosen = boxes().some((box) => box.checked);
+        if (apply) apply.disabled = !chosen;
+        selectAll.checked = boxes().length > 0 && boxes().every((box) => box.checked);
+      };
+      selectAll.addEventListener("change", () => {
+        boxes().forEach((box) => { box.checked = selectAll.checked; });
+        sync();
+      });
+      boxes().forEach((box) => box.addEventListener("change", sync));
+      sync();
+    }
+
+    function activeComparisonForm() {
+      const quarter = document.getElementById("quarter-form");
+      const month = document.getElementById("month-form");
+      if (quarter && !quarter.classList.contains("ua-hidden")) return document.getElementById("quarterly-form");
+      if (month && !month.classList.contains("ua-hidden")) return document.getElementById("monthly-form");
+      return null;
+    }
+
+    function formPayload(form) {
+      const params = {};
+      new FormData(form).forEach((value, key) => {
+        if (key.endsWith("[]")) {
+          const name = key.slice(0, -2);
+          params[name] = params[name] || [];
+          params[name].push(value);
+        } else if (params[key] === undefined) {
+          params[key] = value;
+        }
+      });
+      return params;
+    }
+
+    function analyticsPayload() {
+      const node = document.getElementById("ua-analytics-payload");
+      if (!node) return {};
+      try {
+        return JSON.parse(node.textContent);
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function formatMetricValue(metric, value) {
+      if (value == null || value === "") return "—";
+      const number = Number(value);
+      if (!Number.isFinite(number)) return String(value);
+      if (/line/i.test(metric)) return String(Math.round(number));
+      if (/%/.test(metric)) return number.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
+      if (/cost|margin/i.test(metric)) return number.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return number.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    }
+
+    function statusLabel(status) {
+      if (status === "passed") return "✓ Passed";
+      if (status === "failed") return "✗ Failed";
+      return "✗ Error";
+    }
+
+    function appendCell(row, text, className) {
+      const cell = document.createElement("td");
+      if (className) cell.className = className;
+      cell.textContent = text;
+      row.appendChild(cell);
+      return cell;
+    }
+
+    function renderValidation(result) {
+      const root = document.getElementById("ua-validation-result");
+      if (!root) return;
+      root.hidden = false;
+      root.replaceChildren();
+      const status = result && result.status ? result.status : "error";
+      const banner = document.createElement("div");
+      banner.className = "ua-validation-banner ua-validation-banner--" + status;
+      banner.textContent = (result && result.message) || "Validation could not be completed.";
+      root.appendChild(banner);
+
+      const metrics = result && Array.isArray(result.metrics) ? result.metrics : [];
+      if (!metrics.length) return;
+
+      const wrap = document.createElement("div");
+      wrap.className = "ua-table-wrap";
+      const table = document.createElement("table");
+      table.className = "ua-table";
+      const head = document.createElement("tr");
+      [ "Metric", "Brand", "Period", "Endpoint Value", "DB Value", "Status" ].forEach((label) => {
+        const cell = document.createElement("th");
+        cell.scope = "col";
+        cell.textContent = label;
+        head.appendChild(cell);
+      });
+      const thead = document.createElement("thead");
+      thead.appendChild(head);
+      table.appendChild(thead);
+      const body = document.createElement("tbody");
+      metrics.forEach((metric) => {
+        const row = document.createElement("tr");
+        const rowStatus = metric.status || "error";
+        if (rowStatus !== "passed") row.className = "ua-validation-row--" + rowStatus;
+        appendCell(row, metric.metric || "");
+        appendCell(row, metric.brand || "");
+        appendCell(row, metric.period_label || metric.period || "");
+        appendCell(row, formatMetricValue(metric.metric, metric.displayed_value));
+        appendCell(row, formatMetricValue(metric.metric, metric.db_value));
+        const statusCell = appendCell(row, statusLabel(rowStatus), "ua-validation-status--" + rowStatus);
+        if (metric.message && rowStatus !== "passed") {
+          const note = document.createElement("span");
+          note.className = "ua-validation-message";
+          note.textContent = metric.message;
+          statusCell.appendChild(document.createTextNode(" "));
+          statusCell.appendChild(note);
+        }
+        body.appendChild(row);
+      });
+      table.appendChild(body);
+      wrap.appendChild(table);
+      root.appendChild(wrap);
+    }
+
+    function wireValidation() {
+      const button = document.getElementById("ua-validate-btn");
+      if (!button || button.dataset.bound === "1") return;
+      button.dataset.bound = "1";
+      const label = button.textContent;
+      button.addEventListener("click", () => {
+        const form = activeComparisonForm();
+        if (!form) {
+          renderValidation({ status: "error", message: "Verification is available for monthly and quarterly comparisons.", metrics: [] });
+          return;
+        }
+        button.disabled = true;
+        button.textContent = "Validating…";
+        const token = document.querySelector('meta[name="csrf-token"]');
+        const body = formPayload(form);
+        body.analytics = analyticsPayload();
+        fetch(button.dataset.url, {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "X-CSRF-Token": token ? token.content : ""
+          },
+          body: JSON.stringify(body)
+        }).then((response) => response.json().catch(() => ({ status: "error", message: "Validation could not be completed.", metrics: [] })))
+          .then((result) => renderValidation(result))
+          .catch(() => renderValidation({ status: "error", message: "Validation could not be completed.", metrics: [] }))
+          .finally(() => {
+            button.disabled = false;
+            button.textContent = label.trim();
+          });
+      });
+    }
+
+    function boot() {
+      document.querySelectorAll("[data-ua-chart]").forEach(renderChart);
+      wireToggle("utilization-options-menu", "utilization-dropdown-menu");
+      wireToggle("classFilterBtn", "classDropdown");
+      wireToggle("locationFilterBtn", "locationDropdown");
+      wireToggle("payorFilterBtn", "payorDropdown");
+      wireSubmit("quarterly-form", "quarter-compare-btn", ["#group", "#quarter_name1", "#quarter_name2"]);
+      wireSubmit("monthly-form", "month-compare-btn", ["#monthGroup", "#data_month1", "#data_month2"]);
+      wireSubmit("trending-form", "trendBtn", ["#groupSelect", "#startDate", "#endDate"]);
+      wireExclusive(".class-checkbox");
+      wireSelectAll("selectAllLocations", ".location-checkbox", "locationApplyBtn");
+      wireSelectAll("selectAllPayors", ".payor-checkbox", "payorApplyBtn");
+      wireValidation();
+
+      const team = document.getElementById("teamSelect");
+      if (team && team.dataset.bound !== "1") {
+        team.dataset.bound = "1";
+        team.addEventListener("change", () => team.form.requestSubmit());
+      }
+
+      const download = document.getElementById("download-btn");
+      if (download && download.dataset.bound !== "1") {
+        download.dataset.bound = "1";
+        download.addEventListener("click", () => window.print());
+      }
+
+      if (!document.body.dataset.uaOutside) {
+        document.body.dataset.uaOutside = "1";
+        document.addEventListener("click", (event) => {
+          if (event.target.closest(".ua-menu-wrap, .ua-filter")) return;
+          document.querySelectorAll(".ua-menu, .ua-filter-panel").forEach((item) => item.setAttribute("hidden", ""));
+          document.querySelectorAll("[aria-expanded='true']").forEach((item) => item.setAttribute("aria-expanded", "false"));
+        });
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", boot);
+    document.addEventListener("turbo:load", boot);
+  })();
+</script>

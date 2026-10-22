@@ -1,6 +1,23 @@
 module ApplicationHelper
   PUBLIC_EXPLORER_CONTROLLERS = %w[home sessions users].freeze
 
+  OG_THEME_COOKIE = "og_theme".freeze
+
+  # OG theme is the default; the floating settings menu stores "0" to switch back to the classic theme.
+  def og_theme?
+    cookies[OG_THEME_COOKIE] != "0"
+  end
+
+  def current_theme
+    og_theme? ? "og" : "classic"
+  end
+
+  # Views ship a classic and an OG <style> block; the inactive one is rendered disabled
+  # and the settings menu flips the media attributes live.
+  def theme_media(theme)
+    theme.to_s == current_theme ? "all" : "not all"
+  end
+
   def show_feature_explorer?
     logged_in? && PUBLIC_EXPLORER_CONTROLLERS.exclude?(controller_name)
   end

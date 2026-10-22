@@ -1,0 +1,90 @@
+<% includable = local_assigns.fetch(:includable, false) %>
+<% included = Array(local_assigns[:included]) %>
+<% forced = Array(local_assigns[:forced]) %>
+<% selected_tables = Array(local_assigns[:selected_tables]) %>
+
+<section class="dbt-panel">
+  <h2><%= title %></h2>
+  <p><%= description %></p>
+  <% if tables.empty? %>
+    <p class="dbt-empty"><%= empty_message %></p>
+  <% elsif includable %>
+    <%= form_with url: analyze_database_transfers_path, method: :post, class: "dbt-related-form", data: { dbt_related_form: true, turbo: false } do %>
+      <% selected_tables.each do |name| %>
+        <%= hidden_field_tag "tables[]", name, id: nil %>
+      <% end %>
+      <ul class="dbt-related">
+        <% tables.each do |table| %>
+          <% forced_table = forced.include?(table.name) %>
+          <% checked = included.include?(table.name) || forced_table %>
+          <li>
+            <div class="dbt-related-head">
+              <span class="dbt-tick" aria-hidden="true"><%= checked ? "☑" : "☐" %></span>
+              <strong><%= table.name %></strong>
+              <span class="dbt-tag"><%= badge %></span>
+              <% if @counts_by_name[table.name] %>
+                <span class="dbt-meta"><%= number_with_delimiter(@counts_by_name[table.name]) %> records</span>
+              <% end %>
+              <label class="dbt-include" for="include_related_<%= table.name %>">
+                <%= check_box_tag "include_related[]",
+                      table.name,
+                      checked,
+                      id: "include_related_#{table.name}",
+                      disabled: forced_table,
+                      data: (forced_table ? {} : { dbt_include_related: true }) %>
+                <span><%= forced_table ? "Included with a related table" : "Include" %></span>
+              </label>
+            </div>
+            <% if forced_table %>
+              <p class="dbt-path">Copied because a related table you included depends on it.</p>
+            <% end %>
+            <% if table.chain.size > 1 %>
+              <p class="dbt-path"><%= table.chain_label %></p>
+            <% end %>
+            <ul class="dbt-reasons">
+              <% table.reasons.each do |edge| %>
+                <li><code><%= edge.summary %></code></li>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+      </ul>
+      <div class="dbt-related-actions">
+        <% if tables.size > 1 %>
+          <label class="dbt-include">
+            <input type="checkbox" data-dbt-include-all aria-label="Include all related tables">
+            <span>Include all related tables</span>
+          </label>
+        <% else %>
+          <p class="dbt-meta">Leave this unchecked to copy only your selection.</p>
+        <% end %>
+        <%= button_tag type: "submit", class: "dbt-btn" do %>
+          <i class="fas fa-check"></i> Update plan
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <ul class="dbt-related">
+      <% tables.each do |table| %>
+        <li>
+          <div class="dbt-related-head">
+            <span class="dbt-tick" aria-hidden="true">☑</span>
+            <strong><%= table.name %></strong>
+            <span class="dbt-tag"><%= badge %></span>
+            <% if @counts_by_name[table.name] %>
+              <span class="dbt-meta"><%= number_with_delimiter(@counts_by_name[table.name]) %> records</span>
+            <% end %>
+          </div>
+          <% if table.chain.size > 1 %>
+            <p class="dbt-path"><%= table.chain_label %></p>
+          <% end %>
+          <ul class="dbt-reasons">
+            <% table.reasons.each do |edge| %>
+              <li><code><%= edge.summary %></code></li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>

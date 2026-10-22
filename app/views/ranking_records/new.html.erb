@@ -41,7 +41,7 @@
       <div class="upload-settings" style="display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2rem;">
         <div class="setting-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; flex: 1; max-width: 220px;">
           <label style="font-size: 0.85rem; font-weight: 700; color: var(--dark); text-transform: uppercase; letter-spacing: 0.5px;">Team ID</label>
-          <%= select_tag :team_id, options_for_select([["Team 209", "209"], ["Team 198", "198"]], "198"), class: "settings-select", style: "width: 100%; padding: 0.75rem 1rem; border-radius: 10px; border: 2px solid rgba(67, 97, 238, 0.2); font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--dark); outline: none; background: var(--light); cursor: pointer;" %>
+          <%= select_tag :team_id, options_for_select([["Team 209", "209"], ["Team 198", "198"], ["Team 147", "147"]], "198"), class: "settings-select", style: "width: 100%; padding: 0.75rem 1rem; border-radius: 10px; border: 2px solid rgba(67, 97, 238, 0.2); font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; color: var(--dark); outline: none; background: var(--light); cursor: pointer;" %>
         </div>
         <div class="setting-group" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; flex: 1; max-width: 220px;">
           <label style="font-size: 0.85rem; font-weight: 700; color: var(--dark); text-transform: uppercase; letter-spacing: 0.5px;">Accounting Period</label>
@@ -222,7 +222,7 @@
   });
 </script>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   .rrk-upload {
     --primary: #4361ee;
     --primary-light: #6c8aff;
@@ -574,6 +574,403 @@
 
   .debug-error {
     color: #9d174d;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .debug-form {
+      grid-template-columns: 1fr;
+    }
+    .debug-btn {
+      width: 100%;
+    }
+  }
+</style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  select.settings-select[name="team_id"], select.settings-select[name="accounting_period_id"] { border: 1px solid var(--og-line-strong) !important; font-family: var(--og-font-body) !important; background: var(--og-bg-alt) !important; }
+  .rrk-upload {
+    --primary: var(--og-red);
+    --primary-light: var(--og-red-bright);
+    --secondary: var(--og-ember);
+    --accent: var(--og-amber);
+    --success: var(--og-success);
+    --danger: var(--og-danger);
+    --light: var(--og-surface-2);
+    --dark: var(--og-text);
+    --gray: var(--og-muted);
+    --border-radius: 16px;
+    --shadow: var(--og-shadow);
+    --transition: all 0.3s ease;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: var(--og-font-body);
+    color: var(--dark);
+    background: transparent;
+    min-height: calc(100vh - 20px);
+    box-sizing: border-box;
+  }
+
+  .rrk-upload .header {
+    background: var(--og-glass);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--og-line);
+    border-left: 3px solid var(--og-red);
+  }
+
+  .rrk-upload .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .rrk-upload .header-text h1 {
+    font-family: var(--og-font-display);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    margin: 0 0 0.35rem;
+    background: var(--og-grad-sunset);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .rrk-upload .header-text p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.98rem;
+  }
+
+  .rrk-upload .back-btn {
+    background: var(--og-grad-blood);
+    color: #fff;
+    border-radius: 50px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+    transition: var(--transition);
+  }
+
+  .rrk-upload .back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--og-glow-red);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .flash-messages { margin-bottom: 1.25rem; }
+
+  .flash-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .flash-message.alert {
+    background: rgba(255, 59, 71, 0.14);
+    border: 1px solid rgba(255, 59, 71, 0.35);
+    border-left: 4px solid var(--danger);
+    color: var(--og-danger);
+  }
+
+  .flash-message.notice {
+    background: rgba(61, 220, 132, 0.12);
+    border: 1px solid rgba(61, 220, 132, 0.35);
+    border-left: 4px solid var(--success);
+    color: var(--og-success);
+  }
+
+  .upload-card {
+    background: var(--og-surface);
+    border: 1px solid var(--og-line);
+    border-radius: var(--border-radius);
+    padding: 2.5rem 2rem;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--og-red);
+  }
+
+  .upload-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+  }
+
+  .upload-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--og-grad-blood);
+    box-shadow: var(--og-glow-red);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.75rem;
+  }
+
+  .upload-text h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.4rem;
+    color: var(--dark);
+  }
+
+  .upload-text p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.95rem;
+  }
+
+  .upload-area {
+    border: 3px dashed rgba(224, 20, 30, 0.45);
+    border-radius: var(--border-radius);
+    padding: 2.25rem 1.5rem;
+    text-align: center;
+    background: var(--og-bg-alt);
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+
+  .upload-area:hover {
+    border-color: var(--og-amber);
+    background: rgba(224, 20, 30, 0.05);
+    box-shadow: 0 0 24px rgba(224, 20, 30, 0.15);
+  }
+
+  .upload-area.dragover {
+    border-color: var(--og-amber);
+    background: rgba(255, 164, 27, 0.06);
+    box-shadow: 0 0 24px rgba(224, 20, 30, 0.2);
+  }
+
+  .upload-placeholder i {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 0.65rem;
+  }
+
+  .upload-placeholder h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1.1rem;
+    color: var(--dark);
+  }
+
+  .upload-placeholder p {
+    margin: 0;
+    color: var(--gray);
+    font-size: 0.88rem;
+  }
+
+  .file-input {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+  }
+
+  .file-details {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--light);
+    border-radius: 12px;
+    border-left: 4px solid var(--success);
+    text-align: left;
+  }
+
+  .file-details i {
+    font-size: 1.5rem;
+    color: var(--success);
+  }
+
+  .file-meta { flex: 1; }
+
+  .file-name {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.95rem;
+  }
+
+  .file-size {
+    color: var(--gray);
+    font-size: 0.82rem;
+  }
+
+  .remove-btn {
+    background: rgba(255, 59, 71, 0.14);
+    border: 2px solid var(--danger);
+    color: var(--danger);
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .remove-btn:hover {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .upload-actions {
+    text-align: center;
+  }
+
+  .upload-btn {
+    background: var(--og-grad-blood);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 0.85rem 2.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+    box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+    transition: var(--transition);
+  }
+
+  .upload-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--og-glow-red);
+    }
+
+  .upload-btn:disabled {
+    background: var(--og-surface-3);
+    color: var(--og-muted);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .upload-tips {
+    margin-top: 1.25rem;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--light);
+    border-radius: 12px;
+    border-left: 3px solid var(--accent);
+    color: var(--gray);
+    font-size: 0.88rem;
+    text-align: left;
+  }
+
+  .tip-item i {
+    color: var(--accent);
+    margin-top: 0.12rem;
+  }
+
+  .debug-card {
+    margin-top: 1.5rem;
+    border-top-color: var(--secondary);
+  }
+
+  .debug-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .debug-input {
+    border: 1px solid var(--og-line-strong);
+    background: var(--og-bg-alt);
+    color: var(--og-text);
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.92rem;
+    width: 100%;
+  }
+
+  .debug-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2);
+  }
+
+  .debug-btn {
+    background: transparent;
+    color: var(--og-text);
+    border: 1px solid var(--og-line-strong);
+    border-radius: 999px;
+    padding: 0.7rem 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    }
+
+    .debug-btn:hover:not(:disabled) {
+      border-color: var(--og-amber);
+      color: var(--og-amber);
+    }
+
+  .debug-result {
+    margin-top: 1rem;
+    background: var(--light);
+    border-left: 4px solid var(--og-red);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    font-size: 0.9rem;
+    color: var(--dark);
+  }
+
+  .rrk-upload select option {
+    background: #141213;
+    color: var(--og-text);
+  }
+
+  .rrk-upload .settings-select:focus {
+    border-color: var(--og-red) !important;
+    box-shadow: 0 0 0 3px rgba(224, 20, 30, 0.2);
+  }
+
+  .debug-result h4 {
+    margin: 0 0 0.5rem;
+  }
+
+  .debug-result p {
+    margin: 0.3rem 0;
+  }
+
+  .debug-result pre {
+    margin: 0.65rem 0 0;
+    white-space: pre-wrap;
+    background: var(--og-bg-alt);
+    color: var(--og-text-soft);
+    border: 1px solid var(--og-line);
+    border-radius: 8px;
+    padding: 0.55rem;
+    font-size: 0.78rem;
+  }
+
+  .debug-error {
+    color: var(--og-danger);
     margin: 0;
   }
 

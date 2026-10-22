@@ -8,7 +8,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <style>
+  <style data-theme-style="classic" media="<%= theme_media(:classic) %>">
     :root {
       --primary: #4361ee;
       --primary-light: #6c8aff;
@@ -341,6 +341,348 @@
       }
     }
   </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+    :root {
+      --primary: var(--og-red);
+      --primary-light: var(--og-red-bright);
+      --primary-dark: var(--og-red-dark);
+      --secondary: var(--og-ember);
+      --accent: var(--og-amber);
+      --danger: var(--og-danger);
+      --warning: var(--og-warning);
+      --success: var(--og-success);
+      --light: var(--og-surface-2);
+      --dark: var(--og-text);
+      --gray: var(--og-muted);
+      --border-radius: var(--og-radius);
+      --shadow: var(--og-shadow);
+      --transition: all 0.4s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--og-font-body);
+      color: var(--og-text);
+      background: transparent;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header Styles */
+    .header {
+      background: var(--og-glass);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--og-line);
+      border-left: 3px solid var(--og-red);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .header-text h1 {
+      font-family: var(--og-font-display);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 3rem;
+      line-height: 1.05;
+      margin-bottom: 0.25rem;
+      background: var(--og-grad-sunset);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-text p {
+      color: var(--og-text-soft);
+      font-size: 1.1rem;
+    }
+
+    .back-btn {
+      background: transparent;
+      color: var(--og-text);
+      border: 1px solid var(--og-line-strong);
+      border-radius: 50px;
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--og-amber);
+      color: var(--og-amber);
+      text-decoration: none;
+    }
+
+    /* Upload Card */
+    .upload-card {
+      background: var(--og-surface);
+      border: 1px solid var(--og-line);
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-top: 4px solid transparent;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--og-glow-red);
+      border-top: 4px solid var(--og-red);
+    }
+
+    .upload-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .upload-header h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--og-text);
+    }
+
+    .upload-header p {
+      color: var(--og-text-soft);
+      margin-top: 0.5rem;
+    }
+
+    .upload-area {
+      border: 3px dashed rgba(224, 20, 30, 0.45);
+      border-radius: var(--border-radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      background: var(--og-bg-alt);
+      transition: var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-area:hover {
+      border-color: var(--og-amber);
+      box-shadow: 0 0 24px rgba(224, 20, 30, 0.15);
+    }
+
+    .upload-area.dragover {
+      border-color: var(--og-amber);
+      background: rgba(224, 20, 30, 0.06);
+      box-shadow: 0 0 30px rgba(224, 20, 30, 0.2);
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--og-grad-blood);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      color: #fff;
+      font-size: 2rem;
+      box-shadow: 0 8px 20px rgba(224, 20, 30, 0.3);
+    }
+
+    .upload-text h3 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--og-text);
+    }
+
+    .upload-text p {
+      color: var(--og-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .browse-btn {
+      background: transparent;
+      color: var(--og-text);
+      border: 1px solid var(--og-line-strong);
+      border-radius: 50px;
+      padding: 0.8rem 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .browse-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--og-amber);
+      color: var(--og-amber);
+    }
+
+    .file-info {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(61, 220, 132, 0.1);
+      border: 1px solid rgba(61, 220, 132, 0.3);
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--og-success);
+    }
+
+    .file-name {
+      font-weight: 600;
+      color: var(--og-success);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .upload-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .upload-btn {
+      background: var(--og-grad-blood);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 0.8rem 2.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--og-shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--og-glow-red);
+    }
+
+    .upload-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .view-uploads-btn {
+      background: transparent;
+      color: var(--og-text);
+      border: 1px solid var(--og-line-strong);
+      border-radius: 50px;
+      padding: 0.8rem 2rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .view-uploads-btn:hover {
+      border-color: var(--og-amber);
+      color: var(--og-amber);
+      text-decoration: none;
+      transform: translateY(-2px);
+    }
+
+    /* Alert Messages */
+    .alert {
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background: rgba(61, 220, 132, 0.12);
+      color: var(--og-success);
+      border: 1px solid rgba(61, 220, 132, 0.35);
+    }
+
+    .alert-danger {
+      background: rgba(255, 59, 71, 0.14);
+      color: var(--og-danger);
+      border: 1px solid rgba(255, 59, 71, 0.35);
+    }
+
+    /* Hidden elements */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .header-text h1 {
+        font-size: 2.4rem;
+      }
+
+      .upload-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+
+      .upload-controls {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .upload-btn, .view-uploads-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .upload-card {
+        padding: 1.5rem;
+      }
+
+      .upload-area {
+        padding: 2rem 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -348,7 +690,8 @@
     <header class="header">
       <div class="header-content">
         <div class="header-text">
-          <h1>Product Preferences Validation</h1>
+          <h1 class="og-title">Product Preferences Validation</h1>
+          <span class="og-slash" aria-hidden="true"></span>
           <p>Upload Excel files to validate product preferences against payor data</p>
         </div>
         <%= link_to features_path, class: "back-btn" do %>

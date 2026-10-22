@@ -5,7 +5,7 @@
   data-results-url="<%= results_insurance_preference_validation_path(@run) %>"
   data-finished="<%= @run.complete? || @run.failed? %>"
 >
-  <style>
+  <style data-theme-style="classic" media="<%= theme_media(:classic) %>">
     .ip-wrap { --primary:#4361ee; --dark:#2b2d42; --gray:#8d99ae; font-family: Inter, "Segoe UI", sans-serif; color: var(--dark); max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
     .ip-hero, .ip-card { background:#fff; border-radius:16px; padding:1.5rem 1.75rem; box-shadow:0 10px 30px rgba(0,0,0,.06); margin-bottom:1.25rem; }
     .ip-hero h1 { margin:0 0 .35rem; font-size:1.9rem; background:linear-gradient(135deg,#4361ee,#7209b7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
@@ -36,6 +36,44 @@
     .ip-progress.is-failed { background:#fef2f2; }
     details.ip-model { margin-top:.35rem; }
     .ip-muted { color:#8d99ae; }
+  </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+    .ip-wrap { --primary:var(--og-red); --dark:var(--og-text); --gray:var(--og-muted); font-family: var(--og-font-body); color: var(--dark); max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+    .ip-hero, .ip-card { background:var(--og-surface); border:1px solid var(--og-line); border-radius:16px; padding:1.5rem 1.75rem; box-shadow:var(--og-shadow-sm); margin-bottom:1.25rem; }
+    .ip-hero { background:var(--og-glass); backdrop-filter:blur(10px); border-left:3px solid var(--og-red); }
+    .ip-hero h1 { margin:0 0 .35rem; font-family:var(--og-font-display); font-weight:400; letter-spacing:.05em; font-size:2.5rem; background:var(--og-grad-sunset); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .ip-actions { display:flex; gap:.7rem; flex-wrap:wrap; margin-top:1rem; }
+    .ip-btn { display:inline-flex; align-items:center; gap:.45rem; background:var(--og-grad-blood); color:#fff; border:0; border-radius:999px; padding:.65rem 1.1rem; font-weight:700; text-decoration:none; }
+    .ip-btn.ghost { background:transparent; border:1px solid var(--og-line-strong); color:var(--og-text); }
+    .ip-btn:hover { box-shadow:var(--og-glow-red); }
+    .ip-btn.ghost:hover { box-shadow:none; border-color:var(--og-amber); }
+    .ip-btn.is-disabled { opacity:.45; pointer-events:none; }
+    .ip-alert { padding:1rem 1.2rem; border-radius:12px; margin-bottom:1rem; font-weight:600; }
+    .ip-alert.notice { background:rgba(61,220,132,.12); border:1px solid rgba(61,220,132,.35); color:var(--og-success); }
+    .ip-alert.alert { background:rgba(255,59,71,.14); border:1px solid rgba(255,59,71,.35); color:var(--og-danger); }
+    .ip-alert.warn { background:rgba(255, 176, 32, .14); color:var(--og-warning); }
+    .ip-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.75rem; }
+    .ip-kpi { background:var(--og-surface-2); border:1px solid var(--og-line); border-radius:12px; padding:.9rem 1rem; }
+    .ip-kpi strong { display:block; font-size:1.9rem; font-family:var(--og-font-display); font-weight:400; letter-spacing:.04em; color:var(--og-amber); }
+    .ip-filters { display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:1rem; }
+    .ip-filters input, .ip-filters select { padding:.55rem .7rem; border:1px solid var(--og-line-strong); border-radius:10px; background:var(--og-bg-alt); color:var(--og-text); }
+    .ip-filters input:focus, .ip-filters select:focus { outline:none; border-color:var(--og-red); box-shadow:0 0 0 3px rgba(224,20,30,.2); }
+    .ip-filters select option { background:#141213; color:var(--og-text); }
+    .ip-table-wrap { overflow:auto; max-height:70vh; }
+    .ip-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+    .ip-table th, .ip-table td { text-align:left; padding:.65rem .5rem; border-bottom:1px solid var(--og-line); vertical-align:top; }
+    .ip-table th { cursor:pointer; white-space:nowrap; position:sticky; top:0; background:var(--og-surface-2); color:var(--og-amber); text-transform:uppercase; font-size:.75rem; letter-spacing:.04em; }
+    .ip-table tbody tr:hover { background:rgba(224,20,30,.07); }
+    .ip-chip { display:inline-block; padding:.15rem .55rem; border-radius:999px; font-size:.72rem; font-weight:700; }
+    .ip-chip-pass { background:rgba(61, 220, 132, .14); color:var(--og-success); }
+    .ip-chip-fail { background:rgba(255, 59, 71, .14); color:var(--og-danger); }
+    .ip-chip-review { background:rgba(255, 176, 32, .14); color:var(--og-warning); }
+    .ip-chip-neutral { background:var(--og-surface-3); color:var(--og-text-soft); }
+    .ip-progress { padding:1rem; background:rgba(255, 164, 27, .10); border:1px solid rgba(255, 164, 27, .3); border-radius:12px; margin-bottom:1rem; }
+    .ip-progress.is-done { background:rgba(61, 220, 132, .14); border-color:rgba(61, 220, 132, .35); }
+    .ip-progress.is-failed { background:rgba(255, 59, 71, .14); border-color:rgba(255, 59, 71, .35); }
+    details.ip-model { margin-top:.35rem; }
+    .ip-muted { color:var(--og-text-soft); }
   </style>
 
   <div class="ip-hero">

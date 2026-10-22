@@ -38,7 +38,7 @@
   </section>
 </div>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   .nbp-page--compact {
     --primary: #4361ee;
     --primary-light: #6c8aff;
@@ -152,6 +152,135 @@
 
   .nbp-text-link {
     color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .nbp-text-link:hover {
+    text-decoration: underline;
+  }
+</style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .nbp-page--compact {
+    --primary: var(--og-red);
+    --primary-light: var(--og-red-bright);
+    --secondary: var(--og-ember);
+    --success: var(--og-success);
+    --danger: var(--og-danger);
+    --light: var(--og-surface-2);
+    --dark: var(--og-text);
+    --gray: var(--og-muted);
+    --border-radius: 16px;
+    --shadow: var(--og-shadow);
+    --transition: all 0.3s ease;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: var(--og-font-body);
+    color: var(--dark);
+    background: transparent;
+    min-height: calc(100vh - 20px);
+  }
+
+  .nbp-page--compact .header {
+    background: var(--og-glass);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--og-line);
+    border-left: 3px solid var(--og-red);
+  }
+
+  .nbp-page--compact .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .nbp-page--compact .header-text h1 {
+    font-family: var(--og-font-display);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-size: 2.6rem;
+    margin: 0 0 0.35rem;
+    background: var(--og-grad-sunset);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nbp-page--compact .header-text p {
+    margin: 0;
+    color: var(--gray);
+  }
+
+  .nbp-page--compact .back-btn {
+    background: var(--og-grad-blood);
+    color: white;
+    border-radius: 50px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+    transition: var(--transition);
+  }
+
+  .nbp-page--compact .back-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+  }
+
+  .nbp-page--compact .flash-messages { margin-bottom: 1.25rem; }
+
+  .nbp-page--compact .flash-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .nbp-page--compact .flash-message.alert {
+    background: rgba(255, 59, 71, 0.1);
+    border-left: 4px solid var(--danger);
+    color: var(--og-danger);
+  }
+
+  .nbp-page--compact .flash-message.notice {
+    background: rgba(61, 220, 132, 0.1);
+    border-left: 4px solid var(--success);
+    color: var(--og-success);
+  }
+
+  .nbp-page--compact .nbp-panel {
+    background: var(--og-surface);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--og-line);
+    border-top: 4px solid var(--secondary);
+  }
+
+  .nbp-edit-footer {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--og-line);
+  }
+
+  .nbp-text-link {
+    color: var(--og-amber);
     font-weight: 600;
     text-decoration: none;
     display: inline-flex;

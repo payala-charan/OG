@@ -62,7 +62,7 @@
   </section>
 </div>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   .kettering-page { max-width: 1500px; margin: 0 auto; padding: 2rem; color: #243447; }
   .kettering-header { display: flex; justify-content: space-between; gap: 1.5rem; align-items: flex-start; margin-bottom: 1.5rem; }
   .kettering-eyebrow { color: #168aad; font-size: .75rem; font-weight: 800; letter-spacing: .12em; margin: 0 0 .35rem; text-transform: uppercase; }
@@ -83,5 +83,32 @@
   .kettering-row-actions a { color: #168aad; font-weight: 700; }
   .kettering-empty { padding: 4rem 1rem; text-align: center; }
   .kettering-empty p { color: #607080; margin-bottom: 1.5rem; }
+  @media (max-width: 700px) { .kettering-page { padding: 1rem; } .kettering-header { flex-direction: column; } }
+</style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .kettering-page { max-width: 1500px; margin: 0 auto; padding: 2rem; color: var(--og-text); }
+  .kettering-header { display: flex; justify-content: space-between; gap: 1.5rem; align-items: flex-start; margin-bottom: 1.5rem; }
+  .kettering-eyebrow { color: var(--og-red-bright); font-size: .75rem; font-weight: 800; letter-spacing: .12em; margin: 0 0 .35rem; text-transform: uppercase; }
+  .kettering-header h1 { font-family: var(--og-font-display); font-weight: 400; letter-spacing: .05em; font-size: 2.6rem; margin: 0 0 .35rem; }
+  .kettering-header p:last-child { color: var(--og-muted); margin: 0; }
+  .kettering-actions { display: flex; gap: .75rem; }
+  .kettering-button { border: 0; border-radius: 6px; display: inline-block; font-weight: 700; padding: .7rem 1rem; text-decoration: none; }
+  .kettering-button--primary { background: var(--og-grad-blood); color: #fff; }
+  .kettering-button--primary:hover { box-shadow: var(--og-glow-red); }
+  .kettering-button--muted { background: transparent; color: var(--og-text); border: 1px solid var(--og-line-strong); }
+  .kettering-button--muted:hover { border-color: var(--og-amber); }
+  .kettering-flash { background: rgba(61, 220, 132, .12); color: var(--og-success); border-left: 4px solid var(--og-success); margin-bottom: 1rem; padding: .85rem 1rem; }
+  .kettering-flash--alert { background: rgba(255, 59, 71, .14); color: var(--og-danger); border-left-color: var(--og-danger); }
+  .kettering-table-card { background: var(--og-surface); border: 1px solid var(--og-line); border-radius: 8px; overflow: hidden; }
+  .kettering-table-wrap { overflow-x: auto; }
+  .kettering-table-card table { border-collapse: collapse; min-width: 1050px; width: 100%; }
+  .kettering-table-card th, .kettering-table-card td { border-bottom: 1px solid var(--og-line); padding: .85rem 1rem; text-align: left; white-space: nowrap; }
+  .kettering-table-card th { background: var(--og-surface-2); color: var(--og-amber); font-size: .78rem; text-transform: uppercase; }
+  .kettering-row-actions { display: flex; gap: .65rem; }
+  .kettering-table-card tbody tr:nth-child(even) { background: rgba(255, 255, 255, .02); }
+  .kettering-table-card tbody tr:hover { background: rgba(224, 20, 30, .07); }
+  .kettering-row-actions a { color: var(--og-amber); font-weight: 700; }
+  .kettering-empty { padding: 4rem 1rem; text-align: center; }
+  .kettering-empty p { color: var(--og-muted); margin-bottom: 1.5rem; }
   @media (max-width: 700px) { .kettering-page { padding: 1rem; } .kettering-header { flex-direction: column; } }
 </style>

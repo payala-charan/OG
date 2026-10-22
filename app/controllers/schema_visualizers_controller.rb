@@ -12,6 +12,7 @@ class SchemaVisualizersController < ApplicationController
       begin
         parser = SchemaParserService.new(@schema_data.content)
         graph_data = parser.parse
+        og = cookies[:og_theme] != "0"
 
         @nodes = graph_data[:tables].map do |t|
           {
@@ -20,7 +21,7 @@ class SchemaVisualizersController < ApplicationController
             shape: 'box',
             margin: { top: 15, bottom: 15, left: 20, right: 20 },
             font: { size: 18, face: 'Inter, sans-serif', bold: true },
-            color: { background: '#ffffff', border: '#4361ee', highlight: { background: '#4361ee', border: '#4361ee' } },
+            color: og ? { background: '#f3ece4', border: '#e0141e', highlight: { background: '#e0141e', border: '#ff2d36' } } : { background: '#ffffff', border: '#4361ee', highlight: { background: '#4361ee', border: '#4361ee' } },
             borderWidth: 2,
             shadow: true,
             tableColumns: t[:columns]
@@ -32,7 +33,7 @@ class SchemaVisualizersController < ApplicationController
             from: rel[:from],
             to: rel[:to],
             arrows: 'to',
-            color: rel[:inferred] ? { color: '#f72585', highlight: '#f72585' } : { color: '#a0aec0', highlight: '#4361ee' },
+            color: rel[:inferred] ? (og ? { color: '#ff5a1f', highlight: '#ff5a1f' } : { color: '#f72585', highlight: '#f72585' }) : { color: '#a0aec0', highlight: og ? '#e0141e' : '#4361ee' },
             dashes: rel[:inferred],
             width: 2,
             selectionWidth: 4

@@ -1,0 +1,15 @@
+<% if proof.present? %>
+  <% kind = ua_proof_kind(local_assigns[:section_key], proof) %>
+  <% if kind %>
+    <%= render "proof_#{kind}",
+          proof: proof,
+          rows: ua_proof_rows(proof),
+          period_1: local_assigns[:period_1].presence || "Period 1",
+          period_2: local_assigns[:period_2].presence || "Period 2" %>
+  <% else %>
+    <div class="ua-proof ua-proof--plain">
+      <h3>Calculation proof</h3>
+      <%= render "proof_node", value: proof %>
+    </div>
+  <% end %>
+<% end %>

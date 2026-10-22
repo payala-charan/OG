@@ -1,0 +1,78 @@
+<div class="ua-proof">
+  <div class="ua-proof-banner">
+    <h3>Calculation proof — Product Cost Per Unit</h3>
+    <p>
+      From purchase file + biosimilar sheet (NDC match), same scope as utilization filters above.
+      <strong>Product Cost / Unit</strong> =
+      <code>Σ(invoice_price × quantity_ordered) ÷ Σ(billing_unit_per_package_size × quantity_ordered)</code>.
+      Only purchase lines with a biosimilar NDC match and non-zero invoice price / quantity are included.
+    </p>
+  </div>
+
+  <div class="ua-table-wrap">
+    <table class="ua-proof-table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="ua-proof-brand" scope="col">Brand</th>
+          <th colspan="5" class="ua-proof-period" scope="colgroup"><%= period_1 %></th>
+          <th colspan="5" class="ua-proof-period" scope="colgroup"><%= period_2 %></th>
+        </tr>
+        <tr>
+          <% 2.times do %>
+            <th class="ua-proof-split" scope="col">Qty ordered</th>
+            <th class="ua-proof-split" scope="col">Billing units</th>
+            <th class="ua-proof-split" scope="col">Σ(Invoice×Qty)</th>
+            <th class="ua-proof-split" scope="col">Purchase lines</th>
+            <th class="ua-proof-split ua-proof-highlight" scope="col">Cost/Unit (in table)</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.each do |brand, data| %>
+          <tr>
+            <td class="ua-proof-brand"><%= brand %></td>
+            <% %w[q1 q2].each do |period| %>
+              <% metrics = ua_proof_period(data, period) %>
+              <% billing = metrics["billing_units_sum"].to_f %>
+              <td class="ua-proof-split"><%= ua_proof_number(metrics["quantity_ordered_sum"]) %></td>
+              <td class="ua-proof-split"><%= ua_proof_number(metrics["billing_units_sum"]) %></td>
+              <td class="ua-proof-split"><%= ua_proof_money(metrics["invoice_extended_sum"]) %></td>
+              <td class="ua-proof-split"><%= metrics["purchase_lines_included"].to_i %></td>
+              <td class="ua-proof-split ua-proof-highlight">
+                <%= ua_proof_money(metrics["product_cost_per_unit_raw"]) %>
+                <% if billing.positive? %>
+                  <span class="ua-proof-hint">
+                    = <%= ua_proof_money(metrics["invoice_extended_sum"]) %> ÷ <%= ua_proof_number(billing) %>
+                  </span>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+        <tr class="ua-proof-grand">
+          <td class="ua-proof-brand">Grand Total <span class="ua-proof-match">(matches table above)</span></td>
+          <% %w[q1 q2].each do |period| %>
+            <% grand = ua_proof_grand(proof, period) %>
+            <% purchase = ua_proof_purchase(proof, period) %>
+            <% billing = purchase["billing_units_sum"].to_f %>
+            <td class="ua-proof-split"><%= ua_proof_number(purchase["quantity_ordered_sum"]) %></td>
+            <td class="ua-proof-split"><%= ua_proof_number(purchase["billing_units_sum"]) %></td>
+            <td class="ua-proof-split"><%= ua_proof_money(purchase["invoice_extended_sum"]) %></td>
+            <td class="ua-proof-split"><%= purchase["purchase_lines_included"].to_i %></td>
+            <td class="ua-proof-split ua-proof-highlight">
+              <%= ua_proof_money(grand["product_cost_per_unit"]) %>
+              <span class="ua-proof-hint">
+                = <%= ua_proof_money(grand["product_cost"]) %> ÷ <%= ua_proof_number(grand["cms_units"]) %> CMS units
+              </span>
+              <% if billing.positive? %>
+                <span class="ua-proof-hint">
+                  Purchase-file: <%= ua_proof_money(purchase["invoice_extended_sum"].to_f / billing) %> (Σ invoice ÷ Σ billing)
+                </span>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

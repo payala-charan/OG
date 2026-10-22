@@ -1,0 +1,128 @@
+<section class="dbt-panel dbt-plan" id="transfer-plan">
+  <h2>Transfer plan</h2>
+  <p>
+    Copy these tables from <strong><%= plan.source_database %></strong> into
+    <strong><%= plan.target_database %></strong> (public schema), in this order.
+  </p>
+
+  <div class="dbt-plan-stats">
+    <div><span class="dbt-source-label">Tables</span><strong><%= plan.tables.size %></strong></div>
+    <div><span class="dbt-source-label">Records (cached count)</span><strong><%= number_with_delimiter(plan.total_rows) %></strong></div>
+    <div>
+      <span class="dbt-source-label">Status</span>
+      <% if plan.transferable? %>
+        <span class="dbt-state dbt-state--ready">Ready</span>
+      <% else %>
+        <span class="dbt-state dbt-state--blocked">Blocked</span>
+      <% end %>
+    </div>
+  </div>
+
+  <% plan.blockers.each do |blocker| %>
+    <p class="dbt-flash dbt-flash--alert"><%= blocker %></p>
+  <% end %>
+
+  <div class="dbt-table-wrap">
+    <table class="dbt-plan-table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Table</th>
+          <th scope="col" class="dbt-num">Records</th>
+          <th scope="col">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% plan.tables.each_with_index do |table, index| %>
+          <tr data-dbt-plan-row="<%= table.name %>">
+            <td><%= index + 1 %></td>
+            <td>
+              <strong><%= table.name %></strong>
+              <span class="dbt-tag"><%= database_transfer_status_label(table.role) %></span>
+              <% if large_database_table?(table.row_count) %>
+                <span class="dbt-tag dbt-tag--large">Large</span>
+              <% end %>
+            </td>
+            <td class="dbt-num"><%= table.row_count ? number_with_delimiter(table.row_count) : "—" %></td>
+            <td>
+              <% if table.blocked? %>
+                <span class="dbt-state dbt-state--blocked">Blocked</span>
+                <ul>
+                  <% table.blockers.each do |blocker| %>
+                    <li class="dbt-blocker"><%= blocker %></li>
+                  <% end %>
+                </ul>
+              <% else %>
+                <span class="dbt-state dbt-state--ready">Will be created</span>
+              <% end %>
+              <% if table.warnings.any? %>
+                <ul>
+                  <% table.warnings.each do |warning| %>
+                    <li class="dbt-warning"><%= warning %></li>
+                  <% end %>
+                </ul>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% plan.warnings.each do |warning| %>
+    <p class="dbt-flash dbt-flash--notice"><%= warning %></p>
+  <% end %>
+
+  <h3>How the transfer runs</h3>
+  <ul class="dbt-safety">
+    <li>FAT is read inside one read-only snapshot. Nothing is written to <%= plan.source_database %>.</li>
+    <li>Only new tables are created in <%= plan.target_database %>. Existing OG tables are never changed.</li>
+    <li>All tables are created, copied, keyed and indexed in a single transaction. Any error rolls back everything.</li>
+    <li>Row counts in OG must match the FAT snapshot, or the transaction rolls back.</li>
+    <li>The plan is checked again when the run starts. If FAT's schema changed, the run stops.</li>
+    <li>Related tables are copied only when they are included in this plan.</li>
+  </ul>
+
+  <% chosen_tables = local_assigns[:selected_tables] || plan.selected_tables %>
+<% included_related = Array(local_assigns[:included_related]) %>
+<% if plan.transferable? %>
+    <div class="dbt-actions">
+      <%= form_with url: transfer_database_transfers_path, method: :post, class: "dbt-action", data: { turbo: false } do %>
+        <% chosen_tables.each do |name| %>
+          <%= hidden_field_tag "tables[]", name, id: nil %>
+        <% end %>
+        <% included_related.each do |name| %>
+          <%= hidden_field_tag "include_related[]", name, id: nil %>
+        <% end %>
+        <%= hidden_field_tag :plan_fingerprint, plan.fingerprint, id: nil %>
+        <%= hidden_field_tag :rehearsal, "1", id: nil %>
+        <h3>1. Rehearse</h3>
+        <p>Run the full transfer and verification, then roll it back. OG is left exactly as it is.</p>
+        <%= button_tag type: "submit", class: "dbt-btn dbt-btn--quiet" do %>
+          <i class="fas fa-vial"></i> Rehearse transfer
+        <% end %>
+      <% end %>
+
+      <%= form_with url: transfer_database_transfers_path, method: :post, class: "dbt-action", data: { turbo: false } do %>
+        <% chosen_tables.each do |name| %>
+          <%= hidden_field_tag "tables[]", name, id: nil %>
+        <% end %>
+        <% included_related.each do |name| %>
+          <%= hidden_field_tag "include_related[]", name, id: nil %>
+        <% end %>
+        <%= hidden_field_tag :plan_fingerprint, plan.fingerprint, id: nil %>
+        <h3>2. Transfer</h3>
+        <label for="confirm_database">
+          Type <code><%= plan.target_database %></code> to create these <%= plan.tables.size %> table(s) in OG.
+        </label>
+        <%= text_field_tag :confirm_database, nil, id: "confirm_database", autocomplete: "off", required: true,
+              spellcheck: false, placeholder: plan.target_database %>
+        <%= button_tag type: "submit", class: "dbt-btn dbt-btn--danger" do %>
+          <i class="fas fa-file-import"></i> Start transfer
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="dbt-empty">Resolve every blocked table to enable the transfer.</p>
+  <% end %>
+</section>

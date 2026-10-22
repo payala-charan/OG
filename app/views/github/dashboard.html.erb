@@ -135,7 +135,7 @@
       </div>
 
       <div class="heatmap-legend">
-        <span style="color: #475569;">Learn how we count contributions</span>
+        <span class="og-gh1" style="color: #475569;">Learn how we count contributions</span>
         <div style="flex:1;"></div>
         <span>Less</span>
         <span class="legend-box" style="background-color: #ebedf0; border: 1px solid rgba(27,31,35,0.06);"></span>
@@ -247,6 +247,7 @@
 
 <!-- Scripts for Chart.js Advanced Engine -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>if (window.Chart && window.appTheme() === 'og') { Chart.defaults.color = '#cfc5ba'; Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)'; }</script>
 <script>
   window.GH_CHART_MODE = "<%= chart_mode %>";
   
@@ -263,7 +264,10 @@
   };
 
   // Color Palette specifically designed for Multi-Stacked Bar charts
-  const palette = [
+  const palette = appTheme() === 'og' ? [
+    '#e0141e', '#ffa41b', '#ff5a1f', '#3ddc84', '#e6b450',
+    '#7fc8ff', '#ff2d36', '#c77dff', '#8c0a10', '#cfc5ba'
+  ] : [
     '#4361ee', '#f72585', '#4cc9f0', '#7209b7', '#fbc3bc',
     '#06d6a0', '#ff9e00', '#118ab2', '#073b4c', '#ef476f'
   ];
@@ -293,13 +297,13 @@
         datasets.push({
           label: 'Authored PRs',
           data: pointData,
-          borderColor: '#4361ee',
-          backgroundColor: 'rgba(67, 97, 238, 0.15)',
+          borderColor: themeColor('#4361ee', '#e0141e'),
+          backgroundColor: themeColor('rgba(67, 97, 238, 0.15)', 'rgba(224, 20, 30, 0.15)'),
           borderWidth: 3,
           tension: 0.4,
           fill: true,
-          pointBackgroundColor: '#fff',
-          pointBorderColor: '#4361ee',
+          pointBackgroundColor: themeColor('#fff', '#ffa41b'),
+          pointBorderColor: themeColor('#4361ee', '#e0141e'),
           pointRadius: 5
         });
       } else {
@@ -324,7 +328,7 @@
             label: auth,
             data: authorDatapoints,
             backgroundColor: assignedColor,
-            borderColor: '#fff',
+            borderColor: themeColor('#fff', '#141213'),
             borderWidth: 1,
             borderRadius: 4
           });
@@ -349,7 +353,7 @@
               labels: { usePointStyle: true, boxWidth: 10, font: {family: 'Inter'} }
             },
             tooltip: {
-              backgroundColor: '#1e293b',
+              backgroundColor: themeColor('#1e293b', '#1c1919'),
               padding: 12,
               titleFont: { size: 13, family: 'Inter' },
               bodyFont: { size: 14, weight: 'bold', family: 'Inter' },
@@ -363,13 +367,13 @@
             x: { 
               stacked: !isSingle,
               grid: { display: false },
-              ticks: { color: '#64748b', font: {family: 'Inter'} }
+              ticks: { color: themeColor('#64748b', '#cfc5ba'), font: {family: 'Inter'} }
             },
             y: { 
               stacked: !isSingle,
               beginAtZero: true, 
-              grid: { borderDash: [4, 4], color: '#f1f5f9' }, 
-              ticks: { stepSize: 1, color: '#64748b', font: {family: 'Inter'} }
+              grid: { borderDash: [4, 4], color: themeColor('#f1f5f9', 'rgba(255, 255, 255, 0.08)') }, 
+              ticks: { stepSize: 1, color: themeColor('#64748b', '#cfc5ba'), font: {family: 'Inter'} }
             }
           }
         }
@@ -392,7 +396,7 @@
   });
 </script>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   .gh-dashboard-container {
     display: flex;
     height: calc(100vh - 40px);
@@ -553,3 +557,177 @@
     .table-container { padding-bottom: 1rem; }
   }
 </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .gh-dashboard-container {
+    display: flex;
+    height: calc(100vh - 40px);
+    background: var(--og-bg-alt);
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 10px;
+    box-shadow: var(--og-shadow);
+    border: 1px solid var(--og-line);
+    font-family: var(--og-font-body);
+    color: var(--og-text);
+  }
+
+  /* Sidebar */
+  .gh-sidebar { width: 300px; background: var(--og-surface); border-right: 1px solid var(--og-line); display: flex; flex-direction: column; z-index: 10; }
+  .gh-sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--og-line); display: flex; justify-content: space-between; align-items: center; }
+  .gh-sidebar-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--og-text); margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+  .gh-sidebar-header h2 i { color: var(--og-red-bright); }
+  .badge { background: rgba(255, 164, 27, 0.12); color: var(--og-amber); border: 1px solid rgba(255, 164, 27, 0.3); padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
+  .gh-repo-list { flex: 1; overflow-y: auto; padding: 1rem 0; }
+  .gh-repo-item { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.5rem; text-decoration: none; transition: all 0.2s; border-left: 3px solid transparent; }
+  .gh-repo-item:hover { background: rgba(255, 255, 255, 0.03); }
+  .gh-repo-item.active { background: rgba(224, 20, 30, 0.1); border-left-color: var(--og-red); }
+  .repo-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--og-surface-2); color: var(--og-text-soft); border: 1px solid var(--og-line); display: flex; justify-content: center; align-items: center; font-size: 0.9rem; }
+  .gh-repo-item.active .repo-icon { background: var(--og-grad-blood); color: #fff; border-color: transparent; }
+  .repo-info { display: flex; flex-direction: column; gap: 0.2rem; }
+  .repo-name { font-size: 0.9rem; font-weight: 600; color: var(--og-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+  .repo-owner { font-size: 0.75rem; color: var(--og-muted); }
+  .gh-repo-item.active .repo-name { color: var(--og-red-bright); }
+
+  /* Main Area */
+  .gh-main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: transparent; }
+  .gh-topbar { padding: 1.5rem 2.5rem; background: rgba(14, 13, 13, 0.94); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--og-line); box-shadow: inset 3px 0 0 var(--og-red); position: sticky; top: 0; z-index: 5; }
+  .topbar-title h1 { font-family: var(--og-font-display); font-size: 2.2rem; font-weight: 400; letter-spacing: 0.05em; line-height: 1.05; margin: 0 0 0.3rem; color: var(--og-text); }
+  .topbar-title p { font-size: 0.9rem; color: var(--og-muted); margin: 0; }
+  .topbar-actions { display: flex; gap: 1rem; align-items: center; }
+  .inline-form { margin: 0; }
+  .gh-btn-primary, .gh-btn-outline { padding: 0.6rem 1.2rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+  .gh-btn-primary { background: var(--og-grad-blood); color: #fff; border: none; box-shadow: var(--og-shadow-sm); }
+  .gh-btn-primary:hover { box-shadow: var(--og-glow-red); transform: translateY(-2px); }
+  .gh-btn-outline { background: transparent; color: var(--og-text); border: 1px solid var(--og-line-strong); }
+  .gh-btn-outline:hover { border-color: var(--og-amber); color: var(--og-amber); }
+  .gh-btn-outline.icon-only { padding: 0.6rem; }
+
+  /* KPIs */
+  .gh-kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; padding: 2rem 2.5rem 1rem; }
+  .kpi-card { background: var(--og-surface); padding: 1.5rem; border-radius: 16px; box-shadow: var(--og-shadow-sm); border: 1px solid var(--og-line); display: flex; align-items: center; gap: 1.2rem; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; }
+  .kpi-card:hover { transform: translateY(-3px); border-color: rgba(224, 20, 30, 0.45); box-shadow: var(--og-glow-red); }
+  .kpi-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; background: rgba(255, 90, 31, 0.12); color: var(--og-ember); }
+  .kpi-card.total .kpi-icon { background: rgba(224, 20, 30, 0.14); color: var(--og-red-bright); }
+  .kpi-card.open .kpi-icon { background: rgba(255, 176, 32, 0.14); color: var(--og-warning); }
+  .kpi-card.closed .kpi-icon { background: rgba(255, 59, 71, 0.14); color: var(--og-danger); }
+  .kpi-card.merged .kpi-icon { background: rgba(61, 220, 132, 0.14); color: var(--og-success); }
+  .kpi-card.yearly .kpi-icon { background: rgba(255, 164, 27, 0.12); color: var(--og-amber); }
+  .kpi-card.monthly .kpi-icon { background: rgba(230, 180, 80, 0.12); color: var(--og-gold); }
+  .kpi-card.commit-total .kpi-icon { background: rgba(127, 200, 255, 0.12); color: var(--og-info); }
+  .kpi-data h3 { margin: 0 0 0.3rem; font-size: 0.85rem; color: var(--og-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+  .kpi-value { font-family: var(--og-font-display); font-size: 2.2rem; font-weight: 400; letter-spacing: 0.04em; color: var(--og-text); }
+
+  /* Chart & Authors Array Config */
+  .gh-content-grid { display: grid; grid-template-columns: 350px 1fr; gap: 1.5rem; padding: 1rem 2.5rem; }
+  .gh-panel { background: var(--og-surface); border-radius: 16px; box-shadow: var(--og-shadow-sm); border: 1px solid var(--og-line); display: flex; flex-direction: column; overflow: hidden; }
+  .gh-panel.full-width { margin: 1rem 2.5rem 2.5rem; }
+  .panel-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--og-line); display: flex; justify-content: space-between; align-items: center; }
+  .panel-header h3 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--og-text); }
+  .badge-sub { font-size: 0.8rem; background: rgba(224, 20, 30, 0.12); border: 1px solid rgba(224, 20, 30, 0.3); padding: 0.2rem 0.5rem; border-radius: 6px; color: var(--og-red-bright); margin-left: 0.5rem; }
+
+  /* Chart Layout Details */
+  .advanced-chart-header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .chart-toggles { display: flex; background: var(--og-bg-alt); border: 1px solid var(--og-line-strong); padding: 3px; border-radius: 8px; }
+  .toggle-btn { background: transparent; border: none; padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; color: var(--og-muted); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+  .toggle-btn:hover { color: var(--og-text); }
+  .toggle-btn.active { background: var(--og-grad-blood); color: #fff; box-shadow: 0 2px 8px rgba(224, 20, 30, 0.3); }
+  .chart-panel { min-height: 480px; }
+  .chart-container { padding: 1.5rem; flex: 1; position: relative; min-height: 400px; }
+
+  /* Author Sidebar */
+  .author-list { flex: 1; overflow-y: auto; max-height: 430px; }
+  .empty-msg { padding: 2rem; color: var(--og-muted); text-align: center; font-size: 0.9rem; }
+  .author-item { display: flex; align-items: center; padding: 1rem 1.5rem; text-decoration: none; border-bottom: 1px solid var(--og-line); transition: all 0.2s; }
+  .author-item:hover { background: rgba(224, 20, 30, 0.06); }
+  .author-item.active { background: rgba(224, 20, 30, 0.1); box-shadow: inset 3px 0 0 var(--og-red); }
+  .author-avatar { width: 40px; height: 40px; background: var(--og-surface-2); border: 1px solid var(--og-line-strong); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: var(--og-text-soft); margin-right: 1rem; }
+  .author-item.active .author-avatar { background: var(--og-grad-blood); color: #fff; border-color: transparent; }
+  .author-meta { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
+  .author-name { font-weight: 600; color: var(--og-text); font-size: 0.95rem; }
+  .author-count { font-size: 0.8rem; color: var(--og-muted); }
+  .author-go { color: var(--og-faint); font-size: 0.9rem; }
+  .author-item.active .author-go { color: var(--og-red-bright); }
+
+  /* Table Grid Struct */
+  .table-container { width: 100%; overflow-x: auto; }
+  .gh-table { width: 100%; border-collapse: collapse; text-align: left; }
+  .gh-table th { background: linear-gradient(180deg, #221a1a, #170f10); color: var(--og-amber); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 1rem 1.5rem; border-bottom: 1px solid rgba(224, 20, 30, 0.45); }
+  .gh-table td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--og-line); color: var(--og-text-soft); font-size: 0.9rem; }
+  .gh-table td strong { color: var(--og-text); }
+  .empty-list-row { text-align: center; padding: 2rem !important; color: var(--og-muted) !important; }
+  .gh-table tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+  .gh-table tr:hover td { background: rgba(224, 20, 30, 0.07); }
+  .pr-id { font-family: var(--og-font-mono); font-weight: 600; color: var(--og-amber); }
+  .pr-title { max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .td-author { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; }
+  .td-author .av { color: var(--og-muted); }
+  .pr-badge { padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+  .pr-badge.merged { background: rgba(61, 220, 132, 0.14); color: var(--og-success); border: 1px solid rgba(61, 220, 132, 0.35); }
+  .pr-badge.open { background: rgba(255, 176, 32, 0.14); color: var(--og-warning); border: 1px solid rgba(255, 176, 32, 0.35); }
+  .pr-badge.closed { background: rgba(255, 59, 71, 0.14); color: var(--og-danger); border: 1px solid rgba(255, 59, 71, 0.35); }
+  .pr-date { color: var(--og-muted); font-size: 0.85rem; }
+  .merged-by { font-weight: 500; color: var(--og-text-soft); }
+
+  /* Contribution heatmap style */
+  .heatmap-panel { margin: 1rem 2.5rem; }
+  .heatmap-controls { display: flex; align-items: center; gap: 0.5rem; color: var(--og-muted); }
+  .heatmap-year-btn { background: var(--og-surface-2); border: 1px solid var(--og-line-strong); color: var(--og-text-soft); border-radius: 6px; padding: 0.25rem 0.65rem; text-decoration: none; font-size: 0.8rem; transition: all 0.2s; }
+  .heatmap-year-btn:hover { border-color: var(--og-amber); color: var(--og-amber); }
+  .heatmap-year-btn.active { background: var(--og-grad-blood); color: #fff; border-color: var(--og-red); }
+  .heatmap-grid { display: flex; overflow-x: auto; padding: 0.75rem 1rem 1rem; }
+  .heatmap-week { display: grid; grid-template-rows: repeat(7, 14px); gap: 3px; margin-right: 3px; }
+  .heatmap-cell { width: 14px; height: 14px; border-radius: 3px; background: var(--og-surface-3); transition: transform 0.15s ease; }
+  /* GitHub's light "no contributions" color arrives inline from the API; dim it for the dark theme */
+  .heatmap-cell[style*="#ebedf0"], .legend-box[style*="#ebedf0"] { background-color: var(--og-surface-3) !important; }
+  .heatmap-cell:hover { transform: scale(1.1); outline: 2px solid var(--og-amber); }
+  .heatmap-cell.empty { opacity: 0.12; }
+  .heatmap-cell.level-0 { background: var(--og-surface-3); }
+  .heatmap-cell.level-1 { background: #d6e685; }
+  .heatmap-cell.level-2 { background: #8cc665; }
+  .heatmap-cell.level-3 { background: #44a340; }
+  .heatmap-cell.level-4 { background: #1e6823; }
+  .heatmap-legend { display: flex; align-items: center; gap: 0.35rem; padding: 0 1rem 1rem; color: var(--og-muted); font-size: 0.8rem; }
+  .legend-box { width: 20px; height: 20px; border-radius: 3px; display: inline-block; }
+
+  /* RESPONSIVE DESIGN (Mobile & Tablet) */
+  @media (max-width: 1024px) {
+    .gh-dashboard-container { flex-direction: column; height: auto; min-height: 100vh; margin: 0; border-radius: 0; border: none; }
+    .gh-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--og-line); z-index: 20; position: sticky; top: 0; box-shadow: var(--og-shadow-sm); }
+    .gh-sidebar-header { padding: 1rem 1.5rem; }
+    .gh-repo-list { display: flex; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; padding: 0.5rem 1rem; scrollbar-width: none; }
+    .gh-repo-list::-webkit-scrollbar { display: none; }
+    .gh-repo-item { padding: 0.6rem 1rem; border-left: none; border-radius: 12px; margin-right: 0.5rem; flex-shrink: 0; border: 1px solid var(--og-line-strong); }
+    .gh-repo-item.active { background: var(--og-grad-blood); border-color: var(--og-red); box-shadow: 0 4px 12px rgba(224, 20, 30, 0.3); }
+    .gh-repo-item.active .repo-name, .gh-repo-item.active .repo-owner { color: #fff; }
+    .gh-repo-item.active .repo-icon { background: rgba(255,255,255,0.2); color: #fff; }
+    
+    .gh-main { border-radius: 0; overflow-y: visible; }
+    .gh-kpi-grid { grid-template-columns: repeat(2, 1fr); padding: 1.5rem; }
+    .gh-content-grid { grid-template-columns: 1fr; padding: 1rem 1.5rem; }
+  }
+
+  @media (max-width: 768px) {
+    .gh-topbar { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1.2rem; }
+    .topbar-actions { width: 100%; justify-content: flex-start; }
+    .gh-kpi-grid { grid-template-columns: 1fr; padding: 1rem; gap: 1rem; }
+    
+    .heatmap-panel, .gh-panel.full-width { margin: 1rem; }
+    .heatmap-controls { width: 100%; justify-content: flex-start; overflow-x: auto; padding-bottom: 0.5rem; }
+    .heatmap-year-btn { flex-shrink: 0; }
+    .panel-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .panel-header h3 { width: 100%; }
+    
+    .advanced-chart-header { flex-direction: column; align-items: flex-start; }
+    .chart-toggles { width: 100%; background: var(--og-bg-alt); padding: 4px; }
+    .toggle-btn { flex: 1; text-align: center; }
+    
+    .heatmap-legend { flex-wrap: wrap; justify-content: flex-start; gap: 0.4rem; }
+    .heatmap-legend span:first-child { width: 100%; margin-bottom: 0.4rem; }
+    
+    .gh-table th, .gh-table td { padding: 0.8rem; font-size: 0.8rem; }
+    .pr-title { max-width: 140px; }
+    .table-container { padding-bottom: 1rem; }
+  }
+  /* Restored classic inline styles; OG look via classes */
+  .og-gh1 { color: var(--og-muted) !important; }
+  </style>

@@ -77,7 +77,7 @@
   </section>
 </div>
 
-<style>
+<style data-theme-style="classic" media="<%= theme_media(:classic) %>">
   .nbp-show {
     --primary: #4361ee;
     --primary-light: #6c8aff;
@@ -243,6 +243,184 @@
     background: linear-gradient(135deg, var(--danger), #db2777);
     color: #fff;
     box-shadow: 0 6px 18px rgba(247, 37, 133, 0.3);
+  }
+
+  @media (max-width: 520px) {
+    .nbp-dl-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+  .nbp-show {
+    --primary: var(--og-red);
+    --primary-light: var(--og-red-bright);
+    --secondary: var(--og-ember);
+    --success: var(--og-success);
+    --danger: var(--og-danger);
+    --light: var(--og-surface-2);
+    --dark: var(--og-text);
+    --gray: var(--og-muted);
+    --border-radius: 16px;
+    --shadow: var(--og-shadow);
+    --transition: all 0.3s ease;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: var(--og-font-body);
+    color: var(--dark);
+    background: transparent;
+    min-height: calc(100vh - 20px);
+  }
+
+  .nbp-show .header {
+    background: var(--og-glass);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--og-line);
+    border-left: 3px solid var(--og-red);
+  }
+
+  .nbp-show .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .nbp-show .header-text h1 {
+    font-family: var(--og-font-display);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    font-size: 2.6rem;
+    margin: 0 0 0.35rem;
+    background: var(--og-grad-sunset);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nbp-show .header-text p {
+    margin: 0;
+    color: var(--gray);
+  }
+
+  .nbp-show .back-btn {
+    background: var(--og-grad-blood);
+    color: white;
+    border-radius: 50px;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 20px rgba(224, 20, 30, 0.3);
+    transition: var(--transition);
+  }
+
+  .nbp-show .back-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+  }
+
+  .nbp-show .flash-messages { margin-bottom: 1.25rem; }
+
+  .nbp-show .flash-message {
+    padding: 1rem 1.25rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(61, 220, 132, 0.1);
+    border-left: 4px solid var(--success);
+    color: var(--og-success);
+  }
+
+  .nbp-detail-card {
+    background: var(--og-surface);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--og-line);
+    border-top: 4px solid var(--primary);
+  }
+
+  .nbp-dl {
+    margin: 0;
+    padding: 0;
+  }
+
+  .nbp-dl-row {
+    display: grid;
+    grid-template-columns: minmax(140px, 38%) 1fr;
+    gap: 0.75rem 1.25rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--og-line);
+  }
+
+  .nbp-dl-row:last-of-type {
+    border-bottom: none;
+  }
+
+  .nbp-dl dt {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--gray);
+  }
+
+  .nbp-dl dd {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--dark);
+    word-break: break-word;
+  }
+
+  .nbp-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--og-line);
+  }
+
+  .nbp-detail-btn {
+    border-radius: 50px;
+    padding: 0.65rem 1.35rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .nbp-detail-btn:hover {
+    transform: translateY(-2px);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .nbp-detail-btn--primary {
+    background: var(--og-grad-blood);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(224, 20, 30, 0.35);
+  }
+
+  .nbp-detail-btn--danger {
+    background: linear-gradient(135deg, #b3101a, #5a0609);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(255, 59, 71, 0.3);
   }
 
   @media (max-width: 520px) {

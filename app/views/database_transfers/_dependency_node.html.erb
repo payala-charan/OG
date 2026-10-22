@@ -1,0 +1,15 @@
+<li class="dbt-tree-item">
+  <code><%= node[:edge].summary %></code>
+  <% if node[:self_reference] %>
+    <span class="dbt-tag">Self reference</span>
+  <% elsif node[:cycle] %>
+    <span class="dbt-tag">Already in this chain</span>
+  <% end %>
+  <% if node[:children].present? %>
+    <ul>
+      <% node[:children].each do |child| %>
+        <%= render "dependency_node", node: child %>
+      <% end %>
+    </ul>
+  <% end %>
+</li>

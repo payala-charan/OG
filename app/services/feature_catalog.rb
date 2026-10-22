@@ -68,8 +68,10 @@ class FeatureCatalog
           motion: "bars",
           features: [
             Feature.new(id: "payor", name: "Payor Analysis", icon: "fa-chart-bar", path_helper: :payor_preferences_path, kind: "view", hint: "Payor insights"),
+            Feature.new(id: "utilization_analytics", name: "Utilization Analytics", icon: "fa-chart-area", path_helper: :utilization_analytics_path, kind: "view", hint: "Units, cost, and margin"),
             Feature.new(id: "screen", name: "Screen Analysis", icon: "fa-desktop", path_helper: :screen_analyses_path, kind: "task", hint: "Capture screens"),
             Feature.new(id: "schema", name: "Schema Mapping", icon: "fa-sitemap", path_helper: :schema_visualizers_path, kind: "view", hint: "Database map"),
+            Feature.new(id: "db_transfer", name: "FAT Database Transfer", icon: "fa-database", path_helper: :database_transfers_path, kind: "view", hint: "Analyze and copy FAT tables into OG"),
             Feature.new(id: "quarter", name: "Quarter Status", icon: "fa-chart-pie", path_helper: :quarter_statuses_path, kind: "view", hint: "Data coverage")
           ]
         ),

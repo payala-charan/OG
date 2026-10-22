@@ -8,7 +8,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <style>
+  <style data-theme-style="classic" media="<%= theme_media(:classic) %>">
     :root {
       --primary: #4361ee;
       --primary-light: #6c8aff;
@@ -48,6 +48,52 @@
     
     .actions-bar { margin-top: 1rem; display: flex; justify-content: flex-end; }
   </style>
+<style data-theme-style="og" media="<%= theme_media(:og) %>">
+    :root {
+      --primary: var(--og-red);
+      --primary-light: var(--og-red-bright);
+      --secondary: var(--og-ember);
+      --success: var(--og-success);
+      --light: var(--og-surface-2);
+      --dark: var(--og-text);
+      --gray: var(--og-muted);
+      --border-radius: 16px;
+      --shadow: var(--og-shadow);
+      --transition: all 0.4s ease;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--og-font-body); color: var(--dark); background: transparent; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; background: var(--og-glass); backdrop-filter: blur(10px); border: 1px solid var(--og-line); border-left: 3px solid var(--og-red); border-radius: var(--border-radius); padding: 2rem; margin-bottom: 2rem; box-shadow: var(--shadow); }
+    .header h1 { font-family: var(--og-font-display); letter-spacing: 0.05em; font-weight: 400; font-size: 2.8rem; background: var(--og-grad-sunset); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.5rem; border-radius: 50px; font-weight: 600; text-decoration: none; transition: var(--transition); border: none; cursor: pointer; }
+    .btn-outline { background: transparent; border: 2px solid var(--og-line-strong); color: var(--og-text); }
+    .btn-outline:hover { border-color: var(--og-amber); background: rgba(255, 164, 27, 0.06); transform: translateY(-2px); }
+    .btn-success { background: linear-gradient(135deg, #1f8a52 0%, #11522f 100%); color: #fff; border: 1px solid rgba(61, 220, 132, 0.45); box-shadow: 0 6px 20px rgba(61, 220, 132, 0.18); }
+    .btn-success:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(61, 220, 132, 0.3); }
+    a.btn[style*="#f4f6ff"] { background: var(--og-surface-2) !important; color: var(--og-text) !important; border-color: var(--og-line-strong) !important; }
+    a.btn[style*="background: #4361ee"] { background: var(--og-grad-blood) !important; color: #fff !important; border-color: rgba(224, 20, 30, 0.6) !important; }
+
+    .table-container { background: var(--og-surface); border: 1px solid var(--og-line); border-radius: var(--border-radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 2rem; }
+    .styled-table { width: 100%; border-collapse: collapse; }
+    .styled-table thead tr { background: linear-gradient(180deg, #221a1a, #170f10); color: var(--og-amber); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.04em; text-align: left; }
+    .styled-table th, .styled-table td { padding: 1.2rem 1.5rem; }
+    .styled-table tbody tr { border-bottom: 1px solid var(--og-line); transition: var(--transition); }
+    .styled-table tbody tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.02); }
+    .styled-table tbody tr:hover { background-color: rgba(224, 20, 30, 0.07); }
+    .styled-table tbody tr:last-of-type { border-bottom: 2px solid var(--primary); }
+    
+    .code-badge { background: var(--og-surface-2); padding: 0.4rem 0.8rem; border-radius: 6px; font-family: monospace; font-weight: 600; color: var(--dark); border: 1px solid var(--og-line); }
+    .value-badge { font-weight: 700; color: var(--og-amber); font-size: 1.1rem; }
+    
+    .actions-bar { margin-top: 1rem; display: flex; justify-content: flex-end; }
+  /* Restored classic inline styles; OG look via classes */
+  .og-pcr1 { color: var(--og-amber) !important; }
+  .og-pcr2 { color: var(--og-danger) !important; }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -56,9 +102,9 @@
         <h1><i class="fa-solid fa-chart-line"></i> Computation Results</h1>
         <p style="color: var(--gray); margin-top: 0.5rem;">Results generated mapping the NDCs against your formula.</p>
         <% if @file_name.present? %>
-          <p style="margin-top: 0.75rem; color: #4361ee;"><strong>File:</strong> <%= @file_name %></p>
+          <p class="og-pcr1" style="margin-top: 0.75rem; color: #4361ee;"><strong>File:</strong> <%= @file_name %></p>
         <% else %>
-          <p style="margin-top: 0.75rem; color: #f72585;">No file selected. Please choose an uploaded file.</p>
+          <p class="og-pcr2" style="margin-top: 0.75rem; color: #f72585;">No file selected. Please choose an uploaded file.</p>
         <% end %>
       </div>
       <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
