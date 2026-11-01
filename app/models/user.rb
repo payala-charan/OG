@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :validation_records, dependent: :destroy
   has_many :tally_validation_records, dependent: :destroy
   has_many :insurance_preference_validation_runs, dependent: :destroy
+  has_many :fat_validation_runs, dependent: :destroy
   validates :email, presence: true, uniqueness: true
   validates :password, presence: true, length: { minimum: 6 }, if: :password
   has_one :github_account, dependent: :destroy

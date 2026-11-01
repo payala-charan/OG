@@ -1,0 +1,81 @@
+<div class="fv-wrap">
+  <style>
+    .fv-wrap { max-width: 980px; margin: 0 auto; padding: 1.5rem; color: var(--og-text, #2b2d42); font-family: Inter, "Segoe UI", sans-serif; }
+    .fv-hero, .fv-card { background: var(--og-surface, #fff); border: 1px solid var(--og-line, #e5e7eb); border-radius: 16px; padding: 1.5rem 1.75rem; box-shadow: 0 10px 30px rgba(0,0,0,.05); margin-bottom: 1.25rem; }
+    .fv-hero h1 { margin: 0 0 .35rem; font-size: 1.8rem; }
+    .fv-note { color: var(--og-muted, #6b7280); }
+    .fv-alert { padding: .9rem 1rem; border-radius: 12px; margin-bottom: 1rem; font-weight: 600; }
+    .fv-alert.notice { background: rgba(6,214,160,.12); color: #047857; }
+    .fv-alert.alert { background: rgba(247,37,133,.1); color: #be123c; }
+    .fv-table { width: 100%; border-collapse: collapse; }
+    .fv-table th, .fv-table td { text-align: left; padding: .65rem .4rem; border-bottom: 1px solid var(--og-line, #eef1f6); }
+    .fv-pass { background: rgba(22,163,74,.12); }
+    .fv-fail { background: rgba(220,38,38,.12); }
+    .fv-chip { display: inline-block; padding: .12rem .5rem; border-radius: 999px; font-size: .75rem; font-weight: 700; }
+    .fv-chip-pending, .fv-chip-running { background: #fef3c7; color: #92400e; }
+    .fv-chip-completed { background: #d1fae5; color: #047857; }
+    .fv-chip-failed { background: #fee2e2; color: #b91c1c; }
+    .fv-link { color: #4361ee; font-weight: 700; }
+  </style>
+
+  <div class="fv-hero">
+    <h1>Overview validation</h1>
+    <p>
+      Team <%= @run.team_id %> · <%= @run.environment %> · <%= @run.data_source %>
+      <% if @run.accounting_period_id.present? %> · accounting period <%= @run.accounting_period_id %><% end %>
+    </p>
+    <p>
+      <span class="fv-chip fv-chip-<%= @run.status %>"><%= @run.status %></span>
+      <%= @run.progress_message %>
+    </p>
+    <p class="fv-note">Passed <%= @run.passed_records %> · Failed <%= @run.failed_records %> · Total <%= @run.total_records %></p>
+    <%= link_to "Back to FAT Auto Validation", fat_validations_path, class: "fv-link" %>
+  </div>
+
+  <% if @run.highlight_screenshot.attached? %>
+    <div class="fv-card">
+      <h2 style="margin-top:0;">Colored FAT Overview</h2>
+      <img alt="FAT Overview with validation colors" src="<%= screenshot_fat_validation_path(@run) %>" style="width:100%; border-radius:12px;">
+    </div>
+  <% end %>
+
+  <% if flash[:notice] %><div class="fv-alert notice"><%= flash[:notice] %></div><% end %>
+  <% if @run.error_message.present? %><div class="fv-alert alert"><%= @run.error_message %></div><% end %>
+
+  <% if @run.pending? || @run.running? %>
+    <div class="fv-card">
+      <p>The FAT Chrome window shows the green and red Opportunity values. This page is only the saved detail.</p>
+    </div>
+    <script>
+      setTimeout(function () { window.location.reload(); }, 3000);
+    </script>
+  <% end %>
+
+  <% if @results.any? %>
+    <div class="fv-card">
+      <h2 style="margin-top:0;">Opportunity by drug</h2>
+      <table class="fv-table">
+        <thead>
+          <tr>
+            <th>Drug</th>
+            <th>Expected</th>
+            <th>On screen</th>
+            <th>Difference</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @results.each do |result| %>
+            <tr class="<%= result.pass? ? "fv-pass" : "fv-fail" %>">
+              <td><%= result.generic_group.presence || "—" %></td>
+              <td><%= result.expected_value.nil? ? "—" : number_with_delimiter(result.expected_value.to_i) %></td>
+              <td><%= result.actual_value.nil? ? "—" : number_with_delimiter(result.actual_value.to_i) %></td>
+              <td><%= result.difference.nil? ? "—" : number_with_delimiter(result.difference.to_i) %></td>
+              <td><%= result.status %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

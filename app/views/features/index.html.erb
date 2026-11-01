@@ -557,6 +557,29 @@
               </button>
             </div>
           </div>
+          <!-- FAT Auto Validation Feature -->
+          <div class="feature-card" data-aos="fade-up" data-aos-delay="1135">
+            <div class="feature-icon" style="background: linear-gradient(135deg, var(--primary) 0%, var(--success) 100%);">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="feature-content">
+              <h3>FAT Auto Validation</h3>
+              <p>Open the FAT Overview screen, read each drug's Opportunity, and compare it with the database total for that team.</p>
+              <ul class="feature-benefits">
+                <li><i class="fas fa-check-circle"></i> Team, environment, and Overview selection</li>
+                <li><i class="fas fa-check-circle"></i> Drug name matched to Opportunity</li>
+                <li><i class="fas fa-check-circle"></i> Green and red highlights in the FAT window</li>
+              </ul>
+            </div>
+            <div class="feature-actions">
+              <%= link_to fat_validations_path, class: "btn-primary" do %>
+                <i class="fas fa-check-circle"></i> Start Validation
+              <% end %>
+              <button class="btn-outline-primary" onclick="showFeatureInfo('fat_validation')">
+                <i class="fas fa-info-circle"></i> Learn More
+              </button>
+            </div>
+          </div>
           <!-- Brand Insurance Mapper Feature -->
           <div class="feature-card" data-aos="fade-up" data-aos-delay="1150">
             <div class="feature-icon" style="background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);">
@@ -1995,6 +2018,21 @@
             'Catch missing required plans before a sheet is published',
             'Keep live cost/margin formulas intact when inserting the output column',
             'Review spelling variants separately from truly missing coverage'
+          ]
+        },
+        fat_validation: {
+          title: 'FAT Auto Validation',
+          description: 'Sign in to the selected FAT environment, read the Overview drug table, and compare each Opportunity with the database total for that drug and team.',
+          features: [
+            'Choose Local, Staging, or Production and team 198, 209, or 147',
+            'Reads drug name and Opportunity from the Overview table',
+            'Calculates expected Opportunity from invoice conversions',
+            'Outlines matching cells green and mismatches red in the FAT window'
+          ],
+          benefits: [
+            'Check the live Overview screen without changing FAT data',
+            'Keep each validation run and its pass/fail rows in OG',
+            'Leave the highlighted Chrome window open for review'
           ]
         },
         brand_mapping: {

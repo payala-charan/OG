@@ -144,6 +144,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :fat_validations, only: [:index, :create, :show] do
+    member do
+      get :screenshot
+    end
+  end
+
   resources :insurance_preference_validations, only: [:index, :create, :show, :destroy] do
     member do
       get :download
