@@ -182,36 +182,13 @@ class ValidationsController < ApplicationController
           if benefit_plan_name.empty? || benefit_plan_name.nil? || calc_total_ins_payment.zero?
             calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, ndc_code: ndc_code, category: "CMS").pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
             calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, alternate_ndc_code: ndc_code, category: "CMS").pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0 if calc_total_ins_payment.zero?
-            calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id).where("other_ndc_codes LIKE ?", "%#{ndc_code}%").where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name.upcase).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0 if calc_total_ins_payment.zero?
+            calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id).where("other_ndc_codes LIKE ?", "%#{ndc_code}%").pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0 if calc_total_ins_payment.zero?
             calc_conv_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, generic_name: extracted_conversion_product, category: "CMS").pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
           else
             calc_conv_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, generic_name: extracted_conversion_product).where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name.upcase).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
           end
           calc_total_ins_payment = calc_total_ins_payment * total_units
           calc_conv_total_ins_payment = calc_conv_total_ins_payment * total_units
-          # if team_id == "147"
-          #   calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, ndc_code: ndc_code).where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
-          #   if calc_total_ins_payment.zero?
-          #     calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, alternate_ndc_code: ndc_code).where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
-          #   end
-          #   if calc_total_ins_payment.zero?
-          #     calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id).where("other_ndc_codes LIKE ?", "%#{ndc_code}%").where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
-          #   end
-          #   if benefit_plan_name.empty? || benefit_plan_name.nil?
-          #     calc_conv_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, generic_name: extracted_conversion_product, category: "CMS").pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
-          #   else
-          #     calc_conv_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, generic_name: extracted_conversion_product).where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
-          #   end
-          # else
-          #   calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, ndc_code: ndc_code).where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
-          #   if calc_total_ins_payment.zero?
-          #     calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, alternate_ndc_code: ndc_code).where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
-          #   end
-          #   if calc_total_ins_payment.zero?
-          #     calc_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id).where("other_ndc_codes LIKE ?", "%#{ndc_code}%").where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
-          #   end
-          #   calc_conv_total_ins_payment = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, generic_name: extracted_conversion_product).where("extracted_insurances @> ARRAY[?]::varchar[]", benefit_plan_name).pluck(:payrate_reimbursement_per_package).first.to_f rescue 0.0
-          # end
         end
         known_payors = InsuranceFactor.where(team_id: team_id).pluck(:benefit_plan_name).compact.uniq.map(&:downcase)
         benefit_plan_down = benefit_plan_name.downcase
@@ -241,6 +218,8 @@ class ValidationsController < ApplicationController
           brand_down = "bendamustine"
         elsif brand_down == "neupogen singleject"
           brand_down = "neupogen"
+        elsif (brand_down == "neulasta onpro") && (team_id == "209" || team_id == "198")
+          brand_down = "neulasta onpro kit"
         end
 
         if charge_class.to_s.strip.casecmp("Inpatient").zero?
@@ -352,6 +331,8 @@ class ValidationsController < ApplicationController
             if charge_class.to_s.strip.casecmp("Inpatient").zero?
               calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, billing_unit_per_package_size: billing_unit_per_package_size, generic_name_group: group).order(blended_gpo_cost: :asc)
                                       .pluck(:generic_name).first.to_s rescue ""
+              # calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, billing_unit_per_package_size: billing_unit_per_package_size, generic_name_group: group).where("? = ANY(extracted_insurances)", benefit_plan_name).order(blended_gpo_cost: :asc)
+              #                         .pluck(:generic_name).first.to_s rescue ""
             elsif financial_class.to_s.strip.casecmp("Self-Pay").zero?
               if conversion_criteria == "highest_margin" || conversion_criteria == "low_cost"
                 calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size, cost_three_forty_b: corresponding_value)
@@ -379,6 +360,8 @@ class ValidationsController < ApplicationController
             if charge_class.to_s.strip.casecmp("Inpatient").zero?
               calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, billing_unit_per_package_size: billing_unit_per_package_size,  generic_name_group: group).order(blended_gpo_cost: :asc)
                                       .pluck(:generic_name).first.to_s rescue ""
+              # calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, billing_unit_per_package_size: billing_unit_per_package_size,  generic_name_group: group).where("? = ANY(extracted_insurances)", benefit_plan_name).order(blended_gpo_cost: :asc)
+              #                         .pluck(:generic_name).first.to_s rescue ""
             elsif financial_class.to_s.strip.casecmp("Self-Pay").zero?
               if conversion_criteria == "highest_margin" || conversion_criteria == "low_cost"
                 calc_conversion_product = NewBiosimilarPrice.where(team_id: team_id, accounting_period_id: accounting_period_id, extracted_brand_name: brand.upcase, billing_unit_per_package_size: billing_unit_per_package_size)

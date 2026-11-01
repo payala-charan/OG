@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_01_083000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -165,6 +165,43 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
     t.datetime "updated_at", null: false
     t.string "file_name"
     t.index ["file_name"], name: "index_excel_records_on_file_name"
+  end
+
+  create_table "fat_validation_results", force: :cascade do |t|
+    t.bigint "fat_validation_run_id", null: false
+    t.string "generic_group"
+    t.string "column_name", null: false
+    t.decimal "expected_value", precision: 16, scale: 2
+    t.decimal "actual_value", precision: 16, scale: 2
+    t.decimal "difference", precision: 16, scale: 2
+    t.string "status", null: false
+    t.jsonb "details", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fat_validation_run_id", "generic_group"], name: "index_fat_validation_results_on_run_and_group"
+    t.index ["fat_validation_run_id", "status"], name: "index_fat_validation_results_on_run_and_status"
+    t.index ["fat_validation_run_id"], name: "index_fat_validation_results_on_fat_validation_run_id"
+  end
+
+  create_table "fat_validation_runs", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "team_id", null: false
+    t.string "environment", null: false
+    t.string "report_type", null: false
+    t.string "data_source", null: false
+    t.integer "accounting_period_id"
+    t.integer "status", default: 0, null: false
+    t.integer "total_records", default: 0, null: false
+    t.integer "passed_records", default: 0, null: false
+    t.integer "failed_records", default: 0, null: false
+    t.text "error_message"
+    t.string "progress_message"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_id", "environment", "report_type", "status", "completed_at"], name: "index_fat_validation_runs_on_latest"
+    t.index ["user_id"], name: "index_fat_validation_runs_on_user_id"
   end
 
   create_table "github_accounts", force: :cascade do |t|
@@ -328,6 +365,39 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
     t.index ["payor_id"], name: "index_insurances_on_payor_id"
   end
 
+  create_table "invoice_conversions", force: :cascade do |t|
+    t.integer "utilization_report_id"
+    t.string "conversion_product"
+    t.integer "conversion_percentage"
+    t.float "conversion_product_cost_per_unit"
+    t.float "conversion_product_total_cost"
+    t.float "conversion_product_total_insurance_payment"
+    t.float "conversion_product_total_margin"
+    t.float "conversion_product_percent_margin"
+    t.float "blended_conversion_cost_per_unit"
+    t.float "blended_conversion_total_margin"
+    t.float "blended_conversion_percent_margin"
+    t.float "blended_conversion_cost_difference"
+    t.float "blended_conversion_margin_difference"
+    t.float "blended_conversion_percent_margin_difference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_id"
+    t.string "team_id"
+    t.string "converted_to"
+    t.string "status", default: "individual", null: false
+    t.string "conversion_type"
+    t.string "percentage_basis", default: "", null: false
+    t.index ["status"], name: "index_invoice_conversions_on_status"
+    t.index ["team_id"], name: "index_invoice_conversions_on_team_id"
+    t.index ["user_id", "team_id", "conversion_type"], name: "index_invoice_conversions_user_team_percentage", where: "((conversion_type)::text = 'percentage'::text)"
+    t.index ["user_id"], name: "index_invoice_conversions_on_user_id"
+    t.index ["utilization_report_id", "status", "conversion_type"], name: "index_invoice_conversions_system_status_type", unique: true, where: "((user_id IS NULL) AND (conversion_type IS NOT NULL))"
+    t.index ["utilization_report_id", "status"], name: "index_invoice_conversions_legacy_system_status", unique: true, where: "((user_id IS NULL) AND (conversion_type IS NULL))"
+    t.index ["utilization_report_id", "user_id", "status", "conversion_type", "percentage_basis"], name: "index_invoice_conversions_user_status_type", unique: true, where: "((user_id IS NOT NULL) AND (conversion_type IS NOT NULL))"
+    t.index ["utilization_report_id", "user_id", "status"], name: "index_invoice_conversions_legacy_user_status", unique: true, where: "((user_id IS NOT NULL) AND (conversion_type IS NULL))"
+  end
+
   create_table "kettering_insurances", force: :cascade do |t|
     t.string "generic_name_group"
     t.string "brand_name"
@@ -346,6 +416,21 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_name_matches_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "ndc_codes", force: :cascade do |t|
+    t.bigint "utilization_report_id", null: false
+    t.string "ndc_code", null: false
+    t.string "strength"
+    t.string "package_size"
+    t.string "package_description"
+    t.string "brand_name"
+    t.string "generic_name"
+    t.string "package_unit"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ndc_code"], name: "index_ndc_codes_on_ndc_code"
+    t.index ["utilization_report_id"], name: "index_ndc_codes_on_utilization_report_id"
   end
 
   create_table "ndc_results", force: :cascade do |t|
@@ -480,6 +565,18 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
     t.index ["team_id"], name: "index_payors_on_team_id"
   end
 
+  create_table "primary_payors", force: :cascade do |t|
+    t.bigint "utilization_report_id", null: false
+    t.string "primary_payor_name", null: false
+    t.string "benefit_plan_name"
+    t.float "insurance_factor"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["benefit_plan_name"], name: "index_primary_payors_on_benefit_plan_name"
+    t.index ["primary_payor_name"], name: "index_primary_payors_on_primary_payor_name"
+    t.index ["utilization_report_id"], name: "index_primary_payors_on_utilization_report_id"
+  end
+
   create_table "product_preference_records", force: :cascade do |t|
     t.jsonb "data", default: {}
     t.integer "user_id"
@@ -555,6 +652,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "test_invoice_conversions", id: :serial, force: :cascade do |t|
+    t.integer "utilization_report_id", null: false
+    t.string "conversion_product"
+    t.integer "conversion_percentage"
+    t.float "conversion_product_cost_per_unit"
+    t.float "conversion_product_total_cost"
+    t.float "conversion_product_total_insurance_payment"
+    t.float "conversion_product_total_margin"
+    t.float "conversion_product_percent_margin"
+    t.float "blended_conversion_cost_per_unit"
+    t.float "blended_conversion_total_margin"
+    t.float "blended_conversion_percent_margin"
+    t.float "blended_conversion_cost_difference"
+    t.float "blended_conversion_margin_difference"
+    t.float "blended_conversion_percent_margin_difference"
+    t.datetime "created_at", precision: nil, default: -> { "now()" }, null: false
+    t.datetime "updated_at", precision: nil, default: -> { "now()" }, null: false
+    t.string "source_brand_name"
+    t.string "source_generic_name"
+
+    t.unique_constraint ["utilization_report_id"], name: "test_invoice_conversions_utilization_report_id_key"
+  end
+
   create_table "uploaded_files", force: :cascade do |t|
     t.string "file_name"
     t.string "quarter"
@@ -573,6 +693,92 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["password_digest"], name: "index_users_on_password_digest_trgm", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "utilization_orders", force: :cascade do |t|
+    t.bigint "utilization_report_id", null: false
+    t.datetime "order_date_time", precision: nil
+    t.string "order_status"
+    t.string "order_id"
+    t.string "order_name"
+    t.text "order_description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_utilization_orders_on_order_id"
+    t.index ["utilization_report_id"], name: "index_utilization_orders_on_utilization_report_id"
+  end
+
+  create_table "utilization_reports", force: :cascade do |t|
+    t.string "ordering_mode"
+    t.string "medication_id"
+    t.integer "order_line"
+    t.string "administered_quantity"
+    t.string "administered_qty_unit"
+    t.string "hcpcs_code"
+    t.string "financial_class"
+    t.string "administration_department"
+    t.string "hospital_name"
+    t.string "generic_name_group"
+    t.string "cms_payment_per_unit"
+    t.string "price_without_cost_dist_minus"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "har"
+    t.string "csn"
+    t.string "mrn"
+    t.integer "patient_age"
+    t.string "description"
+    t.string "display_name"
+    t.datetime "administration_instant"
+    t.string "principal_dx"
+    t.string "diagnosis_two"
+    t.string "diagnosis_three"
+    t.string "diagnosis_four"
+    t.string "prescribing_provider_nm"
+    t.string "order_department"
+    t.string "dispense_department"
+    t.string "hospital_group"
+    t.string "extracted_brand_name"
+    t.string "health_system"
+    t.string "mar_action"
+    t.string "qty_unit_name"
+    t.string "pack_desc"
+    t.string "charge_type"
+    t.string "charge_class"
+    t.string "primary_dx"
+    t.string "quantity"
+    t.float "cms_asp"
+    t.float "insurance_payment_per_dose"
+    t.float "total_margin"
+    t.float "percent_margin"
+    t.string "data_month"
+    t.string "reimbursement"
+    t.string "quarter"
+    t.float "charge"
+    t.string "admin_amount"
+    t.string "admin_unit"
+    t.float "total_units"
+    t.float "actual_reimbursement"
+    t.float "units"
+    t.string "category"
+    t.integer "accounting_period_id"
+    t.bigint "reimbursement_id"
+    t.string "team_id"
+    t.float "cost_per_unit_three_forty_b"
+    t.float "cms_total_units"
+    t.string "converted_to"
+    t.float "actual_price"
+    t.float "reimbursement_per_package"
+    t.string "insurance_class"
+    t.index ["extracted_brand_name"], name: "index_utilization_reports_on_extracted_brand_name"
+    t.index ["generic_name_group"], name: "index_utilization_reports_on_generic_name_group"
+    t.index ["hospital_name", "generic_name_group"], name: "idx_inv_on_hosp_gen_grp"
+    t.index ["hospital_name"], name: "index_utilization_reports_on_hospital_name"
+    t.index ["reimbursement_id"], name: "index_utilization_reports_on_reimbursement_id"
+    t.index ["team_id", "accounting_period_id", "category", "generic_name_group"], name: "idx_util_reports_team_period_category_group"
+    t.index ["team_id", "generic_name_group", "category"], name: "idx_util_reports_team_group_category"
+    t.index ["team_id", "hospital_name"], name: "idx_util_reports_team_hospital_uncategorized", where: "(category IS NULL)"
+    t.index ["team_id"], name: "index_utilization_reports_on_team_id"
   end
 
   create_table "validation_records", force: :cascade do |t|
@@ -595,6 +801,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "automation_batch_items", "automation_batches"
   add_foreign_key "automation_batches", "automation_schedules"
+  add_foreign_key "fat_validation_results", "fat_validation_runs"
+  add_foreign_key "fat_validation_runs", "users"
   add_foreign_key "github_accounts", "users"
   add_foreign_key "github_contributions", "github_repositories"
   add_foreign_key "github_pull_requests", "github_repositories"
@@ -607,4 +815,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_06_063000) do
   add_foreign_key "insurance_preference_validation_rows", "insurance_preference_validation_runs"
   add_foreign_key "insurance_preference_validation_runs", "users"
   add_foreign_key "insurances", "payors"
+  add_foreign_key "ndc_codes", "utilization_reports"
+  add_foreign_key "primary_payors", "utilization_reports"
+  add_foreign_key "test_invoice_conversions", "utilization_reports", name: "test_invoice_conversions_utilization_report_id_fkey", on_delete: :cascade
+  add_foreign_key "utilization_orders", "utilization_reports"
 end

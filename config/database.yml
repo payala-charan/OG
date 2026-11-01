@@ -58,7 +58,7 @@ development:
   # Read-only source for the database transfer dashboard. Rails must not migrate it.
   fat:
     <<: *default
-    database: <%= ENV.fetch("FAT_DATABASE", "oct_5") %>
+    database: <%= ENV.fetch("FAT_DATABASE", "oct_28") %>
     database_tasks: false
 
 test:

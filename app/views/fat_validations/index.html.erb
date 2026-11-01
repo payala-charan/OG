@@ -1,0 +1,132 @@
+<div class="fv-wrap">
+  <style>
+    .fv-wrap { max-width: 980px; margin: 0 auto; padding: 1.5rem; color: var(--og-text, #2b2d42); font-family: Inter, "Segoe UI", sans-serif; }
+    .fv-hero, .fv-card { background: var(--og-surface, #fff); border: 1px solid var(--og-line, #e5e7eb); border-radius: 16px; padding: 1.5rem 1.75rem; box-shadow: 0 10px 30px rgba(0,0,0,.05); margin-bottom: 1.25rem; }
+    .fv-hero h1 { margin: 0 0 .35rem; font-size: 1.8rem; }
+    .fv-hero p, .fv-note { color: var(--og-muted, #6b7280); margin: 0; }
+    .fv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .fv-field label { display: block; font-weight: 700; margin-bottom: .35rem; }
+    .fv-field select { width: 100%; padding: .7rem; border: 1px solid var(--og-line-strong, #d1d5db); border-radius: 10px; background: var(--og-bg-alt, #fff); color: inherit; }
+    .fv-btn { display: inline-flex; align-items: center; gap: .45rem; margin-top: 1rem; background: #4361ee; color: #fff; border: 0; border-radius: 999px; padding: .75rem 1.3rem; font-weight: 700; cursor: pointer; text-decoration: none; }
+    .fv-alert { padding: .9rem 1rem; border-radius: 12px; margin-bottom: 1rem; font-weight: 600; }
+    .fv-alert.notice { background: rgba(6,214,160,.12); color: #047857; }
+    .fv-alert.alert { background: rgba(247,37,133,.1); color: #be123c; }
+    .fv-table { width: 100%; border-collapse: collapse; }
+    .fv-table th, .fv-table td { text-align: left; padding: .65rem .4rem; border-bottom: 1px solid var(--og-line, #eef1f6); }
+    .fv-chip { display: inline-block; padding: .12rem .5rem; border-radius: 999px; font-size: .75rem; font-weight: 700; }
+    .fv-chip-pending, .fv-chip-running { background: #fef3c7; color: #92400e; }
+    .fv-chip-completed { background: #d1fae5; color: #047857; }
+    .fv-chip-failed { background: #fee2e2; color: #b91c1c; }
+    @media (max-width: 800px) { .fv-grid { grid-template-columns: 1fr; } }
+  </style>
+
+  <div class="fv-hero">
+    <h1>FAT Auto Validation</h1>
+    <p>On this computer, Chrome opens FAT and colors the Opportunity values. Through an ngrok link, the same colored FAT page appears here instead, because a browser cannot be opened on someone else's computer.</p>
+  </div>
+
+  <% if flash[:notice] %><div class="fv-alert notice"><%= flash[:notice] %></div><% end %>
+  <% if flash[:alert] %><div class="fv-alert alert"><%= flash[:alert] %></div><% end %>
+
+  <% if @watched_run %>
+    <div class="fv-card" id="fv-live"
+         data-status-url="<%= fat_validation_path(@watched_run, format: :json) %>"
+         data-image-url="<%= screenshot_fat_validation_path(@watched_run) %>">
+      <h2 style="margin-top:0;">Colored FAT Overview</h2>
+      <p class="fv-note" id="fv-live-status"><%= @watched_run.progress_message.presence || @watched_run.status %></p>
+      <% if @watched_run.highlight_screenshot.attached? %>
+        <img id="fv-live-image" alt="FAT Overview with validation colors" src="<%= screenshot_fat_validation_path(@watched_run) %>" style="width:100%; margin-top:1rem; border-radius:12px; border:1px solid #e5e7eb;">
+      <% else %>
+        <img id="fv-live-image" alt="FAT Overview with validation colors" style="width:100%; margin-top:1rem; border-radius:12px; border:1px solid #e5e7eb; display:none;">
+      <% end %>
+    </div>
+    <script>
+      (function () {
+        var box = document.getElementById("fv-live");
+        if (!box) return;
+        var statusNode = document.getElementById("fv-live-status");
+        var image = document.getElementById("fv-live-image");
+        var extra = 0;
+        function tick() {
+          fetch(box.dataset.statusUrl, { headers: { Accept: "application/json" } })
+            .then(function (response) { return response.json(); })
+            .then(function (payload) {
+              statusNode.textContent = payload.progress_message || payload.status;
+              if (payload.screenshot_ready && image && image.dataset.loaded !== "1") {
+                image.style.display = "block";
+                image.src = box.dataset.imageUrl;
+                image.dataset.loaded = "1";
+              }
+              if (payload.status === "pending" || payload.status === "running") {
+                setTimeout(tick, 2000);
+              } else if (payload.status === "completed" && !payload.screenshot_ready && extra < 8) {
+                extra += 1;
+                setTimeout(tick, 1500);
+              }
+            })
+            .catch(function () { setTimeout(tick, 3000); });
+        }
+        if (statusNode.textContent !== "completed" && statusNode.textContent !== "failed") tick();
+      })();
+    </script>
+  <% end %>
+
+  <div class="fv-card">
+    <%= form_with url: fat_validations_path, method: :post, local: true, data: { turbo: false } do %>
+      <div class="fv-grid">
+        <div class="fv-field">
+          <label for="environment">Environment</label>
+          <%= select_tag :environment, options_for_select([["Local (localhost:3000)", "local"], ["Staging", "staging"], ["Production", "production"]], "staging") %>
+        </div>
+        <div class="fv-field">
+          <label for="report_type">Report</label>
+          <%= select_tag :report_type, options_for_select([["Overview", "overview"], ["Margin Report (not available yet)", "margin"], ["Utilization Report (not available yet)", "utilization"]], "overview") %>
+        </div>
+        <div class="fv-field">
+          <label for="team_id">Team</label>
+          <%= select_tag :team_id, options_for_select(@team_options, "147") %>
+        </div>
+        <div class="fv-field">
+          <label for="data_source">Data source</label>
+          <%= select_tag :data_source, options_for_select([["Database", "database"], ["Excel upload (not configured yet)", "excel"]], "database") %>
+        </div>
+      </div>
+      <p class="fv-note" style="margin-top:1rem;">Excel column mapping is waiting on your sheet. Database uses invoice conversions for the quarter shown on the Overview page. For Local, run OG on a port other than 3000 so it does not take FAT's port. The FAT window stays open with the colors.</p>
+      <%= submit_tag "Start Validation", class: "fv-btn" %>
+    <% end %>
+  </div>
+
+  <div class="fv-card">
+    <h2 style="margin-top:0;">Recent runs</h2>
+    <% if @runs.empty? %>
+      <p class="fv-note">No validations yet.</p>
+    <% else %>
+      <table class="fv-table">
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Team</th>
+            <th>Environment</th>
+            <th>Status</th>
+            <th>Passed</th>
+            <th>Failed</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @runs.each do |run| %>
+            <tr>
+              <td><%= run.created_at.strftime("%b %-d, %Y %H:%M") %></td>
+              <td><%= run.team_id %></td>
+              <td><%= run.environment %></td>
+              <td><span class="fv-chip fv-chip-<%= run.status %>"><%= run.status %></span></td>
+              <td><%= run.passed_records %></td>
+              <td><%= run.failed_records %></td>
+              <td><%= link_to "Open", fat_validation_path(run) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>

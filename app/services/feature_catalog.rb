@@ -45,7 +45,8 @@ class FeatureCatalog
             Feature.new(id: "excel", name: "Excel Validation", icon: "fa-file-excel", path_helper: :validations_path, kind: "task", hint: "Check spreadsheets"),
             Feature.new(id: "rankings", name: "Rankings Validation", icon: "fa-list-ol", path_helper: :ranking_records_path, kind: "task", hint: "Verify rankings"),
             Feature.new(id: "tally", name: "Excel Tally Validation", icon: "fa-balance-scale", path_helper: :tally_validations_path, kind: "task", hint: "Reconcile totals"),
-            Feature.new(id: "insurance_pref", name: "Insurance Preference Validator", icon: "fa-shield-alt", path_helper: :insurance_preference_validations_path, kind: "task", hint: "Biosimilar vs master plans")
+            Feature.new(id: "insurance_pref", name: "Insurance Preference Validator", icon: "fa-shield-alt", path_helper: :insurance_preference_validations_path, kind: "task", hint: "Biosimilar vs master plans"),
+            Feature.new(id: "fat_validation", name: "FAT Auto Validation", icon: "fa-check-circle", path_helper: :fat_validations_path, kind: "task", hint: "Overview opportunity vs FAT")
           ]
         ),
         Category.new(
